@@ -4,10 +4,21 @@
 
 #include <iostream>
 
-#include <sfinae_exec.h>
-
+#include <sfinae_prop.hpp>
+#include <sfinae_exec.hpp>
 
 int main() {
-  sse_executor exec;
-  std::cout<<exec().name()<<std::endl;
+  auto exec = sse_executor{}.fallback_t();
+  std::cout<<exec.name()<<std::endl;
+
+  auto do_something = [=](int num)-> int {
+    return num;
+  };
+
+  auto val = exec.execute(do_something, 4);
+
+  std::cout<<val;
+
+  exec.require(blocking_t::always_t{});
+//  exec.require(blocking_t::never_t{}); Won't Compile
 }
