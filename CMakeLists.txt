@@ -7,4 +7,4 @@ set (CMAKE_CXX_STANDARD 17)
 include_directories(include)
 
 add_executable(template_meta_plg src/template_meta_plg.cpp)
-add_executable(sfinae_exec src/sfinae_exec.cpp)
+add_executable(sfinae_exec src/executor.cpp)
