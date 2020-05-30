@@ -18,4 +18,8 @@ struct is_executor<
 
 template <typename Executor>
 using is_executor_t = typename is_executor<Executor>::type;
+
+template <template  <typename, typename, typename> typename T> struct executor_available : std::false_type {};
+template <template  <typename, typename, typename> typename T> using executor_available_t = typename executor_available<T>::type;
+
 } // namespace execution
