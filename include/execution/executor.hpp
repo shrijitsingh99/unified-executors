@@ -5,6 +5,8 @@
 #include <functional>
 #include <iostream>
 #include <string>
+//#include <cuda.h>
+#include <execution/executor_gpu.h>
 
 //#define SSE
 
@@ -20,9 +22,16 @@ template <> struct execution::executor_available<sse_executor> : std::true_type 
 
 template <typename Interface, typename Blocking, typename ProtoAllocator>
 struct omp_executor;
-
-#if defined(_OPENMP)
+#ifdef _OPENMP
 template <> struct execution::executor_available<omp_executor> : std::true_type {};
+#endif
+
+template <typename Interface, typename Blocking, typename ProtoAllocator>
+struct cuda_executor;
+
+#ifdef CUDA
+template <> struct execution::executor_available<cuda_executor> : std::true_type {};
+
 #endif
 
 
@@ -112,7 +121,7 @@ struct omp_executor: executor<sse_executor, Interface, Blocking, ProtoAllocator>
   }
 
   template <typename F, typename... Args>
-  void bulk_execute(F &&f, std::size_t n, Args &&... args) {
+  void bulk_execute(F &&f, shape_type n, Args &&... args) {
     #pragma omp parallel num_threads(n)
     {
       std::invoke(std::forward<F>(f), std::forward<Args>(args)..., omp_get_thread_num());
@@ -120,7 +129,34 @@ struct omp_executor: executor<sse_executor, Interface, Blocking, ProtoAllocator>
   }
 
   auto decay_t() -> decltype(auto) {
-    if constexpr (execution::executor_available_t<sse_executor>()) {
+    if constexpr (execution::executor_available_t<omp_executor>()) {
+      return *this;
+    }
+    else
+      return inline_executor<oneway_t, blocking_t::always_t, ProtoAllocator>{};
+  }
+
+  std::string name() { return "omp"; }
+};
+
+
+template <typename Interface,typename Blocking, typename ProtoAllocator>
+struct cuda_executor: executor<sse_executor, Interface, Blocking, ProtoAllocator> {
+
+  using shape_type = std::pair<std::size_t, std::size_t>;
+
+//  template <typename F, typename... Args>
+//  void execute(F &&f, Args &&... args) {
+//    std::invoke(std::forward<F>(f), std::forward<Args>(args)...);
+//  }
+
+  template <typename F, typename... Args>
+  void bulk_execute(F &&f, shape_type shape, Args &&... args) {
+    launch_kernel(f);
+  }
+
+  auto decay_t() -> decltype(auto) {
+    if constexpr (execution::executor_available_t<cuda_executor>()) {
       return *this;
     }
     else

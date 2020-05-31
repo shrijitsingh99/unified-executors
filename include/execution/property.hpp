@@ -52,7 +52,7 @@ class blocking_t {
     }
   };
 
-  static constexpr always_t always;
+  static constexpr always_t always{};
 
   class never_t : basic_executor_property<true> {
    public:
@@ -66,7 +66,7 @@ class blocking_t {
     }
   };
 
-  static constexpr never_t never;
+  static constexpr never_t never{};
 };
 
 static constexpr blocking_t blocking;
@@ -141,3 +141,5 @@ class bulk_oneway_t: basic_executor_property<true> {
 };
 
 static constexpr bulk_oneway_t bulk_oneway;
+
+

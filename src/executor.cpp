@@ -10,7 +10,11 @@
 #include <execution/executor.hpp>
 #include <execution/property.hpp>
 
-#include "mmul.hpp"
+
+#include <mmul.hpp>
+#include <mmul_gpu.h>
+
+using namespace Eigen;
 
 template <typename Executor> void preform_op(Executor &ex) { return; }
 
@@ -44,5 +48,8 @@ int main() {
 
   mmul(omp_executor<oneway_t, blocking_t::always_t, void>{}, a, b, c);
   std::cout<<"\nOMP: \n"<<c<<std::endl;
+
+  mmul_gpu();
+  cuda_executor<oneway_t, blocking_t::always_t, void>{}.bulk_execute(mmul_gpu, std::pair<std::size_t, std::size_t>(1, 2));
 
 }
