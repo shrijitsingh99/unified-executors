@@ -1,4 +1,3 @@
-
 #include <mmul.cuh>
 
 __global__ void mmul_gpu(double *a, double *b, double *c, int m, int n, int k) {

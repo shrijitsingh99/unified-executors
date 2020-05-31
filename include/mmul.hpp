@@ -12,9 +12,9 @@
 
 
 #include <execution/executor.hpp>
-#ifdef CUDA
+//#ifdef CUDA
 #include <mmul.cuh>
-#endif
+//#endif
 using namespace Eigen;
 
 template <typename Interface, typename Blocking, typename ProtoAllocator>
@@ -43,16 +43,19 @@ void mmul(omp_executor<Interface, Blocking, ProtoAllocator> ex, MatrixXd &a,
 }
 
 
-
-
 template <typename Interface, typename Blocking, typename ProtoAllocator>
 void mmul(cuda_executor<Interface, Blocking, ProtoAllocator> ex, MatrixXd &a,
           MatrixXd &b, MatrixXd &c) {
 
+  if constexpr (!execution::executor_available<cuda_executor>())
+    throw std::runtime_error("CUDA Missing");
+
   double *a_g, *b_g, *c_g;
+  #ifdef CUDA
   cudaMallocManaged(&a_g, 9*sizeof(double));
   cudaMallocManaged(&b_g, 9*sizeof(double));
   cudaMallocManaged(&c_g, 9*sizeof(double));
+  #endif
 
   memcpy(a_g, (double*)a.data(), 9*sizeof(double));
   memcpy(b_g, (double*)b.data(), 9*sizeof(double));

@@ -4,4 +4,7 @@
 
 #pragma once
 
-__global__ void mmul_gpu(double *a, double* b, double* c, int m, int n, int k);
+#ifdef CUDA
+__global__
+#endif
+void mmul_gpu(double *a, double* b, double* c, int m, int n, int k);

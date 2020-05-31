@@ -5,6 +5,7 @@
 #include <functional>
 #include <iostream>
 #include <string>
+#include <stdexcept>
 
 #ifdef CUDA
 #include <cuda_runtime.h>
@@ -122,10 +123,14 @@ struct omp_executor: executor<sse_executor, Interface, Blocking, ProtoAllocator>
 
   template <typename F, typename... Args>
   void bulk_execute(F &&f, shape_type n, Args &&... args) {
+  #ifdef _OPENMP
     #pragma omp parallel num_threads(n)
     {
       std::invoke(std::forward<F>(f), std::forward<Args>(args)..., 1);
     }
+  #else
+      throw std::runtime_error("OpenMP Missing");
+  #endif
   }
 
   auto decay_t() -> decltype(auto) {
@@ -148,11 +153,15 @@ struct cuda_executor: executor<sse_executor, Interface, Blocking, ProtoAllocator
 
   template <typename F, typename... Args>
   void bulk_execute(F &&f, shape_type shape, Args &&... args) {
-    void *arguments[] = {&args...};
-    dim3 g(shape[0], shape[1], shape[2]);
-    dim3 b(shape[3], shape[4], shape[5]);
-    cudaLaunchKernel((void *)f, g, b, arguments);
-    cudaDeviceSynchronize();
+    #ifdef CUDA
+      void *kernel_args[] = {&args...};
+      dim3 grid_size(shape[0], shape[1], shape[2]);
+      dim3 block_size(shape[3], shape[4], shape[5]);
+      cudaLaunchKernel((void *)f, grid_size, block_size, kernel_args);
+      cudaDeviceSynchronize();
+      #else
+          throw std::runtime_error("CUDA Missing");
+      #endif
   }
 
   auto decay_t() -> decltype(auto) {
