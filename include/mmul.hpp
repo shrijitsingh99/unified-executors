@@ -10,8 +10,11 @@
 #include <omp.h>
 #endif
 
-#include <execution/executor.hpp>
 
+#include <execution/executor.hpp>
+#ifdef CUDA
+#include <mmul.cuh>
+#endif
 using namespace Eigen;
 
 template <typename Interface, typename Blocking, typename ProtoAllocator>
@@ -24,8 +27,9 @@ template <typename Interface, typename Blocking, typename ProtoAllocator>
 void mmul(omp_executor<Interface, Blocking, ProtoAllocator> ex, MatrixXd &a,
           MatrixXd &b, MatrixXd &c) {
 
-  auto mul = [=](MatrixXd &a, MatrixXd &b, MatrixXd &c, std::size_t thread_idx) {
-  #pragma omp for schedule(static)
+  auto mul = [=](MatrixXd &a, MatrixXd &b, MatrixXd &c,
+                 std::size_t thread_idx) {
+#pragma omp for schedule(static)
     for (int i = 0; i < a.rows(); i = i + 1) {
       for (int j = 0; j < b.cols(); j = j + 1) {
         c(i, j) = 0.0;
@@ -39,3 +43,23 @@ void mmul(omp_executor<Interface, Blocking, ProtoAllocator> ex, MatrixXd &a,
 }
 
 
+
+
+template <typename Interface, typename Blocking, typename ProtoAllocator>
+void mmul(cuda_executor<Interface, Blocking, ProtoAllocator> ex, MatrixXd &a,
+          MatrixXd &b, MatrixXd &c) {
+
+  double *a_g, *b_g, *c_g;
+  cudaMallocManaged(&a_g, 9*sizeof(double));
+  cudaMallocManaged(&b_g, 9*sizeof(double));
+  cudaMallocManaged(&c_g, 9*sizeof(double));
+
+  memcpy(a_g, (double*)a.data(), 9*sizeof(double));
+  memcpy(b_g, (double*)b.data(), 9*sizeof(double));
+  memcpy(c_g, (double*)c.data(), 9*sizeof(double));
+  std::vector<std::size_t> shape = {std::size_t(ceil(a.rows()/2.0)), std::size_t(ceil(b.cols()/2.0)), 1, 2, 2, 1};
+  cuda_executor<oneway_t, blocking_t::always_t, void>{}.bulk_execute(
+      mmul_gpu, shape, a_g, b_g, c_g, a.rows(), a.cols(), b.cols());
+
+  memcpy((double*)c.data(), c_g, 9*sizeof(double));
+}

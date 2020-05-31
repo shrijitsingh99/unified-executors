@@ -1,8 +1,15 @@
-#include <iostream>
-#include <cuda.h>
-#include <mmul_gpu.h>
 
-__global__ void mmul_gpu()
-{
-  printf("mmul_gpu Called\n");
+#include <mmul.cuh>
+
+__global__ void mmul_gpu(double *a, double *b, double *c, int m, int n, int k) {
+  int row = blockIdx.y * blockDim.y + threadIdx.y;
+  int col = blockIdx.x * blockDim.x + threadIdx.x;
+  int sum = 0;
+  if (col < k && row < m) {
+    for (int i = 0; i < n; i++) {
+      sum += a[row * n + i] * b[i * k + col];
+    }
+    c[row * k + col] = sum;
+  }
 }
+

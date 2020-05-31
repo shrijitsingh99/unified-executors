@@ -5,10 +5,10 @@
 #include <functional>
 #include <iostream>
 #include <string>
-//#include <cuda.h>
-#include <execution/executor_gpu.h>
 
-//#define SSE
+#ifdef CUDA
+#include <cuda_runtime.h>
+#endif
 
 template <typename Interface, typename Blocking, typename ProtoAllocator>
 struct inline_executor;
@@ -16,7 +16,7 @@ template <> struct execution::executor_available<inline_executor> : std::true_ty
 
 template <typename Interface, typename Blocking, typename ProtoAllocator>
 struct sse_executor;
-#ifdef SSE
+#ifdef _SSE
 template <> struct execution::executor_available<sse_executor> : std::true_type {};
 #endif
 
@@ -124,7 +124,7 @@ struct omp_executor: executor<sse_executor, Interface, Blocking, ProtoAllocator>
   void bulk_execute(F &&f, shape_type n, Args &&... args) {
     #pragma omp parallel num_threads(n)
     {
-      std::invoke(std::forward<F>(f), std::forward<Args>(args)..., omp_get_thread_num());
+      std::invoke(std::forward<F>(f), std::forward<Args>(args)..., 1);
     }
   }
 
@@ -140,19 +140,19 @@ struct omp_executor: executor<sse_executor, Interface, Blocking, ProtoAllocator>
 };
 
 
+
 template <typename Interface,typename Blocking, typename ProtoAllocator>
 struct cuda_executor: executor<sse_executor, Interface, Blocking, ProtoAllocator> {
 
-  using shape_type = std::pair<std::size_t, std::size_t>;
-
-//  template <typename F, typename... Args>
-//  void execute(F &&f, Args &&... args) {
-//    std::invoke(std::forward<F>(f), std::forward<Args>(args)...);
-//  }
+  using shape_type = std::vector<std::size_t>;
 
   template <typename F, typename... Args>
   void bulk_execute(F &&f, shape_type shape, Args &&... args) {
-    launch_kernel(f);
+    void *arguments[] = {&args...};
+    dim3 g(shape[0], shape[1], shape[2]);
+    dim3 b(shape[3], shape[4], shape[5]);
+    cudaLaunchKernel((void *)f, g, b, arguments);
+    cudaDeviceSynchronize();
   }
 
   auto decay_t() -> decltype(auto) {

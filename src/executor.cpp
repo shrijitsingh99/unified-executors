@@ -3,53 +3,33 @@
 //
 
 #include <iostream>
-#include <vector>
 
 #include <Eigen/Dense>
 
 #include <execution/executor.hpp>
 #include <execution/property.hpp>
 
-
 #include <mmul.hpp>
-#include <mmul_gpu.h>
 
 using namespace Eigen;
 
 template <typename Executor> void preform_op(Executor &ex) { return; }
 
 int main() {
-  auto exec = sse_executor<oneway_t, blocking_t::always_t, void>{}.decay_t();
-  std::cout << exec.name() << std::endl;
-//
-//  auto do_something = [=](int num) -> int { return num; };
-
-  //    auto val = exec.execute(do_something, 4);
-
-  //    std::cout<<val<<std::endl;
-
-//  exec.require(blocking.always);
-//
-//  std::cout << query(exec, oneway) << std::endl;
-//  std::cout << exec.query(oneway) << std::endl;
-
-  preform_op(exec);
-
-  MatrixXd a(3, 3), b(3, 3), c(3, 3);
-
-  a << 1, 1, 1, 1, 1, 1, 1, 1, 1;
-
-  b << 2, 2, 2, 2, 2, 2, 2, 2, 2;
+  double dataA[9] = {1, 2, 3, 4, 5, 6, 7, 8, 9}, dataB[9] = {1, 2, 3, 4, 5, 6, 7, 8, 9}, dataC[9] = {0};
+  MatrixXd a = Map<Matrix<double,3,3,RowMajor> >(dataA);
+  MatrixXd b = Map<Matrix<double,3,3,RowMajor> >(dataB);
+  MatrixXd c = Map<Matrix<double,3,3,RowMajor> >(dataC);
 
   mmul(inline_executor<oneway_t, blocking_t::always_t, void>{}, a, b, c);
   std::cout<<"Inline: \n"<<c<<std::endl;
 
   c.setZero();
-
   mmul(omp_executor<oneway_t, blocking_t::always_t, void>{}, a, b, c);
   std::cout<<"\nOMP: \n"<<c<<std::endl;
 
-  mmul_gpu();
-  cuda_executor<oneway_t, blocking_t::always_t, void>{}.bulk_execute(mmul_gpu, std::pair<std::size_t, std::size_t>(1, 2));
+  c.setZero();
+  mmul(cuda_executor<oneway_t, blocking_t::always_t, void>{}, a, b, c);
+  std::cout<<"\nCUDA: \n"<<c<<std::endl;
 
 }
