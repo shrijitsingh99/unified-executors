@@ -108,7 +108,6 @@ class oneway_t: basic_executor_property<true> {
   }
   template <class Executor>
   friend bool query(const Executor &ex, const oneway_t &t) {
-    static oneway_t a;
     return std::is_same<oneway_t, decltype(ex.interface)>();
   }
 };
@@ -127,3 +126,18 @@ class twoway_t: basic_executor_property<true> {
 };
 
 static constexpr twoway_t twoway;
+
+
+// Bulk Direction Property
+class bulk_oneway_t: basic_executor_property<true> {
+  template <typename Executor>
+  friend Executor require(Executor &ex, const bulk_oneway_t &t) {
+    return ex.require(t);
+  }
+  template <class Executor>
+  friend bool query(const Executor &ex, const bulk_oneway_t &t) {
+    return std::is_same<bulk_oneway_t, decltype(ex.interface)>();
+  }
+};
+
+static constexpr bulk_oneway_t bulk_oneway;
