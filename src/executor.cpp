@@ -6,14 +6,9 @@
 
 #include <Eigen/Dense>
 
-#include <execution/executor.hpp>
-#include <execution/property.hpp>
-
 #include <mmul.hpp>
 
 using namespace Eigen;
-
-template <typename Executor> void preform_op(Executor &ex) { return; }
 
 int main() {
   double dataA[9] = {1, 2, 3, 4, 5, 6, 7, 8, 9}, dataB[9] = {1, 2, 3, 4, 5, 6, 7, 8, 9}, dataC[9] = {0};

@@ -1,15 +1,15 @@
 #pragma once
 
-#include <execution/property.hpp>
-#include <execution/type_traits.hpp>
+#include "property.hpp"
+#include "type_traits.hpp"
 #include <functional>
 #include <iostream>
 #include <string>
 #include <stdexcept>
 
-#ifdef CUDA
-#include <cuda_runtime.h>
-#endif
+//#ifdef CUDA
+#include <cuda_runtime_api.h>
+//#endif
 
 template <typename Interface, typename Blocking, typename ProtoAllocator>
 struct inline_executor;
@@ -113,7 +113,7 @@ struct sse_executor: executor<sse_executor, Interface, Blocking, ProtoAllocator>
 
 template <typename Interface,typename Blocking, typename ProtoAllocator>
 struct omp_executor: executor<sse_executor, Interface, Blocking, ProtoAllocator> {
-
+  static_assert(execution::executor_available<omp_executor>(), "OpenMP Missing");
   using shape_type = std::size_t;
 
   template <typename F, typename... Args>
@@ -123,14 +123,10 @@ struct omp_executor: executor<sse_executor, Interface, Blocking, ProtoAllocator>
 
   template <typename F, typename... Args>
   void bulk_execute(F &&f, shape_type n, Args &&... args) {
-  #ifdef _OPENMP
     #pragma omp parallel num_threads(n)
     {
       std::invoke(std::forward<F>(f), std::forward<Args>(args)..., 1);
     }
-  #else
-      throw std::runtime_error("OpenMP Missing");
-  #endif
   }
 
   auto decay_t() -> decltype(auto) {
@@ -144,23 +140,20 @@ struct omp_executor: executor<sse_executor, Interface, Blocking, ProtoAllocator>
   std::string name() { return "omp"; }
 };
 
-
-
 template <typename Interface,typename Blocking, typename ProtoAllocator>
 struct cuda_executor: executor<sse_executor, Interface, Blocking, ProtoAllocator> {
+  static_assert(execution::executor_available<cuda_executor>(), "CUDA Missing");
 
   using shape_type = std::vector<std::size_t>;
 
   template <typename F, typename... Args>
   void bulk_execute(F &&f, shape_type shape, Args &&... args) {
-    #ifdef CUDA
+      #ifdef CUDA
       void *kernel_args[] = {&args...};
       dim3 grid_size(shape[0], shape[1], shape[2]);
       dim3 block_size(shape[3], shape[4], shape[5]);
-      cudaLaunchKernel((void *)f, grid_size, block_size, kernel_args);
+      cudaLaunchKernel((void *)f, grid_size, block_size, kernel_args, 0, nullptr);
       cudaDeviceSynchronize();
-      #else
-          throw std::runtime_error("CUDA Missing");
       #endif
   }
 

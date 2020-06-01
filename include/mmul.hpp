@@ -4,17 +4,18 @@
 
 #pragma once
 
-#include <Eigen/Dense>
+#include "../../../../usr/local/include/eigen3/Eigen/Dense"
 
 #if defined(_OPENMP)
-#include <omp.h>
+#include "../../../../usr/lib/gcc/x86_64-linux-gnu/7/include/omp.h"
 #endif
 
 
 #include <execution/executor.hpp>
-//#ifdef CUDA
+#ifdef CUDA
+#include <cuda_runtime_api.h>
 #include <mmul.cuh>
-//#endif
+#endif
 using namespace Eigen;
 
 template <typename Interface, typename Blocking, typename ProtoAllocator>
@@ -47,15 +48,10 @@ template <typename Interface, typename Blocking, typename ProtoAllocator>
 void mmul(cuda_executor<Interface, Blocking, ProtoAllocator> ex, MatrixXd &a,
           MatrixXd &b, MatrixXd &c) {
 
-  if constexpr (!execution::executor_available<cuda_executor>())
-    throw std::runtime_error("CUDA Missing");
-
-  double *a_g, *b_g, *c_g;
-  #ifdef CUDA
-  cudaMallocManaged(&a_g, 9*sizeof(double));
-  cudaMallocManaged(&b_g, 9*sizeof(double));
-  cudaMallocManaged(&c_g, 9*sizeof(double));
-  #endif
+  void *a_g, *b_g, *c_g;
+  cudaMallocManaged(&a_g, a.size()*sizeof(double));
+  cudaMallocManaged(&b_g, b.size()*sizeof(double));
+  cudaMallocManaged(&c_g, c.size()*sizeof(double));
 
   memcpy(a_g, (double*)a.data(), 9*sizeof(double));
   memcpy(b_g, (double*)b.data(), 9*sizeof(double));
