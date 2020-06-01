@@ -7,9 +7,9 @@
 #include <string>
 #include <stdexcept>
 
-//#ifdef CUDA
+#ifdef CUDA
 #include <cuda_runtime_api.h>
-//#endif
+#endif
 
 template <typename Interface, typename Blocking, typename ProtoAllocator>
 struct inline_executor;
@@ -152,7 +152,7 @@ struct cuda_executor: executor<sse_executor, Interface, Blocking, ProtoAllocator
       void *kernel_args[] = {&args...};
       dim3 grid_size(shape[0], shape[1], shape[2]);
       dim3 block_size(shape[3], shape[4], shape[5]);
-      cudaLaunchKernel((void *)f, grid_size, block_size, kernel_args, 0, nullptr);
+      cudaLaunchKernel((void *)f, grid_size, block_size, kernel_args, 0, 0);
       cudaDeviceSynchronize();
       #endif
   }
