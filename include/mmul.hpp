@@ -56,7 +56,7 @@ void mmul(Executor ex, MatrixXd &a, MatrixXd &b, MatrixXd &c) {
                                     2,
                                     1};
   cuda_executor<oneway_t, bulk_t, blocking_t::always_t, void>{}.bulk_execute(
-      mmul_gpu, shape, a_g, b_g, c_g, a.rows(), a.cols(), b.cols());
+      mmul_gpu, shape_t<6, 2, 2, 1, 2, 2, 1>{}, a_g, b_g, c_g, a.rows(), a.cols(), b.cols());
 
   memcpy((double *)c.data(), c_g, 9 * sizeof(double));
 }

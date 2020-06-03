@@ -162,10 +162,11 @@ struct cuda_executor
     : executor<sse_executor, Interface, Cardinality, Blocking, ProtoAllocator> {
   static_assert(execution::executor_available<cuda_executor>(), "CUDA Missing");
 
-  using shape_type = std::vector<std::size_t>;
+  template<unsigned... _sizes>
+  using shape_type = shape_t<6, _sizes...>;
 
-  template <typename F, typename... Args>
-  void bulk_execute(F &&f, shape_type shape, Args &&... args) {
+  template <typename F, unsigned  ...Sizes, typename... Args>
+  void bulk_execute(F &&f, shape_type<Sizes...> shape, Args &&... args) {
 #ifdef CUDA
     void *kernel_args[] = {&args...};
     dim3 grid_size(shape[0], shape[1], shape[2]);
