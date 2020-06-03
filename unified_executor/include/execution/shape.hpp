@@ -3,11 +3,6 @@
 //
 
 #include <array>
-#include <initializer_list>
-#include <iostream>
-#include <numeric>
-#include <utility>
-#include <vector>
 
 template <unsigned _size = 1, unsigned... _sizes> struct shape_t {
   static_assert(_size >= sizeof...(_sizes), "Dim don't match");
@@ -17,10 +12,6 @@ template <unsigned _size = 1, unsigned... _sizes> struct shape_t {
 
   unsigned operator[](unsigned dim) { return get(dim); }
 
-  // static constexpr unsigned numel_v = prod<_sizes...> ();
-
-  // constexpr unsigned numel() const { return numel_v; }
-
   template <unsigned _pos> static constexpr unsigned get() {
     return std::get<_pos>(sizes);
   }
@@ -29,4 +20,16 @@ template <unsigned _size = 1, unsigned... _sizes> struct shape_t {
 
   // it might be worth to have this bellow for runtime ease
   static constexpr std::array<unsigned, num_dim> sizes{_sizes...};
+};
+
+template <unsigned _size> struct shape_t<_size> {
+  std::array<unsigned, _size> sizes;
+
+  shape_t() = default;
+
+  unsigned dim() const { return sizes.size(); }
+
+  unsigned get(unsigned pos) const { return sizes[pos]; }
+
+  unsigned operator[](unsigned dim) { return get(dim); }
 };
