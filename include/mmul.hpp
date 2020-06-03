@@ -49,10 +49,10 @@ void mmul(Executor ex, MatrixXd &a, MatrixXd &b, MatrixXd &c) {
   b_g = device_upload((void *)b.data(), b.size() * sizeof(double));
   c_g = device_upload((void *)c.data(), c.size() * sizeof(double));
 
-  shape_t<6> shape {(unsigned) ceil(a.rows() / 2.0), (unsigned) ceil(b.cols() / 2.0), 1, 2, 2, 1};
+  shape_t<2, 2, 1, 2, 2, 1> shape;//{(unsigned) ceil(a.rows() / 2.0), (unsigned) ceil(b.cols() / 2.0), 1, 2, 2, 1};
 
   cuda_executor<oneway_t, bulk_t, blocking_t::always_t, void>{}.bulk_execute(
-      mmul_gpu, shape, a_g, b_g, c_g, a.rows(), a.cols(), b.cols());
+      mmul_gpu, shape_wrapper_t(shape), a_g, b_g, c_g, a.rows(), a.cols(), b.cols());
 
   memcpy((double *)c.data(), c_g, 9 * sizeof(double));
 }
