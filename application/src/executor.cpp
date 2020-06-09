@@ -17,15 +17,15 @@ int main() {
   MatrixXd b = Map<Matrix<double, 3, 3, RowMajor>>(dataB);
   MatrixXd c = Map<Matrix<double, 3, 3, RowMajor>>(dataC);
 
-  mmul(inline_executor<oneway_t, single_t, blocking_t::always_t, void>{}, a, b,
-       c);
-  std::cout << "Inline: \n" << c << std::endl;
+  mmul(inline_executor<oneway_t, single_t, blocking_t::always_t, void>{}.decay_t(), a, b, c);
+  std::cout<<"Inline: \n"<<c<<std::endl;
 
   c.setZero();
-  mmul(omp_executor<oneway_t, single_t, blocking_t::always_t, void>{}, a, b, c);
-  std::cout << "\nOMP: \n" << c << std::endl;
+  mmul(omp_executor<oneway_t, bulk_t, blocking_t::always_t, void>{}, a, b, c);
+  std::cout<<"\nOMP: \n"<<c<<std::endl;
 
   c.setZero();
-  mmul(cuda_executor<oneway_t, bulk_t, blocking_t::always_t, void>{}, a, b, c);
-  std::cout << "\nCUDA: \n" << c << std::endl;
+  mmul(cuda_executor<oneway_t, bulk_t, blocking_t::always_t, void>{}.decay_t(), a, b, c);
+  std::cout<<"\nCUDA: \n"<<c<<std::endl;
+
 }
