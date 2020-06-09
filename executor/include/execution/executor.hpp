@@ -7,7 +7,7 @@
 #include <stdexcept>
 #include <string>
 #include <array>
-#include <doctest.h>
+#include <doctest/doctest.h>
 
 #ifdef CUDA
 #include <cuda_runtime_api.h>
@@ -96,7 +96,7 @@ struct inline_executor : executor<inline_executor, Interface, Cardinality,
   std::string name() { return "inline"; }
 };
 
-TEST_CASE("Test inline executor execute") {
+TEST_CASE("inline_executor execute") {
   auto exec = inline_executor<oneway_t, single_t, blocking_t::always_t, void>{};
   int a = 1, b = 2, c = 0;
   exec.execute([&]() {

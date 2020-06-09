@@ -7,8 +7,12 @@ conan_basic_setup()
 
 find_package(doctest REQUIRED)
 
+enable_testing()
+
 add_subdirectory(executor)
 add_subdirectory(application)
 
 add_executable(main_test test/main.cpp)
 target_link_libraries(main_test doctest::doctest executor)
+
+doctest_discover_tests(main_test)
