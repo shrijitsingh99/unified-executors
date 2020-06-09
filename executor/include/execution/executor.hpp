@@ -6,6 +6,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <string>
+#include <array>
 
 #ifdef CUDA
 #include <cuda_runtime_api.h>
@@ -153,7 +154,7 @@ struct omp_executor: executor<sse_executor, Interface, Cardinality, Blocking, Pr
 template <typename Interface,typename Cardinality,typename Blocking, typename ProtoAllocator>
 struct cuda_executor: executor<sse_executor, Interface, Cardinality, Blocking, ProtoAllocator> {
 
-  using shape_type = std::array<int, 6>;
+  using shape_type = typename std::array<int, 6>;
 
   template <typename F, typename... Args>
   void bulk_execute(F &&f, shape_type shape, Args &&... args) {
