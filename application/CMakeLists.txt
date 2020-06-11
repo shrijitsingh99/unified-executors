@@ -18,9 +18,12 @@ if(CUDA_FOUND)
     set(MMUL_CUDA mmul_cuda)
 endif()
 
-add_executable(test_mmul test/mmul.cpp)
-target_include_directories(test_mmul INTERFACE ${PROJECT_SOURCE_DIR}/include)
-target_link_libraries(test_mmul executor doctest::doctest Eigen3::Eigen ${MMUL_CUDA})
-set_target_properties(test_mmul PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
+add_executable(mmul_test test/mmul.cpp)
+target_include_directories(mmul_test INTERFACE ${PROJECT_SOURCE_DIR}/include)
+target_link_libraries(mmul_test executor doctest::doctest Eigen3::Eigen ${MMUL_CUDA})
+set_target_properties(mmul_test PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
 
-doctest_discover_tests(test_mmul)
+doctest_discover_tests(
+        mmul_test
+        TEST_PREFIX
+        "mmul.")
