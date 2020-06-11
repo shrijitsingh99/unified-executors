@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.8)
 
-project(executor VERSION 0.0.1 LANGUAGES CXX)
+project(executor VERSION 0.0.1)
 
 find_package(doctest REQUIRED)
 find_package(OpenMP QUIET)
