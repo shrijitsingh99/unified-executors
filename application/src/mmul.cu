@@ -1,4 +1,4 @@
-#include "../include/mmul.cuh"
+#include <mmul.cuh>
 
 __global__ void mmul_gpu(double *a, double *b, double *c, int m, int n, int k) {
   int row = blockIdx.y * blockDim.y + threadIdx.y;
