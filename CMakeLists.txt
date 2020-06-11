@@ -1,24 +1,18 @@
 cmake_minimum_required(VERSION 3.8)
 
-set (CMAKE_CXX_STANDARD 17)
-set(CMAKE_CUDA_STANDARD 14)
-set(CMAKE_CUDA_COMPILER /usr/local/cuda/bin/nvcc)
+project(unified_executors VERSION 0.0.1)
 
-project(unified_api_experiments VERSION 0.0.1 LANGUAGES CXX CUDA)
+include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+conan_basic_setup()
 
-find_package(CUDA)
+find_package(doctest REQUIRED)
 
-add_subdirectory(unified_executor)
+enable_testing()
 
-include_directories(include)
+add_subdirectory(executor)
+add_subdirectory(application)
 
-if(CUDA_FOUND)
-    add_definitions(-DCUDA)
-    include_directories("${CUDA_INCLUDE_DIRS}")
-    add_library(mmul_cuda STATIC src/mmul.cu)
-endif()
+add_executable(main_test test/main.cpp)
+target_link_libraries(main_test doctest::doctest executor)
 
-add_executable(executor_example src/executor.cpp)
-
-target_link_libraries(executor_example unified_api_executor mmul_cuda)
-set_target_properties(executor_example PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
+doctest_discover_tests(main_test)

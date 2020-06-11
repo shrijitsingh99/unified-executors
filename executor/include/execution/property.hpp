@@ -4,7 +4,6 @@
 #include <functional>
 #include <iostream>
 #include <string>
-#include "shape.hpp"
 
 // Base Property
 template <typename Derived, bool requireable, bool preferable>
@@ -38,7 +37,7 @@ class executor_shape: basic_executor_property<executor_shape<Executor>, true, tr
 
 public:
   template<unsigned _s0 = 0, unsigned... _sizes>
-  using type = shape_t<_s0, _sizes...>;
+  using type = std::size_t;
 //  using type = std::experimental::detected_or_t<size_t, helper, Executor>;
 //
 //  static_assert(std::is_integral_v<type>,

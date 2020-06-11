@@ -6,6 +6,8 @@
 #include <iostream>
 #include <stdexcept>
 #include <string>
+#include <array>
+#include <doctest/doctest.h>
 
 #ifdef CUDA
 #include <cuda_runtime_api.h>
@@ -20,9 +22,8 @@ struct execution::executor_available<inline_executor> : std::true_type {};
 template <typename Interface, typename Cardinality, typename Blocking,
           typename ProtoAllocator>
 struct sse_executor;
-#ifdef _SSE
-template <>
-struct execution::executor_available<sse_executor> : std::true_type {};
+#ifdef __SSE__
+template <> struct execution::executor_available<sse_executor> : std::true_type {};
 #endif
 
 template <typename Interface, typename Cardinality, typename Blocking,
@@ -38,9 +39,7 @@ template <typename Interface, typename Cardinality, typename Blocking,
 struct cuda_executor;
 
 #ifdef CUDA
-template <>
-struct execution::executor_available<cuda_executor> : std::true_type {};
-
+template <> struct execution::executor_available<cuda_executor> : std::true_type {};
 #endif
 
 template <template <typename, typename, typename, typename> typename Derived,
@@ -97,6 +96,15 @@ struct inline_executor : executor<inline_executor, Interface, Cardinality,
   std::string name() { return "inline"; }
 };
 
+TEST_CASE("inline_executor execute") {
+  auto exec = inline_executor<oneway_t, single_t, blocking_t::always_t, void>{};
+  int a = 1, b = 2, c = 0;
+  exec.execute([&]() {
+    c = a + b;
+  });
+  CHECK(c == 3);
+}
+
 template <typename Interface, typename Cardinality, typename Blocking,
           typename ProtoAllocator>
 struct sse_executor
@@ -128,10 +136,8 @@ struct sse_executor
   std::string name() { return "sse"; }
 };
 
-template <typename Interface, typename Cardinality, typename Blocking,
-          typename ProtoAllocator>
-struct omp_executor
-    : executor<omp_executor, Interface, Cardinality, Blocking, ProtoAllocator> {
+template <typename Interface, typename Cardinality, typename Blocking, typename ProtoAllocator>
+struct omp_executor: executor<sse_executor, Interface, Cardinality, Blocking, ProtoAllocator> {
   using shape_type = std::size_t;
 
   template <typename F, typename... Args> void execute(F &&f, Args &&... args) {
@@ -145,28 +151,23 @@ struct omp_executor
   }
 
   auto decay_t() -> decltype(auto) {
-    //    if constexpr (execution::executor_available_t<omp_executor>()) {
-    //      return *this;
-    //    }
-    //    else
-    //      return inline_executor<oneway_t, blocking_t::always_t,
-    //      ProtoAllocator>{};
+    if constexpr (execution::executor_available_t<omp_executor>()) {
+      return *this;
+    }
+    else
+      return inline_executor<oneway_t, single_t, blocking_t::always_t, ProtoAllocator>{};
   }
 
   std::string name() { return "omp"; }
 };
 
-template <typename Interface, typename Cardinality, typename Blocking,
-          typename ProtoAllocator>
-struct cuda_executor
-    : executor<sse_executor, Interface, Cardinality, Blocking, ProtoAllocator> {
-  static_assert(execution::executor_available<cuda_executor>(), "CUDA Missing");
+template <typename Interface,typename Cardinality,typename Blocking, typename ProtoAllocator>
+struct cuda_executor: executor<sse_executor, Interface, Cardinality, Blocking, ProtoAllocator> {
 
-  template<unsigned... _sizes>
-  using shape_type = shape_t<6, _sizes...>;
+  using shape_type = typename std::array<int, 6>;
 
-  template <typename F, unsigned  ...Sizes, typename... Args>
-  void bulk_execute(F &&f, shape_type<Sizes...> shape, Args &&... args) {
+  template <typename F, typename... Args>
+  void bulk_execute(F &&f, shape_type shape, Args &&... args) {
 #ifdef CUDA
     void *kernel_args[] = {&args...};
     dim3 grid_size(shape[0], shape[1], shape[2]);
@@ -177,13 +178,12 @@ struct cuda_executor
   }
 
   auto decay_t() -> decltype(auto) {
-    //    if constexpr (execution::executor_available_t<cuda_executor>()) {
-    //      return *this;
-    //    }
-    //    else
-    //      return inline_executor<oneway_t, blocking_t::always_t,
-    //      ProtoAllocator>{};
+    if constexpr (execution::executor_available_t<cuda_executor>()) {
+      return *this;
+    }
+    else
+      return inline_executor<oneway_t, single_t, blocking_t::always_t, ProtoAllocator>{};
   }
 
-  std::string name() { return "omp"; }
+  std::string name() { return "cuda"; }
 };

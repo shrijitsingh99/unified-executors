@@ -32,6 +32,6 @@ struct is_executor_of_type<Type, Type<Args...>> : std::true_type {};
 
 template <template <typename...> class Type, typename Executor>
 using executor_of_type =
-    std::enable_if_t<is_executor_of_type<Type, Executor>::value, int>;
+std::enable_if_t<is_executor_of_type<Type, Executor>::value, int>;
 
 } // namespace execution
