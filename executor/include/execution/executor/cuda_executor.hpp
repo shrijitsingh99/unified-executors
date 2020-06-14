@@ -35,7 +35,7 @@ struct cuda_executor: executor<sse_executor, Interface, Cardinality, Blocking, P
   }
 
   auto decay_t() -> decltype(auto) {
-    if constexpr (execution::executor_available_t<cuda_executor>()) {
+    if constexpr (execution::is_executor_available_t<cuda_executor>()) {
       return *this;
     }
     else

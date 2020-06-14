@@ -12,7 +12,7 @@ struct omp_executor;
 
 #ifdef _OPENMP
 template <>
-struct execution::executor_available<omp_executor> : std::true_type {};
+struct execution::is_executor_available<omp_executor> : std::true_type {};
 #endif
 
 template <typename Interface, typename Cardinality, typename Blocking, typename ProtoAllocator>
@@ -30,7 +30,7 @@ struct omp_executor: executor<sse_executor, Interface, Cardinality, Blocking, Pr
   }
 
   auto decay_t() -> decltype(auto) {
-    if constexpr (execution::executor_available_t<omp_executor>()) {
+    if constexpr (execution::is_executor_available_t<omp_executor>()) {
       return *this;
     }
     else
