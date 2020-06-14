@@ -4,20 +4,17 @@
 
 #pragma once
 
-#include <functional>
-#include <iostream>
-#include <stdexcept>
-#include <string>
 #include <array>
-#include <memory>
-
 #include <execution/property.hpp>
 #include <execution/type_trait.hpp>
+#include <functional>
+#include <iostream>
+#include <memory>
+#include <stdexcept>
+#include <string>
 
-
-template <template <typename, typename, typename, typename> typename Derived,
-    typename Interface, typename Cardinality, typename Blocking,
-    typename ProtoAllocator>
+template <template <typename...> typename Derived, typename Interface,
+          typename Cardinality, typename Blocking, typename ProtoAllocator>
 class executor {
  public:
   static constexpr bool query(const blocking_t::always_t &t) {
@@ -38,5 +35,12 @@ class executor {
 
   static constexpr bool query(const twoway_t &t) {
     return std::is_same<Interface, twoway_t>();
+  }
+
+  template <typename F, typename... Args>
+  void bulk_execute(F &&f, Args &&... args, std::size_t n) {
+    for (std::size_t i = 0; i < n; ++i) {
+      std::invoke(std::forward<F>(f), std::forward<Args>(args)..., i);
+    }
   }
 };
