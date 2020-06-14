@@ -6,13 +6,13 @@
 namespace execution {
 
 template <template <typename...> class Type, typename Executor>
-struct is_executor_of_type : std::false_type {};
+struct is_instance_of : std::false_type {};
 
 template <template <typename...> class Type, typename... Args>
-struct is_executor_of_type<Type, Type<Args...>> : std::true_type {};
+struct is_instance_of<Type, Type<Args...>> : std::true_type {};
 
 template <template <typename...> class Type, typename Executor>
-using executor_of_type =
-    std::enable_if_t<is_executor_of_type<Type, Executor>::value, int>;
+using instance_of =
+    std::enable_if_t<is_instance_of<Type, Executor>::value, int>;
 
 }  // namespace execution

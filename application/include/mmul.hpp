@@ -17,15 +17,14 @@
 using namespace Eigen;
 
 template <typename Executor,
-          typename execution::executor_of_type<inline_executor, Executor> = 0>
+          typename execution::instance_of<inline_executor, Executor> = 0>
 void mmul(Executor ex, MatrixXd &a, MatrixXd &b, MatrixXd &c) {
   c = a * b;
 }
 
 template <typename Executor,
-          typename execution::executor_of_type<omp_executor, Executor> = 0>
+          typename execution::instance_of<omp_executor, Executor> = 0>
 void mmul(Executor ex, MatrixXd &a, MatrixXd &b, MatrixXd &c) {
-
   auto mul = [=](MatrixXd &a, MatrixXd &b, MatrixXd &c,
                  std::size_t thread_idx) {
 #pragma omp for schedule(static)
@@ -42,15 +41,15 @@ void mmul(Executor ex, MatrixXd &a, MatrixXd &b, MatrixXd &c) {
 }
 
 template <typename Executor,
-    typename execution::executor_of_type<cuda_executor, Executor> = 0>
+          typename execution::instance_of<cuda_executor, Executor> = 0>
 void mmul(Executor ex, MatrixXd &a, MatrixXd &b, MatrixXd &c) {
-
   void *a_g, *b_g, *c_g;
   a_g = device_upload((void *)a.data(), a.size() * sizeof(double));
   b_g = device_upload((void *)b.data(), b.size() * sizeof(double));
   c_g = device_upload((void *)c.data(), c.size() * sizeof(double));
 
-  std::array<int, 6> shape  {(int) ceil(a.rows() / 2.0), (int) ceil(b.cols() / 2.0), 1, 2, 2, 1};
+  std::array<int, 6> shape{
+      (int)ceil(a.rows() / 2.0), (int)ceil(b.cols() / 2.0), 1, 2, 2, 1};
 
   cuda_executor<oneway_t, bulk_t, blocking_t::always_t, void>{}.bulk_execute(
       mmul_gpu, shape, a_g, b_g, c_g, a.rows(), a.cols(), b.cols());
