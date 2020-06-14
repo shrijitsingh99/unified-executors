@@ -11,16 +11,18 @@
 #include <execution/executor/base_executor.hpp>
 
 template <typename Interface, typename Cardinality, typename Blocking,
-    typename ProtoAllocator>
+          typename ProtoAllocator>
 struct cuda_executor;
 
 #ifdef CUDA
-template <> struct execution::executor_available<cuda_executor> : std::true_type {};
+template <>
+struct execution::executor_available<cuda_executor> : std::true_type {};
 #endif
 
-template <typename Interface,typename Cardinality,typename Blocking, typename ProtoAllocator>
-struct cuda_executor: executor<sse_executor, Interface, Cardinality, Blocking, ProtoAllocator> {
-
+template <typename Interface, typename Cardinality, typename Blocking,
+          typename ProtoAllocator>
+struct cuda_executor : executor<cuda_executor, Interface, Cardinality, Blocking,
+                                ProtoAllocator> {
   using shape_type = typename std::array<int, 6>;
 
   template <typename F, typename... Args>
@@ -44,4 +46,3 @@ struct cuda_executor: executor<sse_executor, Interface, Cardinality, Blocking, P
 
   std::string name() { return "cuda"; }
 };
-

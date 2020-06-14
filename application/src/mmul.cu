@@ -12,7 +12,7 @@ __global__ void mmul_gpu(double *a, double *b, double *c, int m, int n, int k) {
   }
 }
 
-__host__ void* device_upload(void *var, std::size_t size) {
+__host__ void *device_upload(void *var, std::size_t size) {
   void *gpu_var;
   cudaMallocManaged(&gpu_var, size);
   memcpy(gpu_var, var, size);

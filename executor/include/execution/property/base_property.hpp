@@ -4,11 +4,10 @@
 
 #pragma once
 
+#include <execution/type_trait.hpp>
 #include <functional>
 #include <iostream>
 #include <string>
-
-#include <execution/type_trait.hpp>
 
 template <typename Derived, bool requireable, bool preferable>
 class basic_executor_property {
@@ -16,13 +15,14 @@ class basic_executor_property {
   static constexpr bool is_requirable = requireable;
   static constexpr bool is_preferable = preferable;
 
-  template <class T> static constexpr bool is_applicable_property() {
+  template <class T>
+  static constexpr bool is_applicable_property() {
     return execution::is_executor<T>();
   }
 
   template <class Executor>
   static constexpr auto static_query()
-  -> decltype(Executor::query(std::declval<Derived>())) {
+      -> decltype(Executor::query(std::declval<Derived>())) {
     return Executor::query(Derived{});
   }
 

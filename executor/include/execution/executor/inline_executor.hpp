@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include <execution/executor/base_executor.hpp>
+
 template <typename Interface, typename Cardinality, typename Blocking,
           typename ProtoAllocator>
 struct inline_executor;

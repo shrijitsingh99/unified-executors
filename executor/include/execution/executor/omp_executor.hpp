@@ -7,7 +7,7 @@
 #include <execution/executor/base_executor.hpp>
 
 template <typename Interface, typename Cardinality, typename Blocking,
-    typename ProtoAllocator>
+          typename ProtoAllocator>
 struct omp_executor;
 
 #ifdef _OPENMP
@@ -15,8 +15,10 @@ template <>
 struct execution::is_executor_available<omp_executor> : std::true_type {};
 #endif
 
-template <typename Interface, typename Cardinality, typename Blocking, typename ProtoAllocator>
-struct omp_executor: executor<sse_executor, Interface, Cardinality, Blocking, ProtoAllocator> {
+template <typename Interface, typename Cardinality, typename Blocking,
+          typename ProtoAllocator>
+struct omp_executor
+    : executor<omp_executor, Interface, Cardinality, Blocking, ProtoAllocator> {
   using shape_type = std::size_t;
 
   template <typename F, typename... Args> void execute(F &&f, Args &&... args) {
@@ -32,9 +34,9 @@ struct omp_executor: executor<sse_executor, Interface, Cardinality, Blocking, Pr
   auto decay_t() -> decltype(auto) {
     if constexpr (execution::is_executor_available_t<omp_executor>()) {
       return *this;
-    }
-    else
-      return inline_executor<oneway_t, single_t, blocking_t::always_t, ProtoAllocator>{};
+    } else
+      return inline_executor<oneway_t, single_t, blocking_t::always_t,
+                             ProtoAllocator>{};
   }
 
   std::string name() { return "omp"; }
