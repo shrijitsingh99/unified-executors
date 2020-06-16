@@ -32,7 +32,7 @@ struct inline_executor
       return inline_executor<Interface, blocking_t::always_t, ProtoAllocator>{};
   }
 
-  std::string name() { return "inline"; }
+  static std::string name() { return "inline"; }
 };
 
 TEST_CASE("inline_executor execute") {

@@ -41,5 +41,5 @@ struct sse_executor
       return inline_executor<oneway_t, blocking_t::always_t, ProtoAllocator>{};
   }
 
-  std::string name() { return "sse"; }
+  static std::string name() { return "sse"; }
 };
