@@ -26,7 +26,7 @@ struct omp_executor: executor<sse_executor, Interface, Cardinality, Blocking, Pr
   template <typename F, typename... Args>
   void bulk_execute(F &&f, shape_type n, Args &&... args) {
 #pragma omp parallel num_threads(n)
-    { std::invoke(std::forward<F>(f), std::forward<Args>(args)..., 1); }
+    { std::invoke(std::forward<F>(f), std::forward<Args>(args)..., omp_get_thread_num()); }
   }
 
   auto decay_t() -> decltype(auto) {
@@ -37,5 +37,5 @@ struct omp_executor: executor<sse_executor, Interface, Cardinality, Blocking, Pr
       return inline_executor<oneway_t, single_t, blocking_t::always_t, ProtoAllocator>{};
   }
 
-  std::string name() { return "omp"; }
+  static std::string name() { return "omp"; }
 };
