@@ -6,10 +6,10 @@
 
 namespace execution {
 
-template <template <typename...> typename T>
+template <template <typename...> typename Executor>
 struct is_executor_available : std::false_type {};
 
-template <template <typename...> typename T>
-using is_executor_available_t = typename is_executor_available<T>::type;
+template <template <typename...> typename Executor>
+constexpr bool is_executor_available_v = is_executor_available<Executor>::value;
 
 }  // namespace execution

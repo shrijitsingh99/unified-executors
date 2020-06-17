@@ -11,6 +11,7 @@ namespace execution {
 template <typename Executor, typename Property,
           typename std::enable_if_t<
               Property::template is_applicable_property_v<Executor> &&
+                  Property::is_requirable &&
                   Property::template static_query<Executor>(),
               int> = 0>
 Executor require(Executor ex, const Property t) {

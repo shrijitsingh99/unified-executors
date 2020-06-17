@@ -10,18 +10,24 @@
 
 namespace execution {
 
-template <class Executor, typename = void>
+template <class Executor, typename Function = void (*)(), typename = void>
 struct is_executor : std::false_type {};
 
-constexpr const auto noop = [] {};
+namespace detail {
+const auto noop = [] {};
+}
 
-template <class Executor>
-struct is_executor<Executor, std::enable_if_t<true, void>> : std::true_type {};
-
-// #TODO: Satisfy executor conditions
-// (http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p1660r0.pdf)
+template <typename Executor, typename Function>
+struct is_executor<
+    Executor, Function,
+    std::enable_if_t<
+        std::is_copy_constructible_v<
+            std::remove_cv_t<std::remove_reference_t<Executor>>> &&
+        std::declval<Executor> == std::declval<Executor> &&
+        std::is_same_v<decltype(std::declval<Executor>().execute(detail::noop)),
+                       void>>> : std::true_type {};
 
 template <typename Executor>
-using is_executor_t = typename is_executor<Executor>::type;
+constexpr bool is_executor_v = is_executor<Executor>::value;
 
 }  // namespace execution
