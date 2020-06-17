@@ -4,6 +4,10 @@
 
 #pragma once
 
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
 #include <execution/executor/base_executor.hpp>
 
 template <typename Interface, typename Cardinality, typename Blocking,
@@ -21,18 +25,21 @@ struct omp_executor
     : executor<omp_executor, Interface, Cardinality, Blocking, ProtoAllocator> {
   using shape_type = std::size_t;
 
-  template <typename F, typename... Args> void execute(F &&f, Args &&... args) {
-    std::invoke(std::forward<F>(f), std::forward<Args>(args)...);
+  template <typename F>
+  void execute(F &&f) {
+    std::invoke(std::forward<F>(f));
   }
 
-  template <typename F, typename... Args>
-  void bulk_execute(F &&f, shape_type n, Args &&... args) {
+  template <typename F>
+  void bulk_execute(F &&f, shape_type n) {
+#ifdef _OPENMP
 #pragma omp parallel num_threads(n)
-    { std::invoke(std::forward<F>(f), std::forward<Args>(args)..., 1); }
+    { std::invoke(std::forward<F>(f), omp_get_thread_num()); }
+#endif
   }
 
   auto decay_t() -> decltype(auto) {
-    if constexpr (execution::is_executor_available_t<omp_executor>()) {
+    if constexpr (execution::is_executor_available_v<omp_executor>) {
       return *this;
     } else
       return inline_executor<oneway_t, single_t, blocking_t::always_t,

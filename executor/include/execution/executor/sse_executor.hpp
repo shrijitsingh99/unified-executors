@@ -21,21 +21,21 @@ struct sse_executor
     : executor<sse_executor, Interface, Cardinality, Blocking, ProtoAllocator> {
   using shape_type = std::size_t;
 
-  template <typename F, typename... Args>
-  void execute(F &&f, Args &&... args) {
-    std::invoke(std::forward<F>(f), std::forward<Args>(args)...);
+  template <typename F>
+  void execute(F &&f) {
+    std::invoke(std::forward<F>(f));
   }
 
-  template <typename F, typename... Args>
-  void bulk_execute(F &&f, Args &&... args, std::size_t n) {
+  template <typename F>
+  void bulk_execute(F &&f, shape_type n) {
 #pragma simd
     for (std::size_t i = 0; i < n; ++i) {
-      std::invoke(std::forward<F>(f), std::forward<Args>(args)..., i);
+      std::invoke(std::forward<F>(f), i);
     }
   }
 
   auto decay_t() -> decltype(auto) {
-    if constexpr (execution::is_executor_available_t<sse_executor>()) {
+    if constexpr (execution::is_executor_available_v<sse_executor>) {
       return *this;
     } else
       return inline_executor<oneway_t, blocking_t::always_t, ProtoAllocator>{};

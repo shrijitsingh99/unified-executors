@@ -17,6 +17,20 @@ template <template <typename...> typename Derived, typename Interface,
           typename Cardinality, typename Blocking, typename ProtoAllocator>
 class executor {
  public:
+  template <typename Executor,
+            typename execution::instance_of_base<Derived, Executor> = 0>
+  bool operator==(const Executor &) const noexcept {
+    return std::is_same_v<
+        Derived<Interface, Cardinality, Blocking, ProtoAllocator>, Executor>;
+  }
+
+  template <typename Executor,
+            typename execution::instance_of_base<Derived, Executor> = 0>
+  bool operator!=(const Executor &) const noexcept {
+    return std::is_same_v<
+        Derived<Interface, Cardinality, Blocking, ProtoAllocator>, Executor>;
+  }
+
   static constexpr bool query(const blocking_t::always_t &t) {
     return std::is_same<Blocking, blocking_t::always_t>();
   }
