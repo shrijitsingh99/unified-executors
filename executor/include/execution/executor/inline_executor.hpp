@@ -40,17 +40,19 @@ struct inline_executor
 TEST_CASE("inline_executor Validity") {
   auto exec = inline_executor<oneway_t, single_t, blocking_t::always_t>{};
 
-  SUBCASE("inline_executor is_executor_avilable") {
+  SUBCASE("inline_executor is_executor_available") {
     CHECK(execution::is_executor_available_v<inline_executor> == true);
   }
 
   SUBCASE("inline_executor is_executor") {
     CHECK(execution::is_executor_v<decltype(exec)> == true);
+    CHECK(execution::is_executor_v<int> == false);
   }
 
   SUBCASE("inline_executor is_instance_of_base") {
     CHECK(execution::is_instance_of_base_v<inline_executor, decltype(exec)> ==
           true);
+    CHECK(execution::is_instance_of_base_v<inline_executor, int> == false);
   }
 }
 

@@ -16,7 +16,7 @@ struct cuda_executor;
 
 #ifdef CUDA
 template <>
-struct execution::executor_available<cuda_executor> : std::true_type {};
+struct execution::is_executor_available<cuda_executor> : std::true_type {};
 #endif
 
 template <typename Interface, typename Cardinality, typename Blocking,
@@ -28,18 +28,19 @@ struct cuda_executor : executor<cuda_executor, Interface, Cardinality, Blocking,
   template <typename F>
   void execute(F &&f) {
 #ifdef CUDA
-    cudaLaunchKernel((void *)f, grid_size, block_size, nullptr, 0, 0);
+    cudaLaunchKernel((void *)f, 1, 1, nullptr, 0, 0);
     cudaDeviceSynchronize();
 #endif
   }
 
   template <typename F>
-  void bulk_execute(F &&f, shape_type n) {
+  void bulk_execute(F &&f, shape_type shape) {
 #ifdef CUDA
-    void *kernel_args[] = {0};
+    void *kernel_args[] = {};
     dim3 grid_size(shape[0], shape[1], shape[2]);
     dim3 block_size(shape[3], shape[4], shape[5]);
-    cudaLaunchKernel((void *)f, grid_size, block_size, nullptr, 0, 0);
+    auto e = cudaLaunchKernel(static_cast<void *>(&f), grid_size, block_size,
+                              kernel_args, 0, 0);
     cudaDeviceSynchronize();
 #endif
   }
