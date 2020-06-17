@@ -9,6 +9,7 @@
 #endif
 
 #include <execution/executor/base_executor.hpp>
+#include <execution/executor/inline_executor.hpp>
 
 template <typename Interface, typename Cardinality, typename Blocking,
           typename ProtoAllocator>
