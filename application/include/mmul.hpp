@@ -19,15 +19,15 @@ using namespace Eigen;
 template <typename Executor,
           typename execution::instance_of_base<inline_executor, Executor> = 0>
 void mmul(Executor ex, MatrixXd &a, MatrixXd &b, MatrixXd &c) {
-  auto mul = [](MatrixXd &a, MatrixXd &b, MatrixXd &c) { c = a * b; };
+  auto mul = [&]() { c = a * b; };
 
-  ex.execute(std::bind(mul, std::ref(a), std::ref(b), std::ref(c)));
+  ex.execute(mul);
 }
 
 template <typename Executor,
           typename execution::instance_of_base<omp_executor, Executor> = 0>
 void mmul(Executor ex, MatrixXd &a, MatrixXd &b, MatrixXd &c) {
-  auto mul = [](MatrixXd &a, MatrixXd &b, MatrixXd &c, std::size_t thread_idx) {
+  auto mul = [&](std::size_t thread_idx) {
 #pragma omp for schedule(static)
     for (int i = 0; i < a.rows(); i = i + 1) {
       for (int j = 0; j < b.cols(); j = j + 1) {
@@ -38,9 +38,7 @@ void mmul(Executor ex, MatrixXd &a, MatrixXd &b, MatrixXd &c) {
       }
     }
   };
-  ex.bulk_execute(std::bind(mul, std::ref(a), std::ref(b), std::ref(c),
-                            std::placeholders::_1),
-                  a.rows());
+  ex.bulk_execute(mul, a.rows());
 }
 
 template <typename Executor,
