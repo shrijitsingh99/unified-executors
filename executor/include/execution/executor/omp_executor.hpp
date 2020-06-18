@@ -15,8 +15,10 @@ template <typename Interface, typename Cardinality, typename Blocking,
 struct omp_executor;
 
 #ifdef _OPENMP
+namespace execution {
 template <>
-struct execution::is_executor_available<omp_executor> : std::true_type {};
+struct is_executor_available<omp_executor> : std::true_type {};
+}  // namespace execution
 #endif
 
 template <typename Interface, typename Cardinality, typename Blocking,

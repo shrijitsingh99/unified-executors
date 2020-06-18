@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.8)
 
 project(application VERSION 0.0.1)
 
-find_package (Eigen3 3.3 REQUIRED NO_MODULE REQUIRED)
+find_package (Eigen3 3.3 REQUIRED)
 find_package(CUDA QUIET)
 
 include_directories(include)
