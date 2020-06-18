@@ -21,7 +21,7 @@ struct execution::is_executor_available<cuda_executor> : std::true_type {};
 #endif
 
 template <typename Interface, typename Cardinality, typename Blocking,
-          typename ProtoAllocator>
+          typename ProtoAllocator = std::allocator<void>>
 struct cuda_executor : executor<cuda_executor, Interface, Cardinality, Blocking,
                                 ProtoAllocator> {
   using shape_type = typename std::array<int, 6>;

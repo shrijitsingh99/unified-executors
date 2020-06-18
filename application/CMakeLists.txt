@@ -23,4 +23,7 @@ target_include_directories(test_mmul INTERFACE ${PROJECT_SOURCE_DIR}/include)
 target_link_libraries(test_mmul executor doctest::doctest Eigen3::Eigen ${MMUL_CUDA})
 set_target_properties(test_mmul PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
 
-doctest_discover_tests(test_mmul)
+doctest_discover_tests(
+        test_mmul
+        EXTRA_ARGS
+        -s)
