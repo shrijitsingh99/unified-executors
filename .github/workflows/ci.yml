@@ -1,13 +1,13 @@
 name: C/C++ CI
 
-on: [push, pull_request]
+on: [push]
 
 jobs:
   build-ubuntu:
     runs-on: ${{ matrix.os }}
-    continue-on-error: true
     strategy:
-     matrix:
+      fail-fast: false
+      matrix:
        os: [ubuntu-16.04, ubuntu-18.04]
        compiler:
          - {
