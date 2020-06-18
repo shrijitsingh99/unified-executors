@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.8)
 
 project(application VERSION 0.0.1)
 
-find_package(doctest REQUIRED)
 find_package (Eigen3 3.3 REQUIRED NO_MODULE REQUIRED)
 find_package(CUDA QUIET)
 
@@ -20,7 +19,7 @@ endif()
 
 add_executable(test_mmul test/mmul.cpp)
 target_include_directories(test_mmul INTERFACE ${PROJECT_SOURCE_DIR}/include)
-target_link_libraries(test_mmul executor doctest::doctest Eigen3::Eigen ${MMUL_CUDA})
+target_link_libraries(test_mmul executor CONAN_PKG::doctest Eigen3::Eigen ${MMUL_CUDA})
 set_target_properties(test_mmul PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
 
 doctest_discover_tests(
