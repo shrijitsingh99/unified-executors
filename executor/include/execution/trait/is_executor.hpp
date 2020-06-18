@@ -21,10 +21,11 @@ template <typename Executor, typename Function>
 struct is_executor<
     Executor, Function,
     std::enable_if_t<
-        std::is_copy_constructible_v<
-            std::remove_cv_t<std::remove_reference_t<Executor>>> &&
-            std::is_same_v<
-                decltype(std::declval<Executor>().execute(detail::noop)), void>,
+        std::is_copy_constructible<
+            std::remove_cv_t<std::remove_reference_t<Executor>>>::value &&
+            std::is_same<decltype(
+                             std::declval<Executor>().execute(detail::noop)),
+                         void>::value,
         decltype(std::declval<Executor&>() == std::declval<Executor&>(),
                  (void)0)>> : std::true_type {};
 

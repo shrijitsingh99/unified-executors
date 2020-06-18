@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include <execution/trait/common_traits.hpp>
 #include <type_traits>
 
 namespace execution {
@@ -23,7 +24,7 @@ struct can_require : std::false_type {};
 
 template <typename Executor, typename Property>
 struct can_require<Executor, Property,
-                   std::void_t<decltype(execution::require(
+                   detail::void_t<decltype(execution::require(
                        std::declval<Executor>(), std::declval<Property>()))>>
     : std::true_type {};
 

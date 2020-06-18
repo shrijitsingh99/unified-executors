@@ -22,22 +22,25 @@ TEST_CASE("Matrix Multiplication") {
 
   SUBCASE("Inline Matrix Multiplication") {
     c.setZero();
-    mmul(inline_executor<oneway_t, single_t, blocking_t::always_t, void>{}
-             .decay_t(),
-         a, b, c);
+    mmul(inline_executor<oneway_t, single_t, blocking_t::always_t, void>{}, a,
+         b, c);
     CHECK(c.isApprox(ans));
   }
 
+#if _OPENMP
   SUBCASE("OMP Matrix Multiplication") {
     c.setZero();
     mmul(omp_executor<oneway_t, bulk_t, blocking_t::always_t, void>{}, a, b, c);
     CHECK(c.isApprox(ans));
   }
+#endif
+
+#if CUDA
   SUBCASE("CUDA Matrix Multiplication") {
     c.setZero();
-    mmul(
-        cuda_executor<oneway_t, bulk_t, blocking_t::always_t, void>{}.decay_t(),
-        a, b, c);
+    mmul(cuda_executor<oneway_t, bulk_t, blocking_t::always_t, void>{}, a, b,
+         c);
     CHECK(c.isApprox(ans));
   }
+#endif
 }

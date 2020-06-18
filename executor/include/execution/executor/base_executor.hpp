@@ -8,27 +8,28 @@
 #include <execution/property.hpp>
 #include <execution/type_trait.hpp>
 #include <functional>
-#include <iostream>
 #include <memory>
 #include <stdexcept>
 #include <string>
 
-template <template <typename...> typename Derived, typename Interface,
+template <template <typename...> class Derived, typename Interface,
           typename Cardinality, typename Blocking, typename ProtoAllocator>
 class executor {
  public:
   template <typename Executor,
             typename execution::instance_of_base<Derived, Executor> = 0>
   bool operator==(const Executor &) const noexcept {
-    return std::is_same_v<
-        Derived<Interface, Cardinality, Blocking, ProtoAllocator>, Executor>;
+    return std::is_same<
+        Derived<Interface, Cardinality, Blocking, ProtoAllocator>,
+        Executor>::value;
   }
 
   template <typename Executor,
             typename execution::instance_of_base<Derived, Executor> = 0>
   bool operator!=(const Executor &) const noexcept {
-    return std::is_same_v<
-        Derived<Interface, Cardinality, Blocking, ProtoAllocator>, Executor>;
+    return std::is_same<
+        Derived<Interface, Cardinality, Blocking, ProtoAllocator>,
+        Executor>::value;
   }
 
   static constexpr bool query(const blocking_t::always_t &t) {
@@ -54,7 +55,7 @@ class executor {
   template <typename F, typename... Args>
   void bulk_execute(F &&f, Args &&... args, std::size_t n) {
     for (std::size_t i = 0; i < n; ++i) {
-      std::invoke(std::forward<F>(f), std::forward<Args>(args)..., i);
+      invoke_hpp::invoke(std::forward<F>(f), std::forward<Args>(args)..., i);
     }
   }
 };

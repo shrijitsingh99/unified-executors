@@ -22,16 +22,14 @@ struct inline_executor
 
   template <typename F>
   void execute(F &&f) {
-    std::invoke(std::forward<F>(f));
+    invoke_hpp::invoke(std::forward<F>(f));
   }
 
-  inline_executor &decay_t() { return *this; };
+  //  inline_executor &decay_t() { return *this; };
 
-  inline_executor require(const blocking_t::always_t &t) {
-    if constexpr (std::is_same_v<Blocking, blocking_t::always_t>)
-      return *this;
-    else
-      return inline_executor<Interface, blocking_t::always_t, ProtoAllocator>{};
+  inline_executor<Interface, Cardinality, blocking_t::always_t, ProtoAllocator>
+  require(const blocking_t::always_t &t) {
+    return {};
   }
 
   std::string name() { return "inline"; }
@@ -56,7 +54,7 @@ TEST_CASE("inline_executor Validity") {
   }
 }
 
-TEST_CASE("inline_executor Properties") {
+TEST_CASE("inline_executor Property Traits") {
   auto exec = inline_executor<oneway_t, single_t, blocking_t::always_t>{};
 
   SUBCASE("inline_executor can_require") {
@@ -71,6 +69,16 @@ TEST_CASE("inline_executor Properties") {
           true);
     CHECK(execution::can_prefer_v<decltype(exec), blocking_t::never_t> ==
           false);
+  }
+}
+
+TEST_CASE("inline_executor Properties") {
+  auto exec = inline_executor<oneway_t, single_t, blocking_t::never_t>{};
+
+  SUBCASE("inline_executor require & query") {
+    CHECK(exec.query(blocking.never));
+    auto new_exec = exec.require(blocking.always);
+    CHECK(new_exec.query(blocking.always));
   }
 }
 
