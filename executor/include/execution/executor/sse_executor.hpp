@@ -11,8 +11,10 @@ template <typename Interface, typename Cardinality, typename Blocking,
 struct sse_executor;
 
 #ifdef __SSE__
+namespace execution {
 template <>
-struct execution::is_executor_available<sse_executor> : std::true_type {};
+struct is_executor_available<sse_executor> : std::true_type {};
+}  // namespace execution
 #endif
 
 template <typename Interface, typename Cardinality, typename Blocking,

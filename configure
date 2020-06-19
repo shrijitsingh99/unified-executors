@@ -1,0 +1,6 @@
+#!/bin/bash
+
+source ~/.profile
+mkdir build && cd build
+conan install ..
+cmake ..

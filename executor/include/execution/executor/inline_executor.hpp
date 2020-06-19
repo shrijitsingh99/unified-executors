@@ -10,8 +10,10 @@ template <typename Interface, typename Cardinality, typename Blocking,
           typename ProtoAllocator>
 struct inline_executor;
 
+namespace execution {
 template <>
-struct execution::is_executor_available<inline_executor> : std::true_type {};
+struct is_executor_available<inline_executor> : std::true_type {};
+}  // namespace execution
 
 template <typename Interface, typename Cardinality, typename Blocking,
           typename ProtoAllocator = std::allocator<void>>
