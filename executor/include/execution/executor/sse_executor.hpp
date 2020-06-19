@@ -16,7 +16,7 @@ struct execution::is_executor_available<sse_executor> : std::true_type {};
 #endif
 
 template <typename Interface, typename Cardinality, typename Blocking,
-          typename ProtoAllocator>
+          typename ProtoAllocator = std::allocator<void>>
 struct sse_executor
     : executor<sse_executor, Interface, Cardinality, Blocking, ProtoAllocator> {
   using shape_type = std::size_t;

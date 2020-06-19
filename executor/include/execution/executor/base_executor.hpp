@@ -8,7 +8,6 @@
 #include <execution/property.hpp>
 #include <execution/type_trait.hpp>
 #include <functional>
-#include <iostream>
 #include <memory>
 #include <stdexcept>
 #include <string>

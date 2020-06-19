@@ -20,7 +20,7 @@ struct execution::is_executor_available<omp_executor> : std::true_type {};
 #endif
 
 template <typename Interface, typename Cardinality, typename Blocking,
-          typename ProtoAllocator>
+          typename ProtoAllocator = std::allocator<void>>
 struct omp_executor
     : executor<omp_executor, Interface, Cardinality, Blocking, ProtoAllocator> {
   using shape_type = std::size_t;
@@ -31,7 +31,7 @@ struct omp_executor
   }
 
   template <typename F>
-  void bulk_execute(F &&f, shape_type n) {
+  void bulk_execute(F &&f, shape_type n){
 #ifdef _OPENMP
 #pragma omp parallel num_threads(n)
     { std::invoke(std::forward<F>(f), omp_get_thread_num()); }

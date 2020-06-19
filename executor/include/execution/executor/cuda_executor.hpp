@@ -46,13 +46,13 @@ struct cuda_executor : executor<cuda_executor, Interface, Cardinality, Blocking,
 #endif
   }
 
-  auto decay_t() -> decltype(auto) {
-    if constexpr (execution::is_executor_available_v<cuda_executor>) {
-      return *this;
-    } else
-      return inline_executor<oneway_t, single_t, blocking_t::always_t,
-                             ProtoAllocator>{};
-  }
+  //  auto decay_t() -> decltype(auto) {
+  //    if constexpr (execution::is_executor_available_v<cuda_executor>) {
+  //      return *this;
+  //    } else
+  //      return inline_executor<oneway_t, single_t, blocking_t::always_t,
+  //                             ProtoAllocator>{};
+  //  }
 
   std::string name() { return "cuda"; }
 };

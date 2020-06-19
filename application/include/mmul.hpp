@@ -60,10 +60,7 @@ void mmul(Executor ex, MatrixXd &a, MatrixXd &b, MatrixXd &c) {
                            1};
 
   cuda_executor<oneway_t, bulk_t, blocking_t::always_t, void>{}.bulk_execute(
-      [=](int stream_id) {
-        mmul_gpu(a_g, b_g, c_g, a.rows(), a.cols(), b.cols());
-      },
-      shape);
+      [=] __device__() { printf("Device Lambda Called\n"); }, shape);
 
   memcpy(static_cast<double *>(c.data()), c_g, 9 * sizeof(double));
 }
