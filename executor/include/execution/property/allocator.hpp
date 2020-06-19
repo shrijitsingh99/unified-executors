@@ -28,4 +28,4 @@ struct allocator_t<void>
   }
 };
 
-static constexpr allocator_t<void> allocator;
+static constexpr allocator_t<void> allocator{};

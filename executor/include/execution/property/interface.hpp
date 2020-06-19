@@ -17,7 +17,7 @@ class single_t : public basic_executor_property<single_t, true, true> {
   }
 };
 
-static constexpr single_t single;
+static constexpr single_t single{};
 
 class bulk_t : public basic_executor_property<bulk_t, true, true> {
   template <typename Executor>
@@ -30,4 +30,4 @@ class bulk_t : public basic_executor_property<bulk_t, true, true> {
   }
 };
 
-static constexpr bulk_t bulk;
+static constexpr bulk_t bulk{};
