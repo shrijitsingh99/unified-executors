@@ -6,10 +6,24 @@
 
 #ifdef CUDA
 #include <cuda_runtime_api.h>
+
+#include <nvfunctional>
 #endif
 
 #include <execution/executor/base_executor.hpp>
 #include <execution/executor/inline_executor.hpp>
+
+#ifdef CUDA
+template <typename F>
+__global__ void global_kernel(F f) {
+  (*f)();
+}
+
+template <typename NVSTDFunc, typename Lambda>
+__global__ void device_func_insert(NVSTDFunc *f, Lambda l) {
+  *f = l;
+}
+#endif
 
 template <typename Interface, typename Cardinality, typename Blocking,
           typename ProtoAllocator>
@@ -31,25 +45,49 @@ struct cuda_executor : executor<cuda_executor, Interface, Cardinality, Blocking,
   template <typename F>
   void execute(F &&f) {
 #ifdef CUDA
-    cudaLaunchKernel(static_cast<void *>(&f), 1, 1, nullptr, 0, 0);
+    nvstd::function<void(void)> *nv_f;
+    cudaMalloc(reinterpret_cast<void **>(&nv_f),
+               sizeof(nvstd::function<void(void)>));
+    void *device_func_insert_args[] = {static_cast<void *>(&nv_f),
+                                       static_cast<void *>(&f)};
+
+    cudaLaunchKernel(reinterpret_cast<void *>(
+                         device_func_insert<nvstd::function<void(void)>, F>),
+                     1, 1, device_func_insert_args, 0, nullptr);
+
+    void *global_kernel_args[] = {static_cast<void *>(&nv_f)};
+    cudaLaunchKernel(
+        reinterpret_cast<void *>(global_kernel<nvstd::function<void(void)> *>),
+        1, 1, global_kernel_args, 0, nullptr);
     cudaDeviceSynchronize();
 #endif
   }
 
   // Temporary fix for unit test compilation
   template <typename F>
-  void bulk_execute(F &&f, std::size_t n) {
+  void bulk_execute(F f, std::size_t n) {
     bulk_execute(f, std::array<int, 6>{1, 1, 1, static_cast<int>(n), 1, 1});
   }
 
   template <typename F>
-  void bulk_execute(F &&f, shape_type shape) {
+  void bulk_execute(F f, shape_type shape) {
 #ifdef CUDA
-    void *kernel_args[] = {0};
+    nvstd::function<void(void)> *nv_f;
+    cudaMalloc(reinterpret_cast<void **>(&nv_f),
+               sizeof(nvstd::function<void(void)>));
+    void *device_func_insert_args[] = {static_cast<void *>(&nv_f),
+                                       static_cast<void *>(&f)};
+
+    cudaLaunchKernel(reinterpret_cast<void *>(
+                         device_func_insert<nvstd::function<void(void)>, F>),
+                     1, 1, device_func_insert_args, 0, nullptr);
+
+    void *global_kernel_args[] = {static_cast<void *>(&nv_f)};
     dim3 grid_size(shape[0], shape[1], shape[2]);
     dim3 block_size(shape[3], shape[4], shape[5]);
-    cudaLaunchKernel(static_cast<void *>(&f), grid_size, block_size,
-                     kernel_args, 0, 0);
+    cudaLaunchKernel(
+        reinterpret_cast<void *>(global_kernel<nvstd::function<void(void)> *>),
+        grid_size, block_size, global_kernel_args, 0, nullptr);
     cudaDeviceSynchronize();
 #endif
   }

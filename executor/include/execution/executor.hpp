@@ -13,15 +13,16 @@ TYPE_TO_STRING(sse_executor<oneway_t, bulk_t, blocking_t::always_t>);
 TYPE_TO_STRING(omp_executor<oneway_t, bulk_t, blocking_t::always_t>);
 TYPE_TO_STRING(cuda_executor<oneway_t, bulk_t, blocking_t::always_t>);
 
-#define executors                                                \
-  std::tuple<                                                    \
-      inline_executor<oneway_t, single_t, blocking_t::always_t>, \
-      sse_executor<oneway_t, bulk_t, blocking_t::always_t>,      \
-      omp_executor<oneway_t, bulk_t, blocking_t::always_t>,      \
-      std::conditional<                                          \
-          execution::is_executor_available_v<cuda_executor>,     \
-          cuda_executor<oneway_t, bulk_t, blocking_t::always_t>, \
-          inline_executor<oneway_t, single_t, blocking_t::always_t>>::type>
+#define TEST_EXECUTORS                                       \
+  inline_executor<oneway_t, single_t, blocking_t::always_t>, \
+      sse_executor<oneway_t, bulk_t, blocking_t::always_t>,  \
+      omp_executor<oneway_t, bulk_t, blocking_t::always_t>
+
+#define TEST_CUDA_EXECUTOR                                   \
+  std::conditional<                                          \
+      execution::is_executor_available_v<cuda_executor>,     \
+      cuda_executor<oneway_t, bulk_t, blocking_t::always_t>, \
+      inline_executor<oneway_t, single_t, blocking_t::always_t>>::type
 
 TEST_CASE_TEMPLATE_DEFINE("Validity ", E, validity) {
   auto exec = E{};
@@ -77,7 +78,10 @@ TEST_CASE_TEMPLATE_DEFINE("Execute ", E, execute) {
   }
 }
 
-TEST_CASE_TEMPLATE_APPLY(validity, executors);
-TEST_CASE_TEMPLATE_APPLY(property_traits, executors);
-TEST_CASE_TEMPLATE_APPLY(properties, executors);
-TEST_CASE_TEMPLATE_APPLY(execute, executors);
+TEST_CASE_TEMPLATE_APPLY(validity,
+                         std::tuple<TEST_EXECUTORS, TEST_CUDA_EXECUTOR>);
+TEST_CASE_TEMPLATE_APPLY(property_traits,
+                         std::tuple<TEST_EXECUTORS, TEST_CUDA_EXECUTOR>);
+TEST_CASE_TEMPLATE_APPLY(properties,
+                         std::tuple<TEST_EXECUTORS, TEST_CUDA_EXECUTOR>);
+TEST_CASE_TEMPLATE_APPLY(execute, std::tuple<TEST_EXECUTORS>);

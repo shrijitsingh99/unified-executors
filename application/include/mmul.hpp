@@ -44,26 +44,5 @@ void mmul(Executor ex, MatrixXd &a, MatrixXd &b, MatrixXd &c) {
 template <typename Executor,
           typename execution::instance_of_base<cuda_executor, Executor> = 0>
 void mmul(Executor ex, MatrixXd &a, MatrixXd &b, MatrixXd &c) {
-  double *a_g, *b_g, *c_g;
-  a_g = static_cast<double *>(
-      device_upload(static_cast<void *>(a.data()), a.size() * sizeof(double)));
-  b_g = static_cast<double *>(
-      device_upload(static_cast<void *>(b.data()), b.size() * sizeof(double)));
-  c_g = static_cast<double *>(
-      device_upload(static_cast<void *>(c.data()), c.size() * sizeof(double)));
-
-  std::array<int, 6> shape{static_cast<int>(ceil(a.rows() / 2.0)),
-                           static_cast<int>(ceil(b.cols() / 2.0)),
-                           1,
-                           2,
-                           2,
-                           1};
-
-  cuda_executor<oneway_t, bulk_t, blocking_t::always_t, void>{}.bulk_execute(
-      [=](int stream_id) {
-        mmul_gpu(a_g, b_g, c_g, a.rows(), a.cols(), b.cols());
-      },
-      shape);
-
-  memcpy(static_cast<double *>(c.data()), c_g, 9 * sizeof(double));
+  mmul_gpu_host(a, b, c);
 }
