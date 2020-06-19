@@ -29,11 +29,8 @@ struct inline_executor
 
   inline_executor &decay_t() { return *this; };
 
-  inline_executor require(const blocking_t::always_t &t) {
-    if constexpr (std::is_same_v<Blocking, blocking_t::always_t>)
-      return *this;
-    else
-      return inline_executor<Interface, blocking_t::always_t, ProtoAllocator>{};
+  inline_executor<Interface, blocking_t::always_t, ProtoAllocator> require(const blocking_t::always_t &t) {
+      return {};
   }
 
   std::string name() { return "inline"; }
