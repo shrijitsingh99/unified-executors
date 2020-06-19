@@ -47,11 +47,11 @@ struct cuda_executor : executor<cuda_executor, Interface, Cardinality, Blocking,
   template <typename F>
   void bulk_execute(F &&f, shape_type shape) {
 #ifdef CUDA
-    void *kernel_args[] = {};
+    void *kernel_args[] = {&f};
     dim3 grid_size(shape[0], shape[1], shape[2]);
     dim3 block_size(shape[3], shape[4], shape[5]);
-    cudaLaunchKernel(static_cast<void *>(&f), grid_size, block_size,
-                     kernel_args, 0, 0);
+    cudaLaunchKernel(static_cast<void *>(global_kernel<F>), grid_size,
+                     block_size, kernel_args, 0, 0);
     cudaDeviceSynchronize();
 #endif
   }
