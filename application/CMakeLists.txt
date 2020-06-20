@@ -11,7 +11,6 @@ if(CUDA_FOUND)
     enable_language(CUDA)
 
     set(CMAKE_CUDA_COMPILER /usr/local/cuda/bin/nvcc)
-    set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} --expt-extended-lambda")
 
     add_definitions(-DCUDA)
 
