@@ -32,6 +32,28 @@ jobs:
       - name: Test
         run: cd build && ctest
 
+  build-cuda:
+    runs-on: ubuntu-18.04
+    container:
+      image: nvidia/cuda:10.2-base-ubuntu18.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install dependencies
+        run: |
+          apt update
+          apt install cmake libomp-dev python3-pip -y
+          pip3 install wheel setuptools
+          pip3 install conan
+      - name: Configure
+        env:
+          CC: ${{ matrix.compiler.cc }}
+          CXX: ${{ matrix.compiler.cxx }}
+        run: ./configure
+      - name: Build
+        run: cmake --build build
+      - name: Test
+        run: cd build && ctest
+
   build-macos:
      runs-on: macOS-10.15
      steps:
