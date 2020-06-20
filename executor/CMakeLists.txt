@@ -12,6 +12,8 @@ endif()
 if (NOT CUDA_FOUND)
     set(CUDA_LIBRARIES "")
     set(CUDA_INCLUDE_DIRS "")
+else()
+    enable_language(CUDA)
 endif()
 
 add_library(${PROJECT_NAME} INTERFACE)
