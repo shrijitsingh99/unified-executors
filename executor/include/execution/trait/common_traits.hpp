@@ -4,15 +4,9 @@
 
 #pragma once
 
-namespace execution {
-namespace detail {
+#define COMMON_TRAIT_NS execution
 
-template <typename... Ts>
-struct make_void {
-  typedef void type;
-};
-template <typename... Ts>
-using void_t = typename make_void<Ts...>::type;
-
-}  // namespace detail
-}  // namespace execution
+namespace COMMON_TRAIT_NS {
+template <typename...>
+using void_t = void;  // part of std in c++17
+}  // namespace COMMON_TRAIT_NS
