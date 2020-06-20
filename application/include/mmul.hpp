@@ -44,5 +44,5 @@ void mmul(Executor ex, MatrixXd &a, MatrixXd &b, MatrixXd &c) {
 template <typename Executor,
           typename execution::instance_of_base<cuda_executor, Executor> = 0>
 void mmul(Executor ex, MatrixXd &a, MatrixXd &b, MatrixXd &c) {
-  mmul_gpu_host(a, b, c);
+  mmul_gpu(ex, a, b, c);
 }

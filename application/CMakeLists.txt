@@ -9,17 +9,11 @@ include_directories(include)
 
 if(CUDA_FOUND)
     enable_language(CUDA)
-
     set(CMAKE_CUDA_COMPILER /usr/local/cuda/bin/nvcc)
-
     add_definitions(-DCUDA)
-
-    add_library(mmul_cuda STATIC src/mmul.cu)
-    target_link_libraries(mmul_cuda executor Eigen3::Eigen)
-    set(MMUL_CUDA mmul_cuda)
 endif()
 
-add_executable(test_mmul test/mmul.cpp)
+add_executable(test_mmul test/mmul.cpp src/mmul.cu)
 target_include_directories(test_mmul INTERFACE ${PROJECT_SOURCE_DIR}/include)
 target_link_libraries(test_mmul executor CONAN_PKG::doctest Eigen3::Eigen ${MMUL_CUDA})
 

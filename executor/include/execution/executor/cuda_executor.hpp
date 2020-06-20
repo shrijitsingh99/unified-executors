@@ -16,7 +16,7 @@
 #ifdef CUDA
 template <typename F>
 __global__ void global_kernel(F f) {
-  (*f)();
+  f();
 }
 
 template <typename NVSTDFunc, typename Lambda>
@@ -45,20 +45,9 @@ struct cuda_executor : executor<cuda_executor, Interface, Cardinality, Blocking,
   template <typename F>
   void execute(F &&f) {
 #ifdef CUDA
-    nvstd::function<void(void)> *nv_f;
-    cudaMalloc(reinterpret_cast<void **>(&nv_f),
-               sizeof(nvstd::function<void(void)>));
-    void *device_func_insert_args[] = {static_cast<void *>(&nv_f),
-                                       static_cast<void *>(&f)};
-
-    cudaLaunchKernel(reinterpret_cast<void *>(
-                         device_func_insert<nvstd::function<void(void)>, F>),
-                     1, 1, device_func_insert_args, 0, nullptr);
-
-    void *global_kernel_args[] = {static_cast<void *>(&nv_f)};
-    cudaLaunchKernel(
-        reinterpret_cast<void *>(global_kernel<nvstd::function<void(void)> *>),
-        1, 1, global_kernel_args, 0, nullptr);
+    void *global_kernel_args[] = {static_cast<void *>(&f)};
+    cudaLaunchKernel(reinterpret_cast<void *>(global_kernel<F>), 1, 1,
+                     global_kernel_args, 0, nullptr);
     cudaDeviceSynchronize();
 #endif
   }
@@ -72,22 +61,11 @@ struct cuda_executor : executor<cuda_executor, Interface, Cardinality, Blocking,
   template <typename F>
   void bulk_execute(F f, shape_type shape) {
 #ifdef CUDA
-    nvstd::function<void(void)> *nv_f;
-    cudaMalloc(reinterpret_cast<void **>(&nv_f),
-               sizeof(nvstd::function<void(void)>));
-    void *device_func_insert_args[] = {static_cast<void *>(&nv_f),
-                                       static_cast<void *>(&f)};
-
-    cudaLaunchKernel(reinterpret_cast<void *>(
-                         device_func_insert<nvstd::function<void(void)>, F>),
-                     1, 1, device_func_insert_args, 0, nullptr);
-
-    void *global_kernel_args[] = {static_cast<void *>(&nv_f)};
+    void *global_kernel_args[] = {static_cast<void *>(&f)};
     dim3 grid_size(shape[0], shape[1], shape[2]);
     dim3 block_size(shape[3], shape[4], shape[5]);
-    cudaLaunchKernel(
-        reinterpret_cast<void *>(global_kernel<nvstd::function<void(void)> *>),
-        grid_size, block_size, global_kernel_args, 0, nullptr);
+    cudaLaunchKernel(reinterpret_cast<void *>(global_kernel<F>), grid_size,
+                     block_size, global_kernel_args, 0, nullptr);
     cudaDeviceSynchronize();
 #endif
   }

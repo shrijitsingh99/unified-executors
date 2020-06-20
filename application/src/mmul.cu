@@ -1,31 +1,21 @@
 #include <mmul.cuh>
 
-__host__ void *device_upload(void *var, std::size_t size) {
-  void *gpu_var;
-  cudaMallocManaged(&gpu_var, size);
-  memcpy(gpu_var, var, size);
-  return gpu_var;
-}
+void mmul_gpu(cuda_executor<oneway_t, bulk_t, blocking_t::always_t> &ex,
+              MatrixXd &a, MatrixXd &b, MatrixXd &c) {
+  double *a_d, *b_d, *c_d;
 
-__device__ void mmul_gpu(double *a, double *b, double *c, int m, int n, int k) {
-  int row = blockIdx.y * blockDim.y + threadIdx.y;
-  int col = blockIdx.x * blockDim.x + threadIdx.x;
-  double sum = 0;
-  if (col < k && row < m) {
-    for (int i = 0; i < n; i++) {
-      sum += a[row * n + i] * b[i * k + col];
-    }
-    c[row * k + col] = sum;
-  }
-}
+  auto device_upload = [=](void *var, std::size_t size) {
+    void *gpu_var;
+    cudaMallocManaged(&gpu_var, size);
+    memcpy(gpu_var, var, size);
+    return gpu_var;
+  };
 
-void mmul_gpu_host(MatrixXd &a, MatrixXd &b, MatrixXd &c) {
-  double *a_g, *b_g, *c_g;
-  a_g = static_cast<double *>(
+  a_d = static_cast<double *>(
       device_upload(static_cast<void *>(a.data()), a.size() * sizeof(double)));
-  b_g = static_cast<double *>(
+  b_d = static_cast<double *>(
       device_upload(static_cast<void *>(b.data()), b.size() * sizeof(double)));
-  c_g = static_cast<double *>(
+  c_d = static_cast<double *>(
       device_upload(static_cast<void *>(c.data()), c.size() * sizeof(double)));
 
   std::array<int, 6> shape{static_cast<int>(ceil(a.rows() / 2.0)),
@@ -35,11 +25,19 @@ void mmul_gpu_host(MatrixXd &a, MatrixXd &b, MatrixXd &c) {
                            2,
                            1};
 
-  int rows1 = a.rows(), cols1 = a.cols(), cols2 = b.cols();
+  auto mul = [=] __device__() {
+    unsigned row = blockIdx.y * blockDim.y + threadIdx.y;
+    unsigned col = blockIdx.x * blockDim.x + threadIdx.x;
+    double sum = 0;
+    if (col < b.cols() && row < a.rows()) {
+      for (int i = 0; i < a.cols(); i++) {
+        sum += a_d[row * a.cols() + i] * b_d[i * b.cols() + col];
+      }
+      c_d[row * b.cols() + col] = sum;
+    }
+  };
 
-  cuda_executor<oneway_t, bulk_t, blocking_t::always_t, void>{}.bulk_execute(
-      [=] __device__(void) { mmul_gpu(a_g, b_g, c_g, rows1, cols1, cols2); },
-      shape);
+  ex.bulk_execute(mul, shape);
 
-  memcpy(static_cast<double *>(c.data()), c_g, 9 * sizeof(double));
+  memcpy(static_cast<double *>(c.data()), c_d, 9 * sizeof(double));
 }
