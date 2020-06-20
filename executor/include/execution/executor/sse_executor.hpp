@@ -36,13 +36,5 @@ struct sse_executor
     }
   }
 
-  //  constexpr auto decay_t() -> decltype(auto) {
-  //    if (execution::is_executor_available_v<sse_executor>) {
-  //      return *this;
-  //    } else
-  //      return inline_executor<oneway_t, blocking_t::always_t,
-  //      ProtoAllocator>{};
-  //  }
-
-  std::string name() { return "sse"; }
+  static constexpr auto name() { return "sse"; }
 };

@@ -20,7 +20,7 @@ class blocking_t {
     }
   };
 
-  always_t always;
+  const always_t always;
 
   class never_t : public basic_executor_property<never_t, true, true> {
    public:
@@ -34,7 +34,7 @@ class blocking_t {
     }
   };
 
-  never_t never;
+  const never_t never;
 
   class possibly_t : public basic_executor_property<possibly_t, true, true> {
    public:
@@ -48,7 +48,7 @@ class blocking_t {
     }
   };
 
-  possibly_t possibly;
+  const possibly_t possibly;
 };
 
-static const blocking_t blocking{};
+static constexpr blocking_t blocking{};

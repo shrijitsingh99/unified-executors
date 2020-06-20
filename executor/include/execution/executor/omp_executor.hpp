@@ -33,22 +33,12 @@ struct omp_executor
   }
 
   template <typename F>
-  void bulk_execute(F &&f, shape_type n){
+  void bulk_execute(F &&f, shape_type n) {
 #ifdef _OPENMP
 #pragma omp parallel num_threads(n)
-      {std::forward<F>(f)(omp_get_thread_num());
-}
+    { std::forward<F>(f)(omp_get_thread_num()); }
 #endif
-}
+  }
 
-//  auto decay_t() -> decltype(auto) {
-//    if constexpr (execution::is_executor_available_v<omp_executor>) {
-//      return *this;
-//    } else
-//      return inline_executor<oneway_t, single_t, blocking_t::always_t,
-//                             ProtoAllocator>{};
-//  }
-
-std::string name() { return "omp"; }
-}
-;
+  static constexpr auto name() { return "omp"; }
+};

@@ -27,12 +27,10 @@ struct inline_executor
     std::forward<F>(f)();
   }
 
-  //  inline_executor &decay_t() { return *this; };
-
   inline_executor<Interface, Cardinality, blocking_t::always_t, ProtoAllocator>
   require(const blocking_t::always_t &t) {
     return {};
   }
 
-  std::string name() { return "inline"; }
+  static constexpr auto name() { return "inline"; }
 };
