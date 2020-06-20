@@ -25,14 +25,14 @@ struct sse_executor
 
   template <typename F>
   void execute(F &&f) {
-    invoke_hpp::invoke(std::forward<F>(f));
+    std::forward<F>(f)();
   }
 
   template <typename F>
   void bulk_execute(F &&f, shape_type n) {
 #pragma simd
     for (std::size_t i = 0; i < n; ++i) {
-      invoke_hpp::invoke(std::forward<F>(f), i);
+      std::forward<F>(f)(i);
     }
   }
 

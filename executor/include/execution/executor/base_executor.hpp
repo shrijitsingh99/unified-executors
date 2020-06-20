@@ -55,7 +55,7 @@ class executor {
   template <typename F, typename... Args>
   void bulk_execute(F &&f, Args &&... args, std::size_t n) {
     for (std::size_t i = 0; i < n; ++i) {
-      invoke_hpp::invoke(std::forward<F>(f), std::forward<Args>(args)..., i);
+      std::forward<F>(f)(std::forward<Args>(args)..., i);
     }
   }
 };

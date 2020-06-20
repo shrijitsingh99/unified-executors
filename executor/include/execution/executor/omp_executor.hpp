@@ -29,14 +29,14 @@ struct omp_executor
 
   template <typename F>
   void execute(F &&f) {
-    invoke_hpp::invoke(std::forward<F>(f));
+    std::forward<F>(f)();
   }
 
   template <typename F>
   void bulk_execute(F &&f, shape_type n){
 #ifdef _OPENMP
 #pragma omp parallel num_threads(n)
-      {invoke_hpp::invoke(std::forward<F>(f), omp_get_thread_num());
+      {std::forward<F>(f)(omp_get_thread_num());
 }
 #endif
 }

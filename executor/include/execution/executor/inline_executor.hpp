@@ -24,7 +24,7 @@ struct inline_executor
 
   template <typename F>
   void execute(F &&f) {
-    invoke_hpp::invoke(std::forward<F>(f));
+    std::forward<F>(f)();
   }
 
   //  inline_executor &decay_t() { return *this; };
