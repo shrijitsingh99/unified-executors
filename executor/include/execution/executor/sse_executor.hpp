@@ -24,16 +24,26 @@ struct sse_executor
   using shape_type = std::size_t;
 
   template <typename F>
-  void execute(F &&f) {
+  void execute(F &&f) const {
     std::forward<F>(f)();
   }
 
   template <typename F>
-  void bulk_execute(F &&f, shape_type n) {
+  void bulk_execute(F &&f, shape_type n) const {
 #pragma simd
     for (std::size_t i = 0; i < n; ++i) {
       std::forward<F>(f)(i);
     }
+  }
+
+  sse_executor<oneway_t, Cardinality, Blocking, ProtoAllocator> require(
+      const oneway_t &p) {
+    return {};
+  }
+
+  sse_executor<Interface, Cardinality, blocking_t::always_t, ProtoAllocator>
+  require(const blocking_t::always_t &t) {
+    return {};
   }
 
   static constexpr auto name() { return "sse"; }

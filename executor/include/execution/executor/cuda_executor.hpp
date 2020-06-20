@@ -43,7 +43,7 @@ struct cuda_executor : executor<cuda_executor, Interface, Cardinality, Blocking,
   using shape_type = typename std::array<int, 6>;
 
   template <typename F>
-  void execute(F &&f) {
+  void execute(F &&f) const {
 #ifdef CUDA
     void *global_kernel_args[] = {static_cast<void *>(&f)};
     cudaLaunchKernel(reinterpret_cast<void *>(global_kernel<F>), 1, 1,
@@ -54,12 +54,12 @@ struct cuda_executor : executor<cuda_executor, Interface, Cardinality, Blocking,
 
   // Temporary fix for unit test compilation
   template <typename F>
-  void bulk_execute(F f, std::size_t n) {
+  void bulk_execute(F f, std::size_t n) const {
     bulk_execute(f, std::array<int, 6>{1, 1, 1, static_cast<int>(n), 1, 1});
   }
 
   template <typename F>
-  void bulk_execute(F f, shape_type shape) {
+  void bulk_execute(F f, shape_type shape) const {
 #ifdef CUDA
     void *global_kernel_args[] = {static_cast<void *>(&f)};
     dim3 grid_size(shape[0], shape[1], shape[2]);
@@ -68,6 +68,16 @@ struct cuda_executor : executor<cuda_executor, Interface, Cardinality, Blocking,
                      block_size, global_kernel_args, 0, nullptr);
     cudaDeviceSynchronize();
 #endif
+  }
+
+  cuda_executor<oneway_t, Cardinality, Blocking, ProtoAllocator> require(
+      const oneway_t &p) {
+    return {};
+  }
+
+  cuda_executor<Interface, Cardinality, blocking_t::always_t, ProtoAllocator>
+  require(const blocking_t::always_t &t) {
+    return {};
   }
 
   static constexpr auto name() { return "cuda"; }

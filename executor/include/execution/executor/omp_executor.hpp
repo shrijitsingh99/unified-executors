@@ -28,17 +28,29 @@ struct omp_executor
   using shape_type = std::size_t;
 
   template <typename F>
-  void execute(F &&f) {
+  void execute(F &&f) const {
     std::forward<F>(f)();
   }
 
   template <typename F>
-  void bulk_execute(F &&f, shape_type n) {
+  void bulk_execute(F &&f, shape_type n) const {
 #ifdef _OPENMP
 #pragma omp parallel num_threads(n)
-    { std::forward<F>(f)(omp_get_thread_num()); }
+      {std::forward<F>(f)(omp_get_thread_num());
+}
 #endif
-  }
+}
 
-  static constexpr auto name() { return "omp"; }
-};
+omp_executor<oneway_t, Cardinality, Blocking, ProtoAllocator> require(
+    const oneway_t &p) {
+  return {};
+}
+
+omp_executor<Interface, Cardinality, blocking_t::always_t, ProtoAllocator>
+require(const blocking_t::always_t &t) {
+  return {};
+}
+
+static constexpr auto name() { return "omp"; }
+}
+;

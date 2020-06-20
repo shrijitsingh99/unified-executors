@@ -23,8 +23,13 @@ struct inline_executor
   using shape_type = std::size_t;
 
   template <typename F>
-  void execute(F &&f) {
+  void execute(F &&f) const {
     std::forward<F>(f)();
+  }
+
+  inline_executor<oneway_t, Cardinality, Blocking, ProtoAllocator> require(
+      const oneway_t &p) {
+    return {};
   }
 
   inline_executor<Interface, Cardinality, blocking_t::always_t, ProtoAllocator>

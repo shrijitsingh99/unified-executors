@@ -15,9 +15,10 @@ template <typename Executor, typename Property,
               Property::template is_applicable_property_v<Executor> &&
                   Property::is_preferable,
               int> = 0>
-Executor prefer(Executor ex, const Property t) {
-  if (execution::can_require_v<Executor, Property>) return ex.require(t);
-  return ex;
+constexpr auto prefer(Executor &&ex, const Property &t) noexcept {
+  if (execution::can_require_v<Executor, Property>)
+    return std::forward<Executor>(ex).require(t);
+  return std::forward<Executor>(ex);
 }
 
 template <typename Executor, typename Properties, typename = void>

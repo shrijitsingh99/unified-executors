@@ -15,8 +15,8 @@ template <typename Executor, typename Property,
                   Property::is_requirable &&
                   Property::template static_query<Executor>(),
               int> = 0>
-Executor require(Executor ex, const Property t) {
-  return ex.require(t);
+constexpr auto require(Executor &&ex, const Property &p) noexcept {
+  return Property::template static_query<Executor>();
 }
 
 template <typename Executor, typename Properties, typename = void>

@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <execution/type_trait.hpp>
+#include <execution/trait/is_executor.hpp>
 #include <functional>
 #include <iostream>
 #include <string>
@@ -21,8 +21,7 @@ class basic_executor_property {
   }
 
   template <class Executor>
-  static constexpr auto static_query()
-      -> decltype(Executor::query(std::declval<Derived>())) {
+  static constexpr auto static_query() {
     return Executor::query(Derived{});
   }
 

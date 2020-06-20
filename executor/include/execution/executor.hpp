@@ -2,11 +2,13 @@
 
 #include <doctest/doctest.h>
 
-#include <execution/executor/base_executor.hpp>
 #include <execution/executor/cuda_executor.hpp>
 #include <execution/executor/inline_executor.hpp>
 #include <execution/executor/omp_executor.hpp>
 #include <execution/executor/sse_executor.hpp>
+#include <execution/trait/can_prefer.hpp>
+#include <execution/trait/can_query.hpp>
+#include <execution/trait/can_require.hpp>
 
 TYPE_TO_STRING(inline_executor<oneway_t, single_t, blocking_t::always_t>);
 TYPE_TO_STRING(sse_executor<oneway_t, bulk_t, blocking_t::always_t>);
@@ -25,7 +27,7 @@ TYPE_TO_STRING(cuda_executor<oneway_t, bulk_t, blocking_t::always_t>);
       inline_executor<oneway_t, single_t, blocking_t::always_t>>::type
 
 TEST_CASE_TEMPLATE_DEFINE("Validity ", E, validity) {
-  auto exec = E{};
+  const auto exec = E{};
 
   SUBCASE("is_executor") {
     CHECK(execution::is_executor_v<decltype(exec)> == true);
@@ -34,7 +36,7 @@ TEST_CASE_TEMPLATE_DEFINE("Validity ", E, validity) {
 }
 
 TEST_CASE_TEMPLATE_DEFINE("Property Traits ", E, property_traits) {
-  auto exec = E{};
+  const auto exec = E{};
 
   SUBCASE("can_require") {
     CHECK(execution::can_require_v<decltype(exec), blocking_t::always_t> ==
@@ -52,21 +54,30 @@ TEST_CASE_TEMPLATE_DEFINE("Property Traits ", E, property_traits) {
 }
 
 TEST_CASE_TEMPLATE_DEFINE("Properties", E, properties) {
-  auto exec = inline_executor<oneway_t, single_t, blocking_t::never_t>{};
+  const auto exec = E{};
 
-  SUBCASE("require & query") {
-    CHECK(exec.query(blocking.never));
-    auto new_exec = exec.require(blocking.always);
-    CHECK(new_exec.query(blocking.always));
+  SUBCASE("member require & query") {
+    CHECK(exec.query(blocking.never) == false);
+    auto new_exec =
+        static_cast<E>(exec).require(oneway).require(blocking.always);
+    CHECK((new_exec.query(oneway) && new_exec.query(blocking.always)) == true);
+  }
+
+  SUBCASE("function require & query") {
+    CHECK(execution::query(exec, blocking.never) == false);
+    auto new_exec =
+        static_cast<E>(exec).require(oneway).require(blocking.always);
+    CHECK((execution::query(new_exec, oneway) &&
+           execution::query(new_exec, blocking.always)) == true);
   }
 }
 
 TEST_CASE_TEMPLATE_DEFINE("Execute ", E, execute) {
-  auto exec = E{};
-  int a = 1, b = 2, c = 0;
+  const auto exec = E{};
+  int a = 1, b = 2;
 
   SUBCASE("execute") {
-    c = 0;
+    int c = 0;
     exec.execute([&]() { c = a + b; });
     CHECK(c == 3);
   }
