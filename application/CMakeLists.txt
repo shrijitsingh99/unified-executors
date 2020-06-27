@@ -9,7 +9,6 @@ include_directories(include)
 
 if(CUDA_FOUND)
     enable_language(CUDA)
-    set(CMAKE_CUDA_COMPILER /usr/local/cuda/bin/nvcc)
     add_definitions(-DCUDA)
 endif()
 

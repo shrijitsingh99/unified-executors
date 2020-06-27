@@ -22,5 +22,6 @@ target_link_libraries(${PROJECT_NAME} INTERFACE CONAN_PKG::doctest ${OpenMP_LIBS
 target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_14)
 
 if (CUDA_FOUND)
+    # Lambda support in CUDA requires the --expt-extended-lambda flag to be explicitly specified
     target_compile_options(${PROJECT_NAME} INTERFACE $<$<COMPILE_LANGUAGE:CUDA>:--expt-extended-lambda -Xcompiler -fopenmp>)
 endif ()

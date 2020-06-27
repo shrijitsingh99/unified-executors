@@ -10,16 +10,20 @@
 #include <execution/trait/can_query.hpp>
 #include <execution/trait/can_require.hpp>
 
+// For printing names of the types for which the test was run
 TYPE_TO_STRING(inline_executor<oneway_t, single_t, blocking_t::always_t>);
 TYPE_TO_STRING(sse_executor<oneway_t, bulk_t, blocking_t::always_t>);
 TYPE_TO_STRING(omp_executor<oneway_t, bulk_t, blocking_t::always_t>);
 TYPE_TO_STRING(cuda_executor<oneway_t, bulk_t, blocking_t::always_t>);
 
+// List of Executor types to run tests for
 #define TEST_EXECUTORS                                       \
   inline_executor<oneway_t, single_t, blocking_t::always_t>, \
       sse_executor<oneway_t, bulk_t, blocking_t::always_t>,  \
       omp_executor<oneway_t, bulk_t, blocking_t::always_t>
 
+// Only run certain tests for CUDA executors due to different shape API
+// If CUDA is not available fallback to inline executor
 #define TEST_CUDA_EXECUTOR                                   \
   std::conditional<                                          \
       execution::is_executor_available_v<cuda_executor>,     \
