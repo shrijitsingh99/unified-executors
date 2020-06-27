@@ -13,11 +13,18 @@ namespace execution {
 template <typename Executor, typename Property,
           typename std::enable_if_t<
               Property::template is_applicable_property_v<Executor> &&
-                  Property::is_preferable,
+                  Property::is_preferable && can_require_v<Executor, Property>,
               int> = 0>
 constexpr auto prefer(Executor &&ex, const Property &t) noexcept {
-  if (execution::can_require_v<Executor, Property>)
-    return std::forward<Executor>(ex).require(t);
+  return std::forward<Executor>(ex).require(t);
+}
+
+template <typename Executor, typename Property,
+          typename std::enable_if_t<
+              Property::template is_applicable_property_v<Executor> &&
+                  Property::is_preferable && !can_require_v<Executor, Property>,
+              int> = 0>
+constexpr auto prefer(Executor &&ex, const Property &t) noexcept {
   return std::forward<Executor>(ex);
 }
 
@@ -25,9 +32,11 @@ template <typename Executor, typename Properties, typename = void>
 struct can_prefer : std::false_type {};
 
 template <typename Executor, typename Property>
-struct can_prefer<Executor, Property,
-                  COMMON_TRAIT_NS::void_t<decltype(execution::require(
-                      std::declval<Executor>(), std::declval<Property>()))>>
+struct can_prefer<
+    Executor, Property,
+    COMMON_TRAIT_NS::void_t<decltype(execution::prefer(
+        std::declval<std::remove_cv_t<std::remove_reference_t<Executor>>>(),
+        std::declval<std::remove_cv_t<std::remove_reference_t<Property>>>()))>>
     : std::true_type {};
 
 template <typename Executor, typename Property>

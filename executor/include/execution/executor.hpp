@@ -52,8 +52,7 @@ TEST_CASE_TEMPLATE_DEFINE("Property Traits ", E, property_traits) {
   SUBCASE("can_prefer") {
     CHECK(execution::can_prefer_v<decltype(exec), blocking_t::always_t> ==
           true);
-    CHECK(execution::can_prefer_v<decltype(exec), blocking_t::never_t> ==
-          false);
+    CHECK(execution::can_prefer_v<decltype(exec), blocking_t::never_t> == true);
   }
 }
 
