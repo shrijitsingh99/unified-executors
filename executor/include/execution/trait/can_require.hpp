@@ -16,7 +16,7 @@ template <typename Executor, typename Property,
                   Property::template static_query<Executor>(),
               int> = 0>
 constexpr auto require(Executor &&ex, const Property &p) noexcept {
-  return Property::template static_query<Executor>();
+  return std::forward<Executor>(ex).require(p);
 }
 
 template <typename Executor, typename Properties, typename = void>
