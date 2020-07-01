@@ -19,7 +19,7 @@ class executor {
  public:
   template <typename Executor,
             typename execution::instance_of_base<Derived, Executor> = 0>
-  bool operator==(const Executor &) const noexcept {
+  bool operator==(const Executor &rhs) const noexcept {
     return std::is_same<
         Derived<Interface, Cardinality, Blocking, ProtoAllocator>,
         Executor>::value;
@@ -27,8 +27,8 @@ class executor {
 
   template <typename Executor,
             typename execution::instance_of_base<Derived, Executor> = 0>
-  bool operator!=(const Executor &) const noexcept {
-    return std::is_same<
+  bool operator!=(const Executor &rhs) const noexcept {
+    return !operator==(rhs);
         Derived<Interface, Cardinality, Blocking, ProtoAllocator>,
         Executor>::value;
   }
