@@ -18,7 +18,8 @@ using namespace Eigen;
 
 template <typename Executor,
           typename execution::instance_of_base<inline_executor, Executor> = 0>
-void mmul(Executor ex, MatrixXd &a, MatrixXd &b, MatrixXd &c) {
+void mmul(const Executor ex, const MatrixXd &a, const MatrixXd &b,
+          MatrixXd &c) {
   auto mul = [&]() { c = a * b; };
 
   ex.execute(mul);
@@ -26,7 +27,7 @@ void mmul(Executor ex, MatrixXd &a, MatrixXd &b, MatrixXd &c) {
 
 template <typename Executor,
           typename execution::instance_of_base<omp_executor, Executor> = 0>
-void mmul(Executor ex, MatrixXd &a, MatrixXd &b, MatrixXd &c) {
+void mmul(const Executor ex, MatrixXd &a, MatrixXd &b, MatrixXd &c) {
   auto mul = [&](std::size_t thread_idx) {
 #pragma omp for schedule(static)
     for (int i = 0; i < a.rows(); i = i + 1) {
@@ -43,6 +44,7 @@ void mmul(Executor ex, MatrixXd &a, MatrixXd &b, MatrixXd &c) {
 
 template <typename Executor,
           typename execution::instance_of_base<cuda_executor, Executor> = 0>
-void mmul(Executor ex, MatrixXd &a, MatrixXd &b, MatrixXd &c) {
+void mmul(const Executor &ex, const MatrixXd &a, const MatrixXd &b,
+          MatrixXd &c) {
   mmul_gpu(ex, a, b, c);
 }

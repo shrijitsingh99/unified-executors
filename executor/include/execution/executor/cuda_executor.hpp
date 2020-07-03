@@ -55,7 +55,8 @@ struct cuda_executor : executor<cuda_executor, Interface, Cardinality, Blocking,
   // Temporary fix for unit test compilation
   template <typename F>
   void bulk_execute(F f, std::size_t n) const {
-    bulk_execute(f, std::array<int, 6>{1, 1, 1, static_cast<int>(n), 1, 1});
+    bulk_execute(std::forward<F>(f),
+                 std::array<int, 6>{1, 1, 1, static_cast<int>(n), 1, 1});
   }
 
   template <typename F>

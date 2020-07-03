@@ -17,10 +17,10 @@ TYPE_TO_STRING(omp_executor<oneway_t, bulk_t, blocking_t::always_t>);
 TYPE_TO_STRING(cuda_executor<oneway_t, bulk_t, blocking_t::always_t>);
 
 // List of Executor types to run tests for
-#define TEST_EXECUTORS                                       \
-  inline_executor<oneway_t, single_t, blocking_t::always_t>, \
-      sse_executor<oneway_t, bulk_t, blocking_t::always_t>,  \
-      omp_executor<oneway_t, bulk_t, blocking_t::always_t>
+#define TEST_EXECUTORS                                             \
+  const inline_executor<oneway_t, single_t, blocking_t::always_t>, \
+      const sse_executor<oneway_t, bulk_t, blocking_t::always_t>,  \
+      const omp_executor<oneway_t, bulk_t, blocking_t::always_t>
 
 // Only run certain tests for CUDA executors due to different shape API
 // If CUDA is not available fallback to inline executor
@@ -31,7 +31,7 @@ TYPE_TO_STRING(cuda_executor<oneway_t, bulk_t, blocking_t::always_t>);
       inline_executor<oneway_t, single_t, blocking_t::always_t>>::type
 
 TEST_CASE_TEMPLATE_DEFINE("Validity ", E, validity) {
-  const auto exec = E{};
+  auto exec = E{};
 
   SUBCASE("is_executor") {
     CHECK(execution::is_executor_v<decltype(exec)> == true);
@@ -40,43 +40,40 @@ TEST_CASE_TEMPLATE_DEFINE("Validity ", E, validity) {
 }
 
 TEST_CASE_TEMPLATE_DEFINE("Property Traits ", E, property_traits) {
-  const auto exec = E{};
+  auto exec = E{};
 
   SUBCASE("can_require") {
-    CHECK(execution::can_require_v<decltype(exec), blocking_t::always_t> ==
-          true);
-    CHECK(execution::can_require_v<decltype(exec), blocking_t::never_t> ==
-          false);
+    CHECK(execution::can_require_v<E, blocking_t::always_t> == true);
+    CHECK(execution::can_require_v<E, blocking_t::never_t> == false);
   }
 
   SUBCASE("can_prefer") {
-    CHECK(execution::can_prefer_v<decltype(exec), blocking_t::always_t> ==
-          true);
-    CHECK(execution::can_prefer_v<decltype(exec), blocking_t::never_t> == true);
+    CHECK(execution::can_prefer_v<E, blocking_t::always_t> == true);
+    CHECK(execution::can_prefer_v<E, blocking_t::never_t> == true);
   }
 }
 
 TEST_CASE_TEMPLATE_DEFINE("Properties", E, properties) {
-  const auto exec = E{};
+  auto exec = E{};
 
   SUBCASE("member require & query") {
     CHECK(exec.query(blocking.never) == false);
-    auto new_exec =
-        static_cast<E>(exec).require(oneway).require(blocking.always);
+    auto new_exec = typename std::remove_cv<E>::type{}.require(oneway).require(
+        blocking.always);
     CHECK((new_exec.query(oneway) && new_exec.query(blocking.always)) == true);
   }
 
   SUBCASE("function require & query") {
     CHECK(execution::query(exec, blocking.never) == false);
-    auto new_exec =
-        static_cast<E>(exec).require(oneway).require(blocking.always);
+    auto new_exec = typename std::remove_cv<E>::type{}.require(oneway).require(
+        blocking.always);
     CHECK((execution::query(new_exec, oneway) &&
            execution::query(new_exec, blocking.always)) == true);
   }
 }
 
 TEST_CASE_TEMPLATE_DEFINE("Execute ", E, execute) {
-  const auto exec = E{};
+  auto exec = E{};
   int a = 1, b = 2;
 
   SUBCASE("execute") {

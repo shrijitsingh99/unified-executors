@@ -1,22 +1,22 @@
 #include <mmul.cuh>
 
-void mmul_gpu(cuda_executor<oneway_t, bulk_t, blocking_t::always_t> &ex,
-              MatrixXd &a, MatrixXd &b, MatrixXd &c) {
+void mmul_gpu(const cuda_executor<oneway_t, bulk_t, blocking_t::always_t> &ex,
+              const MatrixXd &a, const MatrixXd &b, MatrixXd &c) {
   double *a_d, *b_d, *c_d;
 
-  auto device_upload = [=](void *var, std::size_t size) {
+  auto device_upload = [=](const void *var, std::size_t size) {
     void *gpu_var;
     cudaMallocManaged(&gpu_var, size);
     memcpy(gpu_var, var, size);
     return gpu_var;
   };
 
-  a_d = static_cast<double *>(
-      device_upload(static_cast<void *>(a.data()), a.size() * sizeof(double)));
-  b_d = static_cast<double *>(
-      device_upload(static_cast<void *>(b.data()), b.size() * sizeof(double)));
-  c_d = static_cast<double *>(
-      device_upload(static_cast<void *>(c.data()), c.size() * sizeof(double)));
+  a_d =
+      static_cast<double *>(device_upload(a.data(), a.size() * sizeof(double)));
+  b_d =
+      static_cast<double *>(device_upload(b.data(), b.size() * sizeof(double)));
+  c_d =
+      static_cast<double *>(device_upload(c.data(), c.size() * sizeof(double)));
 
   std::array<int, 6> shape{static_cast<int>(ceil(a.rows() / 2.0)),
                            static_cast<int>(ceil(b.cols() / 2.0)),
