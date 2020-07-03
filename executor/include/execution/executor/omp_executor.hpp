@@ -42,12 +42,12 @@ struct omp_executor
 }
 
 omp_executor<oneway_t, Cardinality, Blocking, ProtoAllocator> require(
-    const oneway_t &p) {
+    const oneway_t &p) const {
   return {};
 }
 
 omp_executor<Interface, Cardinality, blocking_t::always_t, ProtoAllocator>
-require(const blocking_t::always_t &t) {
+require(const blocking_t::always_t &t) const {
   return {};
 }
 

@@ -58,15 +58,13 @@ TEST_CASE_TEMPLATE_DEFINE("Properties", E, properties) {
 
   SUBCASE("member require & query") {
     CHECK(exec.query(blocking.never) == false);
-    auto new_exec = typename std::remove_cv<E>::type{}.require(oneway).require(
-        blocking.always);
+    auto new_exec = exec.require(oneway).require(blocking.always);
     CHECK((new_exec.query(oneway) && new_exec.query(blocking.always)) == true);
   }
 
   SUBCASE("function require & query") {
     CHECK(execution::query(exec, blocking.never) == false);
-    auto new_exec = typename std::remove_cv<E>::type{}.require(oneway).require(
-        blocking.always);
+    auto new_exec = exec.require(oneway).require(blocking.always);
     CHECK((execution::query(new_exec, oneway) &&
            execution::query(new_exec, blocking.always)) == true);
   }
