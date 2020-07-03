@@ -6,8 +6,7 @@
 
 #include <execution/executor/base_executor.hpp>
 
-template <typename Interface, typename Cardinality, typename Blocking,
-          typename ProtoAllocator>
+template <typename Blocking, typename ProtoAllocator>
 struct sse_executor;
 
 #ifdef __SSE__
@@ -17,10 +16,8 @@ struct is_executor_available<sse_executor> : std::true_type {};
 }  // namespace execution
 #endif
 
-template <typename Interface, typename Cardinality, typename Blocking,
-          typename ProtoAllocator = std::allocator<void>>
-struct sse_executor
-    : executor<sse_executor, Interface, Cardinality, Blocking, ProtoAllocator> {
+template <typename Blocking, typename ProtoAllocator = std::allocator<void>>
+struct sse_executor : executor<sse_executor, Blocking, ProtoAllocator> {
   using shape_type = std::size_t;
 
   template <typename F>
@@ -36,13 +33,8 @@ struct sse_executor
     }
   }
 
-  sse_executor<oneway_t, Cardinality, Blocking, ProtoAllocator> require(
-      const oneway_t &p) const {
-    return {};
-  }
-
-  sse_executor<Interface, Cardinality, blocking_t::always_t, ProtoAllocator>
-  require(const blocking_t::always_t &t) const {
+  sse_executor<blocking_t::always_t, ProtoAllocator> require(
+      const blocking_t::always_t &t) const {
     return {};
   }
 

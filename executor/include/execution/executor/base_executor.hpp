@@ -14,15 +14,13 @@
 #include <stdexcept>
 #include <string>
 
-template <template <typename...> class Derived, typename Interface,
-          typename Cardinality, typename Blocking, typename ProtoAllocator>
+template <template <typename...> class Derived, typename Blocking,
+          typename ProtoAllocator>
 struct executor {
   template <typename Executor,
             typename execution::instance_of_base<Derived, Executor> = 0>
   bool operator==(const Executor &rhs) const noexcept {
-    return std::is_same<
-        Derived<Interface, Cardinality, Blocking, ProtoAllocator>,
-        Executor>::value;
+    return std::is_same<Derived<Blocking, ProtoAllocator>, Executor>::value;
   }
 
   template <typename Executor,
@@ -41,14 +39,6 @@ struct executor {
 
   static constexpr bool query(const blocking_t::possibly_t &t) noexcept {
     return std::is_same<Blocking, blocking_t::possibly_t>();
-  }
-
-  static constexpr bool query(const oneway_t &t) noexcept {
-    return std::is_same<Interface, oneway_t>();
-  }
-
-  static constexpr bool query(const twoway_t &t) noexcept {
-    return std::is_same<Interface, twoway_t>();
   }
 
   template <typename F, typename... Args>

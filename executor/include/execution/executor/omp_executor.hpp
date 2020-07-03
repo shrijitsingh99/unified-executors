@@ -10,8 +10,7 @@
 
 #include <execution/executor/base_executor.hpp>
 
-template <typename Interface, typename Cardinality, typename Blocking,
-          typename ProtoAllocator>
+template <typename Blocking, typename ProtoAllocator>
 struct omp_executor;
 
 #ifdef _OPENMP
@@ -21,10 +20,8 @@ struct is_executor_available<omp_executor> : std::true_type {};
 }  // namespace execution
 #endif
 
-template <typename Interface, typename Cardinality, typename Blocking,
-          typename ProtoAllocator = std::allocator<void>>
-struct omp_executor
-    : executor<omp_executor, Interface, Cardinality, Blocking, ProtoAllocator> {
+template <typename Blocking, typename ProtoAllocator = std::allocator<void>>
+struct omp_executor : executor<omp_executor, Blocking, ProtoAllocator> {
   using shape_type = std::size_t;
 
   template <typename F>
@@ -41,13 +38,8 @@ struct omp_executor
 #endif
 }
 
-omp_executor<oneway_t, Cardinality, Blocking, ProtoAllocator> require(
-    const oneway_t &p) const {
-  return {};
-}
-
-omp_executor<Interface, Cardinality, blocking_t::always_t, ProtoAllocator>
-require(const blocking_t::always_t &t) const {
+omp_executor<blocking_t::always_t, ProtoAllocator> require(
+    const blocking_t::always_t &t) const {
   return {};
 }
 

@@ -6,8 +6,7 @@
 
 #include <execution/executor/base_executor.hpp>
 
-template <typename Interface, typename Cardinality, typename Blocking,
-          typename ProtoAllocator>
+template <typename Blocking, typename ProtoAllocator>
 struct inline_executor;
 
 namespace execution {
@@ -15,10 +14,8 @@ template <>
 struct is_executor_available<inline_executor> : std::true_type {};
 }  // namespace execution
 
-template <typename Interface, typename Cardinality, typename Blocking,
-          typename ProtoAllocator = std::allocator<void>>
-struct inline_executor : executor<inline_executor, Interface, Cardinality,
-                                  Blocking, ProtoAllocator> {
+template <typename Blocking, typename ProtoAllocator = std::allocator<void>>
+struct inline_executor : executor<inline_executor, Blocking, ProtoAllocator> {
   using shape_type = std::size_t;
 
   template <typename F>
@@ -26,13 +23,8 @@ struct inline_executor : executor<inline_executor, Interface, Cardinality,
     std::forward<F>(f)();
   }
 
-  inline_executor<oneway_t, Cardinality, Blocking, ProtoAllocator> require(
-      const oneway_t &p) const {
-    return {};
-  }
-
-  inline_executor<Interface, Cardinality, blocking_t::always_t, ProtoAllocator>
-  require(const blocking_t::always_t &t) const {
+  inline_executor<blocking_t::always_t, ProtoAllocator> require(
+      const blocking_t::always_t &t) const {
     return {};
   }
 
