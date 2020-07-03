@@ -30,7 +30,8 @@ struct is_executor_available<cuda_executor> : std::true_type {};
 }  // namespace execution
 #endif
 
-template <typename Blocking, typename ProtoAllocator = std::allocator<void>>
+template <typename Blocking = blocking_t::always_t,
+          typename ProtoAllocator = std::allocator<void>>
 struct cuda_executor : executor<cuda_executor, Blocking, ProtoAllocator> {
   using shape_type = typename std::array<int, 6>;
 

@@ -11,24 +11,23 @@
 #include <execution/trait/can_require.hpp>
 
 // For printing names of the types for which the test was run
-TYPE_TO_STRING(inline_executor<oneway_t, single_t, blocking_t::always_t>);
-TYPE_TO_STRING(sse_executor<oneway_t, bulk_t, blocking_t::always_t>);
-TYPE_TO_STRING(omp_executor<oneway_t, bulk_t, blocking_t::always_t>);
-TYPE_TO_STRING(cuda_executor<oneway_t, bulk_t, blocking_t::always_t>);
+TYPE_TO_STRING(inline_executor<blocking_t::always_t>);
+TYPE_TO_STRING(sse_executor<blocking_t::always_t>);
+TYPE_TO_STRING(omp_executor<blocking_t::always_t>);
+TYPE_TO_STRING(cuda_executor<blocking_t::always_t>);
 
 // List of Executor types to run tests for
-#define TEST_EXECUTORS                                             \
-  const inline_executor<oneway_t, single_t, blocking_t::always_t>, \
-      const sse_executor<oneway_t, bulk_t, blocking_t::always_t>,  \
-      const omp_executor<oneway_t, bulk_t, blocking_t::always_t>
+#define TEST_EXECUTORS                          \
+  const inline_executor<blocking_t::always_t>,  \
+      const sse_executor<blocking_t::always_t>, \
+      const omp_executor<blocking_t::always_t>
 
 // Only run certain tests for CUDA executors due to different shape API
 // If CUDA is not available fallback to inline executor
-#define TEST_CUDA_EXECUTOR                                   \
-  std::conditional<                                          \
-      execution::is_executor_available_v<cuda_executor>,     \
-      cuda_executor<oneway_t, bulk_t, blocking_t::always_t>, \
-      inline_executor<oneway_t, single_t, blocking_t::always_t>>::type
+#define TEST_CUDA_EXECUTOR                                            \
+  std::conditional<execution::is_executor_available_v<cuda_executor>, \
+                   cuda_executor<blocking_t::always_t>,               \
+                   inline_executor<blocking_t::always_t>>::type
 
 TEST_CASE_TEMPLATE_DEFINE("Validity ", E, validity) {
   auto exec = E{};
@@ -58,15 +57,14 @@ TEST_CASE_TEMPLATE_DEFINE("Properties", E, properties) {
 
   SUBCASE("member require & query") {
     CHECK(exec.query(blocking.never) == false);
-    auto new_exec = exec.require(oneway).require(blocking.always);
-    CHECK((new_exec.query(oneway) && new_exec.query(blocking.always)) == true);
+    auto new_exec = exec.require(blocking.always);
+    CHECK(new_exec.query(blocking.always) == true);
   }
 
   SUBCASE("function require & query") {
     CHECK(execution::query(exec, blocking.never) == false);
-    auto new_exec = exec.require(oneway).require(blocking.always);
-    CHECK((execution::query(new_exec, oneway) &&
-           execution::query(new_exec, blocking.always)) == true);
+    auto new_exec = exec.require(blocking.always);
+    CHECK(execution::query(new_exec, blocking.always) == true);
   }
 }
 

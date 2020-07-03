@@ -1,7 +1,7 @@
 #include <mmul.cuh>
 
-void mmul_gpu(const cuda_executor<oneway_t, bulk_t, blocking_t::always_t> &ex,
-              const MatrixXd &a, const MatrixXd &b, MatrixXd &c) {
+void mmul_gpu(const cuda_executor<> &ex, const MatrixXd &a, const MatrixXd &b,
+              MatrixXd &c) {
   double *a_d, *b_d, *c_d;
 
   auto device_upload = [=](const void *var, std::size_t size) {

@@ -20,7 +20,8 @@ struct is_executor_available<omp_executor> : std::true_type {};
 }  // namespace execution
 #endif
 
-template <typename Blocking, typename ProtoAllocator = std::allocator<void>>
+template <typename Blocking = blocking_t::always_t,
+          typename ProtoAllocator = std::allocator<void>>
 struct omp_executor : executor<omp_executor, Blocking, ProtoAllocator> {
   using shape_type = std::size_t;
 

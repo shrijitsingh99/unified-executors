@@ -14,7 +14,8 @@ template <>
 struct is_executor_available<inline_executor> : std::true_type {};
 }  // namespace execution
 
-template <typename Blocking, typename ProtoAllocator = std::allocator<void>>
+template <typename Blocking = blocking_t::always_t,
+          typename ProtoAllocator = std::allocator<void>>
 struct inline_executor : executor<inline_executor, Blocking, ProtoAllocator> {
   using shape_type = std::size_t;
 
