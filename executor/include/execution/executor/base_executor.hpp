@@ -15,8 +15,7 @@
 
 template <template <typename...> class Derived, typename Interface,
           typename Cardinality, typename Blocking, typename ProtoAllocator>
-class executor {
- public:
+struct executor {
   template <typename Executor,
             typename execution::instance_of_base<Derived, Executor> = 0>
   bool operator==(const Executor &rhs) const noexcept {
@@ -29,8 +28,6 @@ class executor {
             typename execution::instance_of_base<Derived, Executor> = 0>
   bool operator!=(const Executor &rhs) const noexcept {
     return !operator==(rhs);
-        Derived<Interface, Cardinality, Blocking, ProtoAllocator>,
-        Executor>::value;
   }
 
   static constexpr bool query(const blocking_t::always_t &t) noexcept {

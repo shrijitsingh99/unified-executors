@@ -6,7 +6,7 @@
 
 #include <execution/property/base_property.hpp>
 
-class oneway_t : public basic_executor_property<oneway_t, true, true> {
+struct oneway_t : basic_executor_property<oneway_t, true, true> {
   template <typename Executor>
   friend Executor require(Executor &ex, const oneway_t &t) {
     return ex.require(t);
@@ -19,7 +19,7 @@ class oneway_t : public basic_executor_property<oneway_t, true, true> {
 
 static constexpr oneway_t oneway{};
 
-class twoway_t : public basic_executor_property<twoway_t, true, true> {
+struct twoway_t : basic_executor_property<twoway_t, true, true> {
   template <typename Executor>
   friend Executor require(Executor &ex, const twoway_t &t) {
     return ex.require(t);

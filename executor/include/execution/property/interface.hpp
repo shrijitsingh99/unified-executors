@@ -6,7 +6,7 @@
 
 #include <execution/property/base_property.hpp>
 
-class single_t : public basic_executor_property<single_t, true, true> {
+struct single_t : basic_executor_property<single_t, true, true> {
   template <typename Executor>
   friend Executor require(Executor &ex, const single_t &t) {
     return ex.require(t);
@@ -19,7 +19,7 @@ class single_t : public basic_executor_property<single_t, true, true> {
 
 static constexpr single_t single{};
 
-class bulk_t : public basic_executor_property<bulk_t, true, true> {
+struct bulk_t : basic_executor_property<bulk_t, true, true> {
   template <typename Executor>
   friend Executor require(Executor &ex, const bulk_t &t) {
     return ex.require(t);

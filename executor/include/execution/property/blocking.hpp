@@ -6,10 +6,9 @@
 
 #include <execution/property/base_property.hpp>
 
-class blocking_t {
+struct blocking_t {
  public:
-  class always_t : public basic_executor_property<always_t, true, true> {
-   public:
+  struct always_t : basic_executor_property<always_t, true, true> {
     template <class Executor>
     friend Executor require(Executor &ex, const always_t &t) {
       return ex.require(t);
@@ -22,8 +21,7 @@ class blocking_t {
 
   const always_t always;
 
-  class never_t : public basic_executor_property<never_t, true, true> {
-   public:
+  struct never_t : basic_executor_property<never_t, true, true> {
     template <class Executor>
     friend Executor require(Executor &ex, const never_t &t) {
       return ex.require(t);
@@ -36,8 +34,7 @@ class blocking_t {
 
   const never_t never;
 
-  class possibly_t : public basic_executor_property<possibly_t, true, true> {
-   public:
+  struct possibly_t : basic_executor_property<possibly_t, true, true> {
     template <class Executor>
     friend Executor require(Executor &ex, const possibly_t &t) {
       return ex.require(t);

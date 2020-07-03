@@ -17,9 +17,8 @@ struct is_executor_available<inline_executor> : std::true_type {};
 
 template <typename Interface, typename Cardinality, typename Blocking,
           typename ProtoAllocator = std::allocator<void>>
-struct inline_executor
-    : public executor<inline_executor, Interface, Cardinality, Blocking,
-                      ProtoAllocator> {
+struct inline_executor : executor<inline_executor, Interface, Cardinality,
+                                  Blocking, ProtoAllocator> {
   using shape_type = std::size_t;
 
   template <typename F>

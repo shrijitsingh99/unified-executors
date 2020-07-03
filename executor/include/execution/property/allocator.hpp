@@ -7,9 +7,8 @@
 #include <execution/property/base_property.hpp>
 
 template <typename ProtoAllocator>
-class allocator_t
-  : public basic_executor_property<allocator_t<ProtoAllocator>, true, true> {
- public:
+struct allocator_t
+    : basic_executor_property<allocator_t<ProtoAllocator>, true, true> {
   constexpr explicit allocator_t(const ProtoAllocator &alloc) : alloc_(alloc) {}
 
   constexpr ProtoAllocator value() const { return alloc_; }
@@ -20,10 +19,10 @@ class allocator_t
 
 template <>
 struct allocator_t<void>
-  : public basic_executor_property<allocator_t<void>, true, true> {
+    : basic_executor_property<allocator_t<void>, true, true> {
   template <class ProtoAllocator>
-  constexpr allocator_t<ProtoAllocator>
-  operator()(const ProtoAllocator &alloc) const {
+  constexpr allocator_t<ProtoAllocator> operator()(
+      const ProtoAllocator &alloc) const {
     return allocator_t<ProtoAllocator>{alloc};
   }
 };

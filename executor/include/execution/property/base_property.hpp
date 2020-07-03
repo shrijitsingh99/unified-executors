@@ -10,8 +10,7 @@
 #include <string>
 
 template <typename Derived, bool requireable, bool preferable>
-class basic_executor_property {
- public:
+struct basic_executor_property {
   static constexpr bool is_requirable = requireable;
   static constexpr bool is_preferable = preferable;
 
