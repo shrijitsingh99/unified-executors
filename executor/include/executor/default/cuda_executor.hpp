@@ -13,6 +13,8 @@
 #include <executor/default/base_executor.hpp>
 #include <executor/default/inline_executor.hpp>
 
+namespace executor {
+
 #ifdef CUDA
 template <typename F>
 __global__ void global_kernel(F f) {
@@ -24,10 +26,8 @@ template <typename Blocking, typename ProtoAllocator>
 struct cuda_executor;
 
 #ifdef CUDA
-namespace executor {
 template <>
 struct is_executor_available<cuda_executor> : std::true_type {};
-}  // namespace executor
 #endif
 
 template <typename Blocking = blocking_t::always_t,
@@ -72,3 +72,5 @@ struct cuda_executor : base_executor<cuda_executor, Blocking, ProtoAllocator> {
 
   static constexpr auto name() { return "cuda"; }
 };
+
+}  // namespace executor

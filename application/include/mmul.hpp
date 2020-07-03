@@ -15,6 +15,7 @@
 
 #include <mmul.cuh>
 
+using namespace executor;
 using namespace Eigen;
 
 template <typename Executor,

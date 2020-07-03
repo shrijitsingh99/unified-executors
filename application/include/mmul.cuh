@@ -10,5 +10,5 @@
 
 using namespace Eigen;
 
-void mmul_gpu(const cuda_executor<> &ex, const MatrixXd &a, const MatrixXd &b,
-              MatrixXd &c);
+void mmul_gpu(const executor::cuda_executor<> &ex, const MatrixXd &a,
+              const MatrixXd &b, MatrixXd &c);

@@ -6,6 +6,8 @@
 
 #include <executor/property/base_property.hpp>
 
+namespace executor {
+
 struct blocking_t {
  public:
   struct always_t : basic_executor_property<always_t, true, true> {
@@ -49,3 +51,5 @@ struct blocking_t {
 };
 
 static constexpr blocking_t blocking{};
+
+}  // namespace executor

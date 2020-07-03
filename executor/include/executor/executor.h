@@ -11,23 +11,24 @@
 #include <executor/trait/can_require.hpp>
 
 // For printing names of the types for which the test was run
-TYPE_TO_STRING(inline_executor<blocking_t::always_t>);
-TYPE_TO_STRING(sse_executor<blocking_t::always_t>);
-TYPE_TO_STRING(omp_executor<blocking_t::always_t>);
-TYPE_TO_STRING(cuda_executor<blocking_t::always_t>);
+TYPE_TO_STRING(executor::inline_executor<executor::blocking_t::always_t>);
+TYPE_TO_STRING(executor::sse_executor<executor::blocking_t::always_t>);
+TYPE_TO_STRING(executor::omp_executor<executor::blocking_t::always_t>);
+TYPE_TO_STRING(executor::cuda_executor<executor::blocking_t::always_t>);
 
 // List of Executor types to run tests for
-#define TEST_EXECUTORS                          \
-  const inline_executor<blocking_t::always_t>,  \
-      const sse_executor<blocking_t::always_t>, \
-      const omp_executor<blocking_t::always_t>
+#define TEST_EXECUTORS                                              \
+  const executor::inline_executor<executor::blocking_t::always_t>,  \
+      const executor::sse_executor<executor::blocking_t::always_t>, \
+      const executor::omp_executor<executor::blocking_t::always_t>
 
 // Only run certain tests for CUDA executors due to different shape API
 // If CUDA is not available fallback to inline executor
-#define TEST_CUDA_EXECUTOR                                           \
-  std::conditional<executor::is_executor_available_v<cuda_executor>, \
-                   cuda_executor<blocking_t::always_t>,              \
-                   inline_executor<blocking_t::always_t>>::type
+#define TEST_CUDA_EXECUTOR                                        \
+  std::conditional<                                               \
+      executor::is_executor_available_v<executor::cuda_executor>, \
+      executor::cuda_executor<executor::blocking_t::always_t>,    \
+      executor::inline_executor<executor::blocking_t::always_t>>::type
 
 TEST_CASE_TEMPLATE_DEFINE("Validity ", E, validity) {
   auto exec = E{};
@@ -42,13 +43,13 @@ TEST_CASE_TEMPLATE_DEFINE("Property Traits ", E, property_traits) {
   auto exec = E{};
 
   SUBCASE("can_require") {
-    CHECK(executor::can_require_v<E, blocking_t::always_t> == true);
-    CHECK(executor::can_require_v<E, blocking_t::never_t> == false);
+    CHECK(executor::can_require_v<E, executor::blocking_t::always_t> == true);
+    CHECK(executor::can_require_v<E, executor::blocking_t::never_t> == false);
   }
 
   SUBCASE("can_prefer") {
-    CHECK(executor::can_prefer_v<E, blocking_t::always_t> == true);
-    CHECK(executor::can_prefer_v<E, blocking_t::never_t> == true);
+    CHECK(executor::can_prefer_v<E, executor::blocking_t::always_t> == true);
+    CHECK(executor::can_prefer_v<E, executor::blocking_t::never_t> == true);
   }
 }
 

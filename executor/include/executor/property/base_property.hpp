@@ -9,6 +9,8 @@
 #include <iostream>
 #include <string>
 
+namespace executor {
+
 template <typename Derived, bool requireable, bool preferable>
 struct basic_executor_property {
   static constexpr bool is_requirable = requireable;
@@ -30,3 +32,5 @@ struct basic_executor_property {
   template <class Executor>
   static constexpr decltype(auto) static_query_v = static_query<Executor>();
 };
+
+}  // namespace executor

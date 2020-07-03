@@ -6,14 +6,14 @@
 
 #include <executor/default/base_executor.hpp>
 
+namespace executor {
+
 template <typename Blocking, typename ProtoAllocator>
 struct sse_executor;
 
 #ifdef __SSE__
-namespace executor {
 template <>
 struct is_executor_available<sse_executor> : std::true_type {};
-}  // namespace executor
 #endif
 
 template <typename Blocking = blocking_t::always_t,
@@ -41,3 +41,5 @@ struct sse_executor : base_executor<sse_executor, Blocking, ProtoAllocator> {
 
   static constexpr auto name() { return "sse"; }
 };
+
+}  // namespace executor

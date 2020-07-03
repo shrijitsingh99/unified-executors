@@ -6,13 +6,13 @@
 
 #include <executor/default/base_executor.hpp>
 
+namespace executor {
+
 template <typename Blocking, typename ProtoAllocator>
 struct inline_executor;
 
-namespace executor {
 template <>
 struct is_executor_available<inline_executor> : std::true_type {};
-}  // namespace executor
 
 template <typename Blocking = blocking_t::always_t,
           typename ProtoAllocator = std::allocator<void>>
@@ -32,3 +32,5 @@ struct inline_executor
 
   static constexpr auto name() { return "inline"; }
 };
+
+}  // namespace executor

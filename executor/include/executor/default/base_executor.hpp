@@ -14,6 +14,8 @@
 #include <stdexcept>
 #include <string>
 
+namespace executor {
+
 template <template <typename...> class Derived, typename Blocking,
           typename ProtoAllocator>
 struct base_executor {
@@ -48,3 +50,5 @@ struct base_executor {
     }
   }
 };
+
+}  // namespace executor

@@ -6,6 +6,8 @@
 
 #include <executor/property/base_property.hpp>
 
+namespace executor {
+
 template <class Executor>
 struct executor_shape
     : basic_executor_property<executor_shape<Executor>, true, true> {
@@ -26,3 +28,5 @@ struct executor_shape;
 
 template <class Executor>
 using executor_shape_t = typename executor_shape<Executor>::type;
+
+}  // namespace executor

@@ -6,6 +6,8 @@
 
 #include <executor/property/base_property.hpp>
 
+namespace executor {
+
 template <typename ProtoAllocator>
 struct allocator_t
     : basic_executor_property<allocator_t<ProtoAllocator>, true, true> {
@@ -28,3 +30,5 @@ struct allocator_t<void>
 };
 
 static constexpr allocator_t<void> allocator{};
+
+}  // namespace executor

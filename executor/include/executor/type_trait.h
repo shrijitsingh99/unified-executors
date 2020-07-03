@@ -1,8 +1,8 @@
 #pragma once
 
-#include <execution/trait/can_prefer.hpp>
-#include <execution/trait/can_query.hpp>
-#include <execution/trait/can_require.hpp>
-#include <execution/trait/is_executor.hpp>
-#include <execution/trait/is_executor_available.hpp>
-#include <execution/trait/is_instance_of_base.hpp>
+#include <executor/trait/can_prefer.hpp>
+#include <executor/trait/can_query.hpp>
+#include <executor/trait/can_require.hpp>
+#include <executor/trait/is_executor.hpp>
+#include <executor/trait/is_executor_available.hpp>
+#include <executor/trait/is_instance_of_base.hpp>

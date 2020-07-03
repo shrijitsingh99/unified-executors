@@ -10,14 +10,14 @@
 
 #include <executor/default/base_executor.hpp>
 
+namespace executor {
+
 template <typename Blocking, typename ProtoAllocator>
 struct omp_executor;
 
 #ifdef _OPENMP
-namespace executor {
 template <>
 struct is_executor_available<omp_executor> : std::true_type {};
-}  // namespace executor
 #endif
 
 template <typename Blocking = blocking_t::always_t,
@@ -37,7 +37,7 @@ struct omp_executor : base_executor<omp_executor, Blocking, ProtoAllocator> {
       {std::forward<F>(f)(omp_get_thread_num());
 }
 #endif
-}
+}  // namespace executor
 
 omp_executor<blocking_t::always_t, ProtoAllocator> require(
     const blocking_t::always_t &t) const {
@@ -47,3 +47,4 @@ omp_executor<blocking_t::always_t, ProtoAllocator> require(
 static constexpr auto name() { return "omp"; }
 }
 ;
+}
