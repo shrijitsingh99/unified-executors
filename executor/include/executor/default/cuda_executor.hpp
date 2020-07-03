@@ -10,8 +10,8 @@
 #include <nvfunctional>
 #endif
 
-#include <execution/executor/base_executor.hpp>
-#include <execution/executor/inline_executor.hpp>
+#include <executor/default/base_executor.hpp>
+#include <executor/default/inline_executor.hpp>
 
 #ifdef CUDA
 template <typename F>
@@ -24,10 +24,10 @@ template <typename Blocking, typename ProtoAllocator>
 struct cuda_executor;
 
 #ifdef CUDA
-namespace execution {
+namespace executor {
 template <>
 struct is_executor_available<cuda_executor> : std::true_type {};
-}  // namespace execution
+}  // namespace executor
 #endif
 
 template <typename Blocking = blocking_t::always_t,

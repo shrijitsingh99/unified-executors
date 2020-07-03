@@ -8,16 +8,16 @@
 #include <omp.h>
 #endif
 
-#include <execution/executor/base_executor.hpp>
+#include <executor/default/base_executor.hpp>
 
 template <typename Blocking, typename ProtoAllocator>
 struct omp_executor;
 
 #ifdef _OPENMP
-namespace execution {
+namespace executor {
 template <>
 struct is_executor_available<omp_executor> : std::true_type {};
-}  // namespace execution
+}  // namespace executor
 #endif
 
 template <typename Blocking = blocking_t::always_t,

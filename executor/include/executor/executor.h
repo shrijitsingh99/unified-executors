@@ -2,13 +2,13 @@
 
 #include <doctest/doctest.h>
 
-#include <execution/executor/cuda_executor.hpp>
-#include <execution/executor/inline_executor.hpp>
-#include <execution/executor/omp_executor.hpp>
-#include <execution/executor/sse_executor.hpp>
-#include <execution/trait/can_prefer.hpp>
-#include <execution/trait/can_query.hpp>
-#include <execution/trait/can_require.hpp>
+#include <executor/default/cuda_executor.hpp>
+#include <executor/default/inline_executor.hpp>
+#include <executor/default/omp_executor.hpp>
+#include <executor/default/sse_executor.hpp>
+#include <executor/trait/can_prefer.hpp>
+#include <executor/trait/can_query.hpp>
+#include <executor/trait/can_require.hpp>
 
 // For printing names of the types for which the test was run
 TYPE_TO_STRING(inline_executor<blocking_t::always_t>);
@@ -24,17 +24,17 @@ TYPE_TO_STRING(cuda_executor<blocking_t::always_t>);
 
 // Only run certain tests for CUDA executors due to different shape API
 // If CUDA is not available fallback to inline executor
-#define TEST_CUDA_EXECUTOR                                            \
-  std::conditional<execution::is_executor_available_v<cuda_executor>, \
-                   cuda_executor<blocking_t::always_t>,               \
+#define TEST_CUDA_EXECUTOR                                           \
+  std::conditional<executor::is_executor_available_v<cuda_executor>, \
+                   cuda_executor<blocking_t::always_t>,              \
                    inline_executor<blocking_t::always_t>>::type
 
 TEST_CASE_TEMPLATE_DEFINE("Validity ", E, validity) {
   auto exec = E{};
 
   SUBCASE("is_executor") {
-    CHECK(execution::is_executor_v<decltype(exec)> == true);
-    CHECK(execution::is_executor_v<int> == false);
+    CHECK(executor::is_executor_v<decltype(exec)> == true);
+    CHECK(executor::is_executor_v<int> == false);
   }
 }
 
@@ -42,13 +42,13 @@ TEST_CASE_TEMPLATE_DEFINE("Property Traits ", E, property_traits) {
   auto exec = E{};
 
   SUBCASE("can_require") {
-    CHECK(execution::can_require_v<E, blocking_t::always_t> == true);
-    CHECK(execution::can_require_v<E, blocking_t::never_t> == false);
+    CHECK(executor::can_require_v<E, blocking_t::always_t> == true);
+    CHECK(executor::can_require_v<E, blocking_t::never_t> == false);
   }
 
   SUBCASE("can_prefer") {
-    CHECK(execution::can_prefer_v<E, blocking_t::always_t> == true);
-    CHECK(execution::can_prefer_v<E, blocking_t::never_t> == true);
+    CHECK(executor::can_prefer_v<E, blocking_t::always_t> == true);
+    CHECK(executor::can_prefer_v<E, blocking_t::never_t> == true);
   }
 }
 

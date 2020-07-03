@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <execution/property/base_property.hpp>
+#include <executor/property/base_property.hpp>
 
 struct blocking_t {
  public:

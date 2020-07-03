@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <execution/trait/is_executor.hpp>
+#include <executor/trait/is_executor.hpp>
 #include <functional>
 #include <iostream>
 #include <string>
@@ -16,7 +16,7 @@ struct basic_executor_property {
 
   template <class T>
   static constexpr bool is_applicable_property() {
-    return execution::is_executor<T>();
+    return executor::is_executor<T>();
   }
 
   template <class Executor>

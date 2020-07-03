@@ -4,11 +4,11 @@
 
 #pragma once
 
-#include <execution/trait/can_require.hpp>
-#include <execution/trait/common_traits.hpp>
+#include <executor/trait/can_require.hpp>
+#include <executor/trait/common_traits.hpp>
 #include <type_traits>
 
-namespace execution {
+namespace executor {
 
 template <typename Executor, typename Property,
           typename std::enable_if_t<
@@ -33,7 +33,7 @@ struct can_prefer : std::false_type {};
 
 template <typename Executor, typename Property>
 struct can_prefer<Executor, Property,
-                  void_t<decltype(execution::prefer(
+                  void_t<decltype(prefer(
                       std::declval<execution::remove_cv_ref_t<Executor>>(),
                       std::declval<execution::remove_cv_ref_t<Property>>()))>>
     : std::true_type {};
@@ -41,4 +41,4 @@ struct can_prefer<Executor, Property,
 template <typename Executor, typename Property>
 constexpr bool can_prefer_v = can_prefer<Executor, Property>::value;
 
-}  // namespace execution
+}  // namespace executor

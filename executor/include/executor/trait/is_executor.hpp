@@ -4,12 +4,12 @@
 
 #pragma once
 
-#include <execution/executor/base_executor.hpp>
-#include <execution/trait/common_traits.hpp>
+#include <executor/default/base_executor.hpp>
+#include <executor/trait/common_traits.hpp>
 #include <experimental/type_traits>
 #include <type_traits>
 
-namespace execution {
+namespace executor {
 
 template <class Executor, typename = void>
 struct is_executor : std::false_type {};
@@ -34,4 +34,4 @@ struct is_executor<
 template <typename Executor>
 constexpr bool is_executor_v = is_executor<Executor>::value;
 
-}  // namespace execution
+}  // namespace executor

@@ -6,7 +6,7 @@
 
 #include <Eigen/Dense>
 #include <array>
-#include <execution/executor/cuda_executor.hpp>
+#include <executor/default/cuda_executor.hpp>
 
 using namespace Eigen;
 

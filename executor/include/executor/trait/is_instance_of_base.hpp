@@ -7,7 +7,7 @@
 #include <experimental/type_traits>
 #include <type_traits>
 
-namespace execution {
+namespace executor {
 
 template <template <typename...> class Type, typename Executor>
 struct is_instance_of_base : std::false_type {};
@@ -23,4 +23,4 @@ template <template <typename...> class Type, typename Executor>
 using instance_of_base =
     std::enable_if_t<is_instance_of_base<Type, Executor>::value, int>;
 
-}  // namespace execution
+}  // namespace executor
