@@ -11,7 +11,8 @@
 #include <omp.h>
 #endif
 
-#include <execution/executor.hpp>
+#include <execution/executor.h>
+
 #include <mmul.cuh>
 
 using namespace Eigen;

@@ -4,8 +4,9 @@
 
 #pragma once
 
+#include <execution/property.h>
+
 #include <array>
-#include <execution/property.hpp>
 #include <execution/trait/is_executor_available.hpp>
 #include <execution/trait/is_instance_of_base.hpp>
 #include <functional>
