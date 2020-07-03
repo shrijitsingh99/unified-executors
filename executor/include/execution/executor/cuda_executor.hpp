@@ -18,11 +18,6 @@ template <typename F>
 __global__ void global_kernel(F f) {
   f();
 }
-
-template <typename NVSTDFunc, typename Lambda>
-__global__ void device_func_insert(NVSTDFunc *f, Lambda l) {
-  *f = l;
-}
 #endif
 
 template <typename Interface, typename Cardinality, typename Blocking,
@@ -43,7 +38,7 @@ struct cuda_executor : executor<cuda_executor, Interface, Cardinality, Blocking,
   using shape_type = typename std::array<int, 6>;
 
   template <typename F>
-  void execute(F &&f) const {
+  void execute(F &f) const {
 #ifdef CUDA
     void *global_kernel_args[] = {static_cast<void *>(&f)};
     cudaLaunchKernel(reinterpret_cast<void *>(global_kernel<F>), 1, 1,
@@ -54,13 +49,14 @@ struct cuda_executor : executor<cuda_executor, Interface, Cardinality, Blocking,
 
   // Temporary fix for unit test compilation
   template <typename F>
-  void bulk_execute(F f, std::size_t n) const {
-    bulk_execute(std::forward<F>(f),
-                 std::array<int, 6>{1, 1, 1, static_cast<int>(n), 1, 1});
+  void bulk_execute(F &f, std::size_t n) const {
+    bulk_execute(f, std::array<int, 6>{1, 1, 1, static_cast<int>(n), 1, 1});
   }
 
+  // Passing rvalue reference of function doesn't currently work with CUDA for
+  // some reason
   template <typename F>
-  void bulk_execute(F f, shape_type shape) const {
+  void bulk_execute(F &f, shape_type shape) const {
 #ifdef CUDA
     void *global_kernel_args[] = {static_cast<void *>(&f)};
     dim3 grid_size(shape[0], shape[1], shape[2]);
