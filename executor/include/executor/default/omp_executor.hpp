@@ -5,7 +5,7 @@
 #pragma once
 
 #ifdef _OPENMP
-#include <omp.h>
+  #include <omp.h>
 #endif
 
 #include <executor/default/base_executor.hpp>
@@ -33,18 +33,17 @@ struct omp_executor : base_executor<omp_executor, Blocking, ProtoAllocator> {
   template <typename F>
   void bulk_execute(F &&f, shape_type n) const {
 #ifdef _OPENMP
-#pragma omp parallel num_threads(n)
-      {std::forward<F>(f)(omp_get_thread_num());
-}
+  #pragma omp parallel for default(none) num_threads(n)
+    for (int i = 0; i < n; ++i) std::forward<F>(f)(omp_get_thread_num());
 #endif
-}  // namespace executor
+  }
 
 omp_executor<blocking_t::always_t, ProtoAllocator> require(
     const blocking_t::always_t &t) const {
   return {};
 }
 
-static constexpr auto name() { return "omp"; }
-}
-;
-}
+  static constexpr auto name() { return "omp"; }
+};
+
+}  // namespace executor
