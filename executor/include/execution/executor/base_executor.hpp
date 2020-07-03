@@ -16,7 +16,7 @@
 
 template <template <typename...> class Derived, typename Blocking,
           typename ProtoAllocator>
-struct executor {
+struct base_executor {
   template <typename Executor,
             typename execution::instance_of_base<Derived, Executor> = 0>
   bool operator==(const Executor &rhs) const noexcept {

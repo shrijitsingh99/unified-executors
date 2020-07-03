@@ -18,7 +18,7 @@ struct is_executor_available<sse_executor> : std::true_type {};
 
 template <typename Blocking = blocking_t::always_t,
           typename ProtoAllocator = std::allocator<void>>
-struct sse_executor : executor<sse_executor, Blocking, ProtoAllocator> {
+struct sse_executor : base_executor<sse_executor, Blocking, ProtoAllocator> {
   using shape_type = std::size_t;
 
   template <typename F>

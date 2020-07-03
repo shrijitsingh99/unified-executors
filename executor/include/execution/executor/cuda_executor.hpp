@@ -32,7 +32,7 @@ struct is_executor_available<cuda_executor> : std::true_type {};
 
 template <typename Blocking = blocking_t::always_t,
           typename ProtoAllocator = std::allocator<void>>
-struct cuda_executor : executor<cuda_executor, Blocking, ProtoAllocator> {
+struct cuda_executor : base_executor<cuda_executor, Blocking, ProtoAllocator> {
   using shape_type = typename std::array<int, 6>;
 
   template <typename F>

@@ -22,7 +22,7 @@ struct is_executor_available<omp_executor> : std::true_type {};
 
 template <typename Blocking = blocking_t::always_t,
           typename ProtoAllocator = std::allocator<void>>
-struct omp_executor : executor<omp_executor, Blocking, ProtoAllocator> {
+struct omp_executor : base_executor<omp_executor, Blocking, ProtoAllocator> {
   using shape_type = std::size_t;
 
   template <typename F>
