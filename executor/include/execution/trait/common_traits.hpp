@@ -6,7 +6,7 @@
 
 #include <type_traits>
 
-namespace executor {
+namespace execution {
 
 // Part of Standard Library in C++17 onwards
 
@@ -16,4 +16,4 @@ using void_t = void;
 template <typename T>
 using remove_cv_ref_t = std::remove_cv_t<std::remove_reference_t<T>>;
 
-}  // namespace executor
+}  // namespace execution

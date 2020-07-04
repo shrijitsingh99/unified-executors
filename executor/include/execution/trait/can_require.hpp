@@ -25,8 +25,8 @@ struct can_require : std::false_type {};
 template <typename Executor, typename Property>
 struct can_require<Executor, Property,
                    void_t<decltype(execution::require(
-                       std::declval<remove_cv_ref_t<Executor>>(),
-                       std::declval<remove_cv_ref_t<Property>>()))>>
+                       std::declval<execution::remove_cv_ref_t<Executor>>(),
+                       std::declval<execution::remove_cv_ref_t<Property>>()))>>
     : std::true_type {};
 
 template <typename Executor, typename Property>
