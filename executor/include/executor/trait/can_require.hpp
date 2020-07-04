@@ -15,7 +15,7 @@ template <typename Executor, typename Property,
                   Property::is_requirable &&
                   Property::template static_query<Executor>(),
               int> = 0>
-constexpr auto require(Executor &&ex, const Property &p) noexcept {
+constexpr auto require(Executor&& ex, const Property& p) noexcept {
   return ex.require(p);
 }
 
@@ -25,8 +25,8 @@ struct can_require : std::false_type {};
 template <typename Executor, typename Property>
 struct can_require<Executor, Property,
                    void_t<decltype(require(
-                       std::declval<execution::remove_cv_ref_t<Executor>>(),
-                       std::declval<execution::remove_cv_ref_t<Property>>()))>>
+                       std::declval<executor::remove_cv_ref_t<Executor>>(),
+                       std::declval<executor::remove_cv_ref_t<Property>>()))>>
     : std::true_type {};
 
 template <typename Executor, typename Property>

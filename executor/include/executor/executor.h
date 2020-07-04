@@ -57,15 +57,15 @@ TEST_CASE_TEMPLATE_DEFINE("Properties", E, properties) {
   auto exec = E{};
 
   SUBCASE("member require & query") {
-    CHECK(exec.query(blocking.never) == false);
-    auto new_exec = exec.require(blocking.always);
-    CHECK(new_exec.query(blocking.always) == true);
+    CHECK(exec.query(executor::blocking.never) == false);
+    auto new_exec = exec.require(executor::blocking.always);
+    CHECK(new_exec.query(executor::blocking.always) == true);
   }
 
   SUBCASE("function require & query") {
-    CHECK(execution::query(exec, blocking.never) == false);
-    auto new_exec = exec.require(blocking.always);
-    CHECK(execution::query(new_exec, blocking.always) == true);
+    CHECK(executor::query(exec, executor::blocking.never) == false);
+    auto new_exec = exec.require(executor::blocking.always);
+    CHECK(executor::query(new_exec, executor::blocking.always) == true);
   }
 }
 

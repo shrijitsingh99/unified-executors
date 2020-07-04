@@ -34,8 +34,8 @@ struct can_prefer : std::false_type {};
 template <typename Executor, typename Property>
 struct can_prefer<Executor, Property,
                   void_t<decltype(prefer(
-                      std::declval<execution::remove_cv_ref_t<Executor>>(),
-                      std::declval<execution::remove_cv_ref_t<Property>>()))>>
+                      std::declval<executor::remove_cv_ref_t<Executor>>(),
+                      std::declval<executor::remove_cv_ref_t<Property>>()))>>
     : std::true_type {};
 
 template <typename Executor, typename Property>
