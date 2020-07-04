@@ -11,8 +11,6 @@
 
 #ifdef CUDA
   #include <cuda_runtime_api.h>
-
-  #include <nvfunctional>
 #endif
 
 #include <executor/default/base_executor.hpp>
