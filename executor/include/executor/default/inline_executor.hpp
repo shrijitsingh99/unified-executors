@@ -1,6 +1,11 @@
-//
-// Created by Shrijit Singh on 2020-06-14.
-//
+/*
+ * SPDX-License-Identifier: BSD-3-Clause
+ *
+ *  Point Cloud Library (PCL) - www.pointclouds.org
+ *  Copyright (c) 2014-, Open Perception, Inc.
+ *  Author(s): Shrijit Singh <shrijitsingh99@gmail.com>
+ *
+ */
 
 #pragma once
 
@@ -26,7 +31,7 @@ struct inline_executor
   }
 
   inline_executor<blocking_t::always_t, ProtoAllocator> require(
-      const blocking_t::always_t &t) const {
+      const blocking_t::always_t& t) const {
     return {};
   }
 

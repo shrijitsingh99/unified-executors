@@ -1,6 +1,11 @@
-//
-// Created by Shrijit Singh on 2020-05-31.
-//
+/*
+ * SPDX-License-Identifier: BSD-3-Clause
+ *
+ *  Point Cloud Library (PCL) - www.pointclouds.org
+ *  Copyright (c) 2014-, Open Perception, Inc.
+ *  Author(s): Shrijit Singh <shrijitsingh99@gmail.com>
+ *
+ */
 
 #pragma once
 
@@ -29,8 +34,8 @@ void mmul(const Executor ex, const MatrixXd& a, const MatrixXd& b,
 
 template <typename Executor,
           typename executor::instance_of_base<omp_executor, Executor> = 0>
-void mmul(const Executor ex, const MatrixXd &a, const MatrixXd &b,
-          MatrixXd &c) {
+void mmul(const Executor ex, const MatrixXd& a, const MatrixXd& b,
+          MatrixXd& c) {
   auto mul = [&](std::size_t thread_idx) {
 #pragma omp for schedule(static)
     for (int i = 0; i < a.rows(); i = i + 1) {
