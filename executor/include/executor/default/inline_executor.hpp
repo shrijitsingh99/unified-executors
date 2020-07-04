@@ -21,7 +21,7 @@ struct inline_executor
   using shape_type = std::size_t;
 
   template <typename F>
-  void execute(F &&f) const {
+  void execute(F&& f) const {
     std::forward<F>(f)();
   }
 

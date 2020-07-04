@@ -26,22 +26,22 @@ struct omp_executor : base_executor<omp_executor, Blocking, ProtoAllocator> {
   using shape_type = std::size_t;
 
   template <typename F>
-  void execute(F &&f) const {
+  void execute(F&& f) const {
     std::forward<F>(f)();
   }
 
   template <typename F>
-  void bulk_execute(F &&f, shape_type n) const {
+  void bulk_execute(F&& f, shape_type n) const {
 #ifdef _OPENMP
-  #pragma omp parallel for default(none) num_threads(n)
+  #pragma omp parallel for num_threads(n)
     for (int i = 0; i < n; ++i) std::forward<F>(f)(omp_get_thread_num());
 #endif
   }
 
-omp_executor<blocking_t::always_t, ProtoAllocator> require(
-    const blocking_t::always_t &t) const {
-  return {};
-}
+  omp_executor<blocking_t::always_t, ProtoAllocator> require(
+      const blocking_t::always_t& t) const {
+    return {};
+  }
 
   static constexpr auto name() { return "omp"; }
 };
