@@ -32,11 +32,10 @@ template <typename Executor, typename Properties, typename = void>
 struct can_prefer : std::false_type {};
 
 template <typename Executor, typename Property>
-struct can_prefer<
-    Executor, Property,
-    COMMON_TRAIT_NS::void_t<decltype(execution::prefer(
-        std::declval<std::remove_cv_t<std::remove_reference_t<Executor>>>(),
-        std::declval<std::remove_cv_t<std::remove_reference_t<Property>>>()))>>
+struct can_prefer<Executor, Property,
+                  void_t<decltype(execution::prefer(
+                      std::declval<remove_cv_ref_t<Executor>>(),
+                      std::declval<remove_cv_ref_t<Property>>()))>>
     : std::true_type {};
 
 template <typename Executor, typename Property>

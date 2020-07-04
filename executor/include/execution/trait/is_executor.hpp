@@ -22,14 +22,11 @@ template <typename Executor>
 struct is_executor<
     Executor,
     std::enable_if_t<
-        std::is_copy_constructible<
-            std::remove_cv_t<std::remove_reference_t<Executor>>>::value &&
-            std::is_same<decltype(std::declval<std::remove_cv_t<
-                                      std::remove_reference_t<Executor>>>()
+        std::is_copy_constructible<remove_cv_ref_t<Executor>>::value &&
+            std::is_same<decltype(std::declval<remove_cv_ref_t<Executor>>()
                                       .execute(detail::noop)),
                          void>::value,
-        COMMON_TRAIT_NS::void_t<decltype(std::declval<Executor>() ==
-                                         std::declval<Executor>())>>>
+        void_t<decltype(std::declval<Executor>() == std::declval<Executor>())>>>
     : std::true_type {};
 
 template <typename Executor>

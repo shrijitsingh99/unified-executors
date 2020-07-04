@@ -4,9 +4,16 @@
 
 #pragma once
 
-#define COMMON_TRAIT_NS execution
+#include <type_traits>
 
-namespace COMMON_TRAIT_NS {
+namespace executor {
+
+// Part of Standard Library in C++17 onwards
+
 template <typename...>
-using void_t = void;  // part of std in c++17
-}  // namespace COMMON_TRAIT_NS
+using void_t = void;
+
+template <typename T>
+using remove_cv_ref_t = std::remove_cv_t<std::remove_reference_t<T>>;
+
+}  // namespace executor
