@@ -31,14 +31,19 @@ struct basic_executor_property {
   // Part of Proposal P0443R13: 2.2.11 & 2.2.12
   template <class Executor>
   static constexpr auto static_query() {
-    return executor::remove_cv_ref_t<Executor>::query(Derived{});
+    return executor::remove_cv_ref_t<Executor>::query(Derived());
   }
 
   template <typename T>
   static constexpr bool is_applicable_property_v = is_applicable_property<T>();
 
-  template <class Executor>
-  static constexpr decltype(auto) static_query_v = static_query<Executor>();
+  // static constexpr Type static_query_v = static_query<Executor>() doesn't
+  // work due to Clang complaining about `invalid operands to binary expression`
+  template <class Executor,
+            class Type = decltype(executor::remove_cv_ref_t<Executor>::query(
+                *static_cast<Derived*>(0)))>
+  static constexpr Type static_query_v =
+      executor::remove_cv_ref_t<Executor>::query(Derived());
 };
 
 }  // namespace executor

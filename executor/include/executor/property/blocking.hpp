@@ -25,17 +25,23 @@ struct blocking_t : basic_executor_property<blocking_t, false, false> {
 
   constexpr blocking_t() : value_{0} {};
 
-  struct always_t : basic_executor_property<always_t, true, true> {};
+  struct always_t : basic_executor_property<always_t, true, true> {
+    static constexpr always_t value() { return {}; }
+  };
 
   static constexpr always_t always{};
   constexpr blocking_t(const always_t&) : value_{1} {};
 
-  struct never_t : basic_executor_property<never_t, true, true> {};
+  struct never_t : basic_executor_property<never_t, true, true> {
+    static constexpr never_t value() { return {}; }
+  };
 
   static constexpr never_t never{};
   constexpr blocking_t(const never_t&) : value_{2} {};
 
-  struct possibly_t : basic_executor_property<possibly_t, true, true> {};
+  struct possibly_t : basic_executor_property<possibly_t, true, true> {
+    static constexpr possibly_t value() { return {}; }
+  };
 
   static constexpr possibly_t possibly{};
   constexpr blocking_t(const possibly_t&) : value_{3} {};

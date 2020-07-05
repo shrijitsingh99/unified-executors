@@ -19,7 +19,7 @@ template <typename Executor, typename Property,
           typename std::enable_if_t<
               Property::template is_applicable_property_v<Executor>, int> = 0>
 constexpr auto query(Executor&& ex, const Property& p) noexcept {
-  return Property::template static_query<Executor>();
+  return Property::template static_query_v<Executor>;
 }
 
 }  // namespace executor
