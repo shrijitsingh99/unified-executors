@@ -26,6 +26,6 @@ constexpr bool is_instance_of_base_v =
 
 template <template <typename...> class Type, typename Executor>
 using instance_of_base =
-    std::enable_if_t<is_instance_of_base<Type, Executor>::value, int>;
+    std::enable_if_t<is_instance_of_base_v<Type, Executor>, int>;
 
 }  // namespace executor
