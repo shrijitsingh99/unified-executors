@@ -15,46 +15,31 @@ namespace executor {
 
 struct blocking_t : basic_executor_property<blocking_t, false, false> {
   friend constexpr bool operator==(const blocking_t& a, const blocking_t& b) {
-    return a.which_ == b.which_;
+    return a.value_ == b.value_;
   }
 
   friend constexpr bool operator!=(const blocking_t& a, const blocking_t& b) {
     return !(a == b);
   }
 
-  constexpr blocking_t() : which_{0} {};
+  constexpr blocking_t() : value_{0} {};
 
-  struct always_t : basic_executor_property<always_t, true, true> {
-    template <class Executor>
-    friend Executor require(Executor& ex, const always_t& t) {
-      return ex.require(t);
-    }
-  };
+  struct always_t : basic_executor_property<always_t, true, true> {};
 
   static constexpr always_t always{};
-  constexpr blocking_t(const always_t&) : which_{1} {};
+  constexpr blocking_t(const always_t&) : value_{1} {};
 
-  struct never_t : basic_executor_property<never_t, true, true> {
-    template <class Executor>
-    friend Executor require(Executor& ex, const never_t& t) {
-      return ex.require(t);
-    }
-  };
+  struct never_t : basic_executor_property<never_t, true, true> {};
 
   static constexpr never_t never{};
-  constexpr blocking_t(const never_t&) : which_{2} {};
+  constexpr blocking_t(const never_t&) : value_{2} {};
 
-  struct possibly_t : basic_executor_property<possibly_t, true, true> {
-    template <class Executor>
-    friend Executor require(Executor& ex, const possibly_t& t) {
-      return ex.require(t);
-    }
-  };
+  struct possibly_t : basic_executor_property<possibly_t, true, true> {};
 
   static constexpr possibly_t possibly{};
-  constexpr blocking_t(const possibly_t&) : which_{3} {};
+  constexpr blocking_t(const possibly_t&) : value_{3} {};
 
-  int which_;
+  int value_;
 };
 
 static constexpr blocking_t blocking{};

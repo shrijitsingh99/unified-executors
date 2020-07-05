@@ -74,9 +74,9 @@ TEST_CASE_TEMPLATE_DEFINE("Properties", E, properties) {
   }
 
   SUBCASE("function require & query") {
-    CHECK_EQ(executor::query(exec, executor::blocking_t{}),
+    CHECK_EQ(executor::query(exec, executor::blocking_t::always),
              executor::blocking_t::always_t{});
-    auto new_exec = exec.require(executor::blocking_t::always_t{});
+    auto new_exec = executor::require(exec, executor::blocking_t::always);
     CHECK_EQ(executor::query(new_exec, executor::blocking_t{}),
              executor::blocking_t::always_t{});
   }

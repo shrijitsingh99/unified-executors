@@ -19,8 +19,9 @@ template <
     typename std::enable_if_t<
         Property::template is_applicable_property_v<Executor> &&
             Property::is_requirable &&
-            std::is_same<decltype(Property::template static_query<Executor>()),
-                         Property>::value,
+            std::is_same<remove_cv_ref_t<decltype(
+                             Property::template static_query_v<Executor>)>,
+                         remove_cv_ref_t<Property>>::value,
         int> = 0>
 constexpr auto require(Executor&& ex, const Property& p) noexcept {
   return ex.require(p);

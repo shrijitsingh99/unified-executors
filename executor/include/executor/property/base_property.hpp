@@ -28,7 +28,7 @@ struct basic_executor_property {
 
   template <class Executor>
   static constexpr auto static_query() {
-    return Executor::query(Derived{});
+    return executor::remove_cv_ref_t<Executor>::query(Derived{});
   }
 
   template <typename T>
