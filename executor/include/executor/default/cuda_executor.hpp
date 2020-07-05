@@ -35,8 +35,20 @@ struct is_executor_available<cuda_executor> : std::true_type {};
 
 template <typename Blocking = blocking_t::always_t,
           typename ProtoAllocator = std::allocator<void>>
-struct cuda_executor : base_executor<cuda_executor, Blocking, ProtoAllocator> {
+struct cuda_executor {
   using shape_type = typename std::array<int, 6>;
+
+  template <typename Executor, instance_of_base<cuda_executor, Executor> = 0>
+  friend bool operator==(const cuda_executor& lhs,
+                         const Executor& rhs) noexcept {
+    return std::is_same<cuda_executor, Executor>::value;
+  }
+
+  template <typename Executor, instance_of_base<cuda_executor, Executor> = 0>
+  friend bool operator!=(const cuda_executor& lhs,
+                         const Executor& rhs) noexcept {
+    return !operator==(lhs, rhs);
+  }
 
   template <typename F>
   void execute(F& f) const {
@@ -68,8 +80,10 @@ struct cuda_executor : base_executor<cuda_executor, Blocking, ProtoAllocator> {
 #endif
   }
 
+  static constexpr auto query(blocking_t) noexcept { return Blocking{}; }
+
   cuda_executor<blocking_t::always_t, ProtoAllocator> require(
-      const blocking_t::always_t& t) const {
+      const blocking_t::always_t&) const {
     return {};
   }
 

@@ -27,8 +27,20 @@ struct is_executor_available<omp_executor> : std::true_type {};
 
 template <typename Blocking = blocking_t::always_t,
           typename ProtoAllocator = std::allocator<void>>
-struct omp_executor : base_executor<omp_executor, Blocking, ProtoAllocator> {
+struct omp_executor {
   using shape_type = std::size_t;
+
+  template <typename Executor, instance_of_base<omp_executor, Executor> = 0>
+  friend bool operator==(const omp_executor& lhs,
+                         const Executor& rhs) noexcept {
+    return std::is_same<omp_executor, Executor>::value;
+  }
+
+  template <typename Executor, instance_of_base<omp_executor, Executor> = 0>
+  friend bool operator!=(const omp_executor& lhs,
+                         const Executor& rhs) noexcept {
+    return !operator==(lhs, rhs);
+  }
 
   template <typename F>
   void execute(F&& f) const {
@@ -43,8 +55,10 @@ struct omp_executor : base_executor<omp_executor, Blocking, ProtoAllocator> {
 #endif
   }
 
+  static constexpr auto query(blocking_t) noexcept { return Blocking{}; }
+
   omp_executor<blocking_t::always_t, ProtoAllocator> require(
-      const blocking_t::always_t& t) const {
+      const blocking_t::always_t&) const {
     return {};
   }
 

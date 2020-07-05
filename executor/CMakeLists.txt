@@ -16,10 +16,10 @@ else()
     enable_language(CUDA)
 endif()
 
-add_library(${PROJECT_NAME} INTERFACE)
-target_include_directories(${PROJECT_NAME} INTERFACE ${PROJECT_SOURCE_DIR}/include ${CUDA_INCLUDE_DIRS})
-target_link_libraries(${PROJECT_NAME} INTERFACE CONAN_PKG::doctest ${OpenMP_LIBS} ${CUDA_LIBRARIES})
-target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_14)
+add_library(${PROJECT_NAME} STATIC src/property/blocking.cpp)
+target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/include ${CUDA_INCLUDE_DIRS})
+target_link_libraries(${PROJECT_NAME} CONAN_PKG::doctest ${OpenMP_LIBS} ${CUDA_LIBRARIES})
+target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_14)
 
 if (CUDA_FOUND)
     # Lambda support in CUDA requires the --expt-extended-lambda flag to be explicitly specified

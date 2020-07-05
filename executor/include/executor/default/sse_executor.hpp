@@ -23,8 +23,20 @@ struct is_executor_available<sse_executor> : std::true_type {};
 
 template <typename Blocking = blocking_t::always_t,
           typename ProtoAllocator = std::allocator<void>>
-struct sse_executor : base_executor<sse_executor, Blocking, ProtoAllocator> {
+struct sse_executor {
   using shape_type = std::size_t;
+
+  template <typename Executor, instance_of_base<sse_executor, Executor> = 0>
+  friend bool operator==(const sse_executor& lhs,
+                         const Executor& rhs) noexcept {
+    return std::is_same<sse_executor, Executor>::value;
+  }
+
+  template <typename Executor, instance_of_base<sse_executor, Executor> = 0>
+  friend bool operator!=(const sse_executor& lhs,
+                         const Executor& rhs) noexcept {
+    return !operator==(lhs, rhs);
+  }
 
   template <typename F>
   void execute(F&& f) const {
@@ -39,8 +51,10 @@ struct sse_executor : base_executor<sse_executor, Blocking, ProtoAllocator> {
     }
   }
 
+  static constexpr auto query(blocking_t) noexcept { return Blocking{}; }
+
   sse_executor<blocking_t::always_t, ProtoAllocator> require(
-      const blocking_t::always_t& t) const {
+      const blocking_t::always_t&) const {
     return {};
   }
 

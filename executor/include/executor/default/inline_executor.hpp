@@ -21,17 +21,37 @@ struct is_executor_available<inline_executor> : std::true_type {};
 
 template <typename Blocking = blocking_t::always_t,
           typename ProtoAllocator = std::allocator<void>>
-struct inline_executor
-    : base_executor<inline_executor, Blocking, ProtoAllocator> {
+struct inline_executor {
   using shape_type = std::size_t;
+
+  template <typename Executor, instance_of_base<inline_executor, Executor> = 0>
+  friend bool operator==(const inline_executor& lhs,
+                         const Executor& rhs) noexcept {
+    return std::is_same<inline_executor, Executor>::value;
+  }
+
+  template <typename Executor, instance_of_base<inline_executor, Executor> = 0>
+  friend bool operator!=(const inline_executor& lhs,
+                         const Executor& rhs) noexcept {
+    return !operator==(lhs, rhs);
+  }
 
   template <typename F>
   void execute(F&& f) const {
     std::forward<F>(f)();
   }
 
+  template <typename F, typename... Args>
+  void bulk_execute(F&& f, Args&&... args, std::size_t n) const {
+    for (std::size_t i = 0; i < n; ++i) {
+      std::forward<F>(f)(std::forward<Args>(args)..., i);
+    }
+  }
+
+  static constexpr auto query(blocking_t) noexcept { return Blocking{}; }
+
   inline_executor<blocking_t::always_t, ProtoAllocator> require(
-      const blocking_t::always_t& t) const {
+      const blocking_t::always_t&) const {
     return {};
   }
 

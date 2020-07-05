@@ -14,12 +14,14 @@
 
 namespace executor {
 
-template <typename Executor, typename Property,
-          typename std::enable_if_t<
-              Property::template is_applicable_property_v<Executor> &&
-                  Property::is_requirable &&
-                  Property::template static_query<Executor>(),
-              int> = 0>
+template <
+    typename Executor, typename Property,
+    typename std::enable_if_t<
+        Property::template is_applicable_property_v<Executor> &&
+            Property::is_requirable &&
+            std::is_same<decltype(Property::template static_query<Executor>()),
+                         Property>::value,
+        int> = 0>
 constexpr auto require(Executor&& ex, const Property& p) noexcept {
   return ex.require(p);
 }
