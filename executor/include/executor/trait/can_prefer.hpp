@@ -33,6 +33,7 @@ constexpr auto prefer(Executor&& ex, const Property& p) noexcept {
   return std::forward<Executor>(ex);
 }
 
+// Part of Proposal P1393R0
 template <typename Executor, typename Properties, typename = void>
 struct can_prefer : std::false_type {};
 

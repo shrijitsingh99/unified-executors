@@ -13,6 +13,7 @@
 
 namespace executor {
 
+// Part of Proposal P0443R13: 2.2.13
 template <typename ProtoAllocator>
 struct allocator_t
     : basic_executor_property<allocator_t<ProtoAllocator>, true, true> {

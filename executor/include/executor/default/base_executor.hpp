@@ -14,8 +14,4 @@
 #include <array>
 #include <executor/trait/is_executor_available.hpp>
 #include <executor/trait/is_instance_of_base.hpp>
-#include <functional>
-#include <iostream>
-#include <memory>
-#include <stdexcept>
 #include <string>

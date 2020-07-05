@@ -38,6 +38,7 @@ using check_equality_comparable =
 
 }  // namespace detail
 
+// Part of Proposal P0443R10: Removed from R11 in favour on concepts
 template <typename Executor>
 struct is_executor<
     Executor,

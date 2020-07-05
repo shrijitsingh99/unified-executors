@@ -18,14 +18,17 @@ namespace executor {
 
 template <typename Derived, bool requireable, bool preferable>
 struct basic_executor_property {
+  // Part of Proposal P1393R0
   static constexpr bool is_requirable = requireable;
   static constexpr bool is_preferable = preferable;
 
-  template <class T>
+  // Part of Proposal P1393R0
+  template <class Executor>
   static constexpr bool is_applicable_property() {
-    return executor::is_executor<T>();
+    return executor::is_executor<Executor>();
   }
 
+  // Part of Proposal P0443R13: 2.2.11 & 2.2.12
   template <class Executor>
   static constexpr auto static_query() {
     return executor::remove_cv_ref_t<Executor>::query(Derived{});

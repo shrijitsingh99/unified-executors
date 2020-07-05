@@ -13,6 +13,7 @@
 
 namespace executor {
 
+// Part of Proposal P0443R13: 2.2.12.1
 struct blocking_t : basic_executor_property<blocking_t, false, false> {
   friend constexpr bool operator==(const blocking_t& a, const blocking_t& b) {
     return a.value_ == b.value_;

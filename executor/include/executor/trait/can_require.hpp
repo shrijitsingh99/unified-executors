@@ -31,6 +31,7 @@ constexpr auto require(Executor&& ex, const Property& p) noexcept {
   return ex.require(p);
 }
 
+// Part of Proposal P1393R0
 template <typename Executor, typename Properties, typename = void>
 struct can_require : std::false_type {};
 
