@@ -32,10 +32,6 @@ struct contains_execute<
         decltype(std::declval<Executor>().execute(detail::noop)), void>::value>>
     : std::true_type {};
 
-template <typename Executor>
-using check_equality_comparable =
-    decltype(std::declval<Executor>() == std::declval<Executor>());
-
 }  // namespace detail
 
 // Part of Proposal P0443R10: Removed from R11 in favour on concepts
@@ -43,8 +39,8 @@ template <typename Executor>
 struct is_executor<
     Executor,
     std::enable_if_t<std::is_copy_constructible<Executor>::value &&
-                         detail::contains_execute<Executor>::value,
-                     void_t<detail::check_equality_comparable<Executor>>>>
+                     detail::contains_execute<Executor>::value &&
+                     executor::equality_comparable<Executor, Executor>::value>>
     : std::true_type {};
 
 template <typename Executor>
