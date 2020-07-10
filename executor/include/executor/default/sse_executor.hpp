@@ -51,7 +51,7 @@ struct sse_executor {
     }
   }
 
-  static constexpr auto query(blocking_t) noexcept { return Blocking{}; }
+  static constexpr auto query(const blocking_t&) noexcept { return Blocking{}; }
 
   sse_executor<blocking_t::always_t, ProtoAllocator> require(
       const blocking_t::always_t&) const {

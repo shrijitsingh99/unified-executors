@@ -27,10 +27,10 @@ struct contains_execute : std::false_type {};
 
 template <typename Executor>
 struct contains_execute<
-    Executor, std::enable_if_t<std::is_same<
-                  decltype(std::declval<executor::remove_cv_ref_t<Executor>>()
-                               .execute(detail::noop)),
-                  void>::value>> : std::true_type {};
+    Executor,
+    std::enable_if_t<std::is_same<
+        decltype(std::declval<Executor>().execute(detail::noop)), void>::value>>
+    : std::true_type {};
 
 template <typename Executor>
 using check_equality_comparable =

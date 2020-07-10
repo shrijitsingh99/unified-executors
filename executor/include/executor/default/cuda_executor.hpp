@@ -80,7 +80,7 @@ struct cuda_executor {
 #endif
   }
 
-  static constexpr auto query(blocking_t) noexcept { return Blocking{}; }
+  static constexpr auto query(const blocking_t&) noexcept { return Blocking{}; }
 
   cuda_executor<blocking_t::always_t, ProtoAllocator> require(
       const blocking_t::always_t&) const {
