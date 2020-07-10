@@ -20,24 +20,27 @@
 #include <executor/trait/can_require.hpp>
 
 // For printing names of the types for which the test was run
-TYPE_TO_STRING(executor::inline_executor<executor::blocking_t::always_t>);
-TYPE_TO_STRING(executor::sse_executor<executor::blocking_t::always_t>);
-TYPE_TO_STRING(executor::omp_executor<executor::blocking_t::always_t>);
-TYPE_TO_STRING(executor::cuda_executor<executor::blocking_t::always_t>);
+using inline_exec_type =
+    executor::inline_executor<executor::blocking_t::always_t>;
+using sse_exec_type = executor::sse_executor<executor::blocking_t::always_t>;
+using omp_exec_type = executor::omp_executor<executor::blocking_t::always_t>;
+using cuda_exec_type = executor::cuda_executor<executor::blocking_t::always_t>;
+
+TYPE_TO_STRING(inline_exec_type);
+TYPE_TO_STRING(sse_exec_type);
+TYPE_TO_STRING(omp_exec_type);
+TYPE_TO_STRING(cuda_exec_type);
 
 // List of Executor types to run tests for
-#define TEST_EXECUTORS                                              \
-  const executor::inline_executor<executor::blocking_t::always_t>,  \
-      const executor::sse_executor<executor::blocking_t::always_t>, \
-      const executor::omp_executor<executor::blocking_t::always_t>
+#define TEST_EXECUTORS                                           \
+  const inline_exec_type, inline_exec_type, const sse_exec_type, \
+      sse_exec_type, const omp_exec_type, omp_exec_type
 
 // Only run certain tests for CUDA executors due to different shape API
 // If CUDA is not available fallback to inline executor
-#define TEST_CUDA_EXECUTOR                                        \
-  std::conditional<                                               \
-      executor::is_executor_available_v<executor::cuda_executor>, \
-      executor::cuda_executor<executor::blocking_t::always_t>,    \
-      executor::inline_executor<executor::blocking_t::always_t>>::type
+#define TEST_CUDA_EXECUTOR                                                     \
+  std::conditional<executor::is_executor_available_v<executor::cuda_executor>, \
+                   cuda_exec_type, inline_exec_type>::type
 
 TEST_CASE_TEMPLATE_DEFINE("Validity ", E, validity) {
   auto exec = E{};
