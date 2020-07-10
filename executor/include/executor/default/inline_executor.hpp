@@ -38,13 +38,13 @@ struct inline_executor {
 
   template <typename F>
   void execute(F&& f) const {
-    std::forward<F>(f)();
+    f();
   }
 
   template <typename F, typename... Args>
   void bulk_execute(F&& f, Args&&... args, std::size_t n) const {
     for (std::size_t i = 0; i < n; ++i) {
-      std::forward<F>(f)(std::forward<Args>(args)..., i);
+      f(std::forward<Args>(args)..., i);
     }
   }
 

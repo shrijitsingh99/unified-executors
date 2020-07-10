@@ -43,7 +43,7 @@ TYPE_TO_STRING(cuda_exec_type);
                    cuda_exec_type, inline_exec_type>::type
 
 TEST_CASE_TEMPLATE_DEFINE("Validity ", E, validity) {
-  auto exec = E{};
+  E exec;
 
   SUBCASE("is_executor") {
     CHECK(executor::is_executor_v<decltype(exec)> == true);
@@ -52,7 +52,7 @@ TEST_CASE_TEMPLATE_DEFINE("Validity ", E, validity) {
 }
 
 TEST_CASE_TEMPLATE_DEFINE("Property Traits ", E, property_traits) {
-  auto exec = E{};
+  E exec;
 
   SUBCASE("can_require") {
     CHECK(executor::can_require_v<E, executor::blocking_t::always_t> == true);
@@ -66,7 +66,7 @@ TEST_CASE_TEMPLATE_DEFINE("Property Traits ", E, property_traits) {
 }
 
 TEST_CASE_TEMPLATE_DEFINE("Properties", E, properties) {
-  auto exec = E{};
+  E exec;
 
   SUBCASE("member require & query") {
     CHECK_EQ(exec.query(executor::blocking_t{}),
@@ -86,7 +86,7 @@ TEST_CASE_TEMPLATE_DEFINE("Properties", E, properties) {
 }
 
 TEST_CASE_TEMPLATE_DEFINE("Execute ", E, execute) {
-  auto exec = E{};
+  E exec;
   int a = 1, b = 2;
 
   SUBCASE("execute") {

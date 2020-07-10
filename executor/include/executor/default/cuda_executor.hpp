@@ -63,7 +63,8 @@ struct cuda_executor {
   // Temporary fix for unit test compilation
   template <typename F>
   void bulk_execute(F& f, std::size_t n) const {
-    bulk_execute(f, std::array<int, 6>{1, 1, 1, static_cast<int>(n), 1, 1});
+    bulk_execute(std::move(f),
+                 std::array<int, 6>{1, 1, 1, static_cast<int>(n), 1, 1});
   }
 
   // Passing rvalue reference of function doesn't currently work with CUDA for

@@ -20,7 +20,8 @@ template <typename Executor, typename Property,
               Property::template is_applicable_property_v<Executor> &&
                   Property::is_preferable && can_require_v<Executor, Property>,
               int> = 0>
-constexpr auto prefer(const Executor& ex, const Property& p) noexcept {
+constexpr decltype(auto) prefer(const Executor& ex,
+                                const Property& p) noexcept {
   return ex.require(p);
 }
 
@@ -29,7 +30,8 @@ template <typename Executor, typename Property,
               Property::template is_applicable_property_v<Executor> &&
                   Property::is_preferable && !can_require_v<Executor, Property>,
               int> = 0>
-constexpr auto prefer(const Executor& ex, const Property& p) noexcept {
+constexpr decltype(auto) prefer(const Executor& ex,
+                                const Property& p) noexcept {
   return ex;
 }
 

@@ -44,14 +44,14 @@ struct omp_executor {
 
   template <typename F>
   void execute(F&& f) const {
-    std::forward<F>(f)();
+    f();
   }
 
   template <typename F>
   void bulk_execute(F&& f, shape_type n) const {
 #ifdef _OPENMP
   #pragma omp parallel for num_threads(n)
-    for (int i = 0; i < n; ++i) std::forward<F>(f)(omp_get_thread_num());
+    for (int i = 0; i < n; ++i) f(omp_get_thread_num());
 #endif
   }
 

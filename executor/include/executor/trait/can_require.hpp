@@ -27,7 +27,8 @@ template <typename Executor, typename Property,
                   Property::is_requirable &&
                   detail::contains_property<Executor, Property>::value,
               int> = 0>
-constexpr auto require(const Executor& ex, const Property& p) noexcept {
+constexpr decltype(auto) require(const Executor& ex,
+                                 const Property& p) noexcept {
   return ex.require(p);
 }
 

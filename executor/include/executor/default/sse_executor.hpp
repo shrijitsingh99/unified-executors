@@ -40,14 +40,14 @@ struct sse_executor {
 
   template <typename F>
   void execute(F&& f) const {
-    std::forward<F>(f)();
+    f();
   }
 
   template <typename F>
   void bulk_execute(F&& f, shape_type n) const {
 #pragma simd
     for (std::size_t i = 0; i < n; ++i) {
-      std::forward<F>(f)(i);
+      f(i);
     }
   }
 
