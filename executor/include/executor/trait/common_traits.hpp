@@ -32,7 +32,7 @@ struct equality_comparable<
     executor::void_t<decltype(std::declval<T1>() == std::declval<T2>(),
                               std::declval<T2>() == std::declval<T1>(),
                               std::declval<T1>() != std::declval<T2>(),
-                              std::declval<T2>() == std::declval<T1>())>>
+                              std::declval<T2>() != std::declval<T1>())>>
     : std::true_type {};
 
 template <typename T1, typename T2>
