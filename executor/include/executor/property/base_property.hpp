@@ -39,9 +39,9 @@ struct basic_executor_property {
 
   // static constexpr Type static_query_v = static_query<Executor>() doesn't
   // work due to Clang complaining about `invalid operands to binary expression`
-  template <class Executor, class Type = const decltype(
-                                std::remove_reference_t<Executor>::query(
-                                    std::declval<Derived>()))>
+  template <typename Executor,
+            typename Type = decltype(std::remove_reference_t<Executor>::query(
+                std::declval<Derived>()))>
   static constexpr Type static_query_v =
       std::remove_reference_t<Executor>::query(Derived{});
 };
