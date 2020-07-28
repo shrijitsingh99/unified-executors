@@ -45,10 +45,9 @@ struct sse_executor {
 
   template <typename F>
   void bulk_execute(F&& f, shape_type n) const {
+    // TODO: Look into what bulk execute will do for SSE
 #pragma simd
-    for (std::size_t i = 0; i < n; ++i) {
-      f(i);
-    }
+    f(0);
   }
 
   static constexpr auto query(const blocking_t&) noexcept { return Blocking{}; }

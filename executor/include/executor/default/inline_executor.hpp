@@ -42,10 +42,8 @@ struct inline_executor {
   }
 
   template <typename F, typename... Args>
-  void bulk_execute(F&& f, Args&&... args, std::size_t n) const {
-    for (std::size_t i = 0; i < n; ++i) {
-      f(std::forward<Args>(args)..., i);
-    }
+  void bulk_execute(F&& f, std::size_t n) const {
+    f(0);
   }
 
   static constexpr auto query(const blocking_t&) noexcept { return Blocking(); }

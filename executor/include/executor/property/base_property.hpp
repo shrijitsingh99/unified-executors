@@ -11,8 +11,6 @@
 
 #include <executor/trait/is_executor.hpp>
 #include <functional>
-#include <iostream>
-#include <string>
 
 namespace executor {
 

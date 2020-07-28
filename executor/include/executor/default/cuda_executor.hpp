@@ -36,7 +36,13 @@ struct is_executor_available<cuda_executor> : std::true_type {};
 template <typename Blocking = blocking_t::always_t,
           typename ProtoAllocator = std::allocator<void>>
 struct cuda_executor {
-  using shape_type = typename std::array<int, 6>;
+  struct dim3 {
+    int x, y, z;
+  };
+  using grid_dim = dim3;
+  using block_dim = dim3;
+
+  using shape_type = std::tuple<grid_dim, block_dim>;
 
   template <typename Executor, instance_of_base<cuda_executor, Executor> = 0>
   friend bool operator==(const cuda_executor& lhs,
@@ -60,17 +66,11 @@ struct cuda_executor {
 #endif
   }
 
-  // Temporary fix for unit test compilation
-  template <typename F>
-  void bulk_execute(F& f, std::size_t n) const {
-    bulk_execute(std::move(f),
-                 std::array<int, 6>{1, 1, 1, static_cast<int>(n), 1, 1});
-  }
-
   // Passing rvalue reference of function doesn't currently work with CUDA for
   // some reason
   template <typename F>
   void bulk_execute(F& f, shape_type shape) const {
+    // TODO: Add custom shape property for CUDA executor
 #ifdef CUDA
     void* global_kernel_args[] = {static_cast<void*>(&f)};
     dim3 grid_size(shape[0], shape[1], shape[2]);

@@ -10,14 +10,13 @@
 #pragma once
 
 #include <doctest/doctest.h>
+#include <executor/property.h>
+#include <executor/type_trait.h>
 
 #include <executor/default/cuda_executor.hpp>
 #include <executor/default/inline_executor.hpp>
 #include <executor/default/omp_executor.hpp>
 #include <executor/default/sse_executor.hpp>
-#include <executor/trait/can_prefer.hpp>
-#include <executor/trait/can_query.hpp>
-#include <executor/trait/can_require.hpp>
 
 // For printing names of the types for which the test was run
 using inline_exec_type =
@@ -95,7 +94,11 @@ TEST_CASE_TEMPLATE_DEFINE("Execute ", E, execute) {
 
   SUBCASE("bulk_execute") {
     int c[3] = {0};
-    exec.bulk_execute([&](int i) { c[i] = 1; }, 3);
+    exec.bulk_execute(
+        [&](auto i) {
+          for (auto& val : c) val = 1;
+        },
+        3);
     CHECK(c[0] + c[1] + c[2] == 3);
   }
 }
