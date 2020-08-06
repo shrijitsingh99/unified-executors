@@ -21,6 +21,15 @@ using void_t = void;
 template <typename T>
 using remove_cv_ref_t = std::remove_cv_t<std::remove_reference_t<T>>;
 
+// Switch to std::disjunction in C++17
+// https://stackoverflow.com/questions/31533469/check-a-parameter-pack-for-all-of-type-t
+template <typename... Conds>
+struct disjunction : std::false_type {};
+
+template <typename Cond, typename... Conds>
+struct disjunction<Cond, Conds...>
+    : std::conditional<Cond::value, std::true_type, disjunction<Conds...>>::type {};
+
 // In accordance with equality_comparable concept in C++ 20
 
 template <typename T1, typename T2, typename = void>
