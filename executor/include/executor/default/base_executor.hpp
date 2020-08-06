@@ -9,9 +9,3 @@
 
 #pragma once
 
-#include <executor/property.h>
-
-#include <array>
-#include <executor/trait/is_executor_available.hpp>
-#include <executor/trait/is_instance_of_base.hpp>
-#include <string>

@@ -9,7 +9,8 @@
 
 #pragma once
 
-#include <executor/default/base_executor.hpp>
+#include <executor/property.h>
+#include <executor/type_trait.h>
 
 namespace executor {
 

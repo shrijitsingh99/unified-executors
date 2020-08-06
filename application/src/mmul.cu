@@ -27,8 +27,10 @@ void mmul_gpu(const executor::cuda_executor<>& ex, const MatrixXd& a,
   c_d =
       static_cast<double*>(device_upload(c.data(), c.size() * sizeof(double)));
 
-  auto shape = executor::executor_shape_t<executor::cuda_executor<> >(
-      {0, 0, 0}, {0, 0, 0});
+  auto shape = executor::executor_shape_t<executor::cuda_executor<>>{
+      {static_cast<unsigned int>(ceil(a.rows() / 2.0)),
+       static_cast<unsigned int>(ceil(b.cols() / 2.0)), 1},
+      {2, 2, 1}};
 
   auto mul = [=] __device__() {
     unsigned row = blockIdx.y * blockDim.y + threadIdx.y;

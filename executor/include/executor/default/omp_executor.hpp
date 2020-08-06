@@ -13,7 +13,8 @@
   #include <omp.h>
 #endif
 
-#include <executor/default/base_executor.hpp>
+#include <executor/property.h>
+#include <executor/type_trait.h>
 
 namespace executor {
 
@@ -29,6 +30,11 @@ template <typename Blocking = blocking_t::always_t,
           typename ProtoAllocator = std::allocator<void>>
 struct omp_executor {
   using shape_type = std::size_t;
+
+  using index_type = struct {
+    int max;
+    int idx;
+  };
 
   template <typename Executor, instance_of_base<omp_executor, Executor> = 0>
   friend bool operator==(const omp_executor& lhs,
@@ -50,8 +56,9 @@ struct omp_executor {
   template <typename F>
   void bulk_execute(F&& f, shape_type n) const {
 #ifdef _OPENMP
+    index_type index{n, omp_get_thread_num()};
   #pragma omp parallel num_threads(n)
-    f(omp_get_thread_num());
+    f(index);
 #endif
   }
 

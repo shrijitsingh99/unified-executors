@@ -11,7 +11,7 @@
 
 namespace executor {
 
-template <typename Executor, typename = executor::void_t<std::size_t>>
+template <typename Executor, typename = void>
 struct executor_index {
   using type = std::size_t;
 };  // namespace executor

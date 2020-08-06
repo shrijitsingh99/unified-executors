@@ -13,8 +13,8 @@
   #include <cuda_runtime_api.h>
 #endif
 
-#include <executor/default/base_executor.hpp>
-#include <executor/default/inline_executor.hpp>
+#include <executor/property.h>
+#include <executor/type_trait.h>
 
 namespace executor {
 
@@ -36,13 +36,13 @@ struct is_executor_available<cuda_executor> : std::true_type {};
 template <typename Blocking = blocking_t::always_t,
           typename ProtoAllocator = std::allocator<void>>
 struct cuda_executor {
-  struct dim3 {
-    int x, y, z;
+  struct cuda_dim {
+    struct dim3 {
+      unsigned int x, y, z;
+    } grid_dim, block_dim;
   };
-  using grid_dim = dim3;
-  using block_dim = dim3;
 
-  using shape_type = std::tuple<grid_dim, block_dim>;
+  using shape_type = cuda_dim;
 
   template <typename Executor, instance_of_base<cuda_executor, Executor> = 0>
   friend bool operator==(const cuda_executor& lhs,
@@ -73,8 +73,8 @@ struct cuda_executor {
     // TODO: Add custom shape property for CUDA executor
 #ifdef CUDA
     void* global_kernel_args[] = {static_cast<void*>(&f)};
-    dim3 grid_size(shape[0], shape[1], shape[2]);
-    dim3 block_size(shape[3], shape[4], shape[5]);
+    dim3 grid_size(shape.grid_dim.x, shape.grid_dim.y, shape.grid_dim.z);
+    dim3 block_size(shape.block_dim.x, shape.block_dim.y, shape.block_dim.z);
     cudaLaunchKernel(reinterpret_cast<void*>(global_kernel<F>), grid_size,
                      block_size, global_kernel_args, 0, nullptr);
     cudaDeviceSynchronize();
