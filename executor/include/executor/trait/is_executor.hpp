@@ -9,7 +9,6 @@
 
 #pragma once
 
-#include <executor/default/base_executor.hpp>
 #include <executor/trait/common_traits.hpp>
 #include <experimental/type_traits>
 #include <type_traits>
