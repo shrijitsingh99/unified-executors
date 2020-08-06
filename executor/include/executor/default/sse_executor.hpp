@@ -45,7 +45,7 @@ struct sse_executor {
   }
 
   template <typename F>
-  void bulk_execute(F&& f, shape_type n) const {
+  void bulk_execute(F&& f, const shape_type n) const {
     // TODO: Look into what bulk execute will do for SSE
 #pragma simd
     f(0);

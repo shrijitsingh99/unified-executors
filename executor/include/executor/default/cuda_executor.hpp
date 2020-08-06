@@ -69,7 +69,7 @@ struct cuda_executor {
   // Passing rvalue reference of function doesn't currently work with CUDA for
   // some reason
   template <typename F>
-  void bulk_execute(F& f, shape_type shape) const {
+  void bulk_execute(F& f, const shape_type shape) const {
     // TODO: Add custom shape property for CUDA executor
 #ifdef CUDA
     void* global_kernel_args[] = {static_cast<void*>(&f)};
