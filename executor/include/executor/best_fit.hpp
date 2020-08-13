@@ -23,6 +23,12 @@ static const auto best_fit_executors =
                     executor::inline_executor<>{});
 
 struct executor_runtime_checks {
+  template <template <typename...> class Executor, typename... Properties, typename executor::instance_of_base<
+      Executor<Properties...>, executor::inline_executor, sse_executor, omp_executor, cuda_executor> = 0>
+  static bool availability_check(const Executor<Properties...>& exec) {
+    return executor::is_executor_available_v<Executor>;
+  }
+
   template <typename Executor, typename executor::instance_of_base<
                                    Executor, executor::inline_executor> = 0>
   static bool check(Executor& exec) {
@@ -56,7 +62,7 @@ void enable_exec_with_priority(
                 "Runtime checks should inherit from executor_runtime_checks");
   bool executor_selected = false;
   executor::for_each_tuple_until(supported_execs, [&](auto& exec) {
-    if (RuntimeChecks::check(exec)) {
+    if (RuntimeChecks::availability_check(exec) && RuntimeChecks::check(exec)) {
       f(exec);
       return (executor_selected = true);
     }
@@ -79,6 +85,7 @@ void enable_exec_on_desc_priority(
                 "Runtime checks should inherit from executor_runtime_checks");
   auto num_supported_execs = std::tuple_size<decltype(supported_execs)>::value;
   auto exec_is_supported = [&](auto& best_fit_exec) {
+    if (!RuntimeChecks::availability_check(best_fit_exec)) return false;
     auto count = 0;
     for_each_tuple_until(supported_execs, [&](auto& supported_exec) {
       if (executor::is_same_template<decltype(best_fit_exec),
