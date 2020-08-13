@@ -9,7 +9,6 @@ include_directories(include)
 
 if(CUDA_FOUND)
     enable_language(CUDA)
-    add_definitions(-DCUDA)
 endif()
 
 add_executable(test_mmul test/mmul.cpp src/mmul.cu)

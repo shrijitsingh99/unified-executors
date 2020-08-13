@@ -36,13 +36,9 @@ struct omp_executor {
     int idx;
   };
 
-  std::size_t max_threads;
+  std::size_t max_threads = 0;
 
-  omp_executor() {
-#ifdef _OPENMP
-    this->max_threads = omp_get_max_threads();
-#endif
-  }
+  omp_executor(): omp_executor(0) {}
 
   omp_executor(std::size_t max_threads): max_threads(max_threads) {
 #ifdef _OPENMP
@@ -64,11 +60,13 @@ struct omp_executor {
 
   template <typename F>
   void execute(F&& f) const {
+    static_assert(is_executor_available_v<omp_executor>, "OpenMP executor unavailable");
     f();
   }
 
   template <typename F>
   void bulk_execute(F&& f, const shape_type n) const {
+    static_assert(is_executor_available_v<omp_executor>, "OpenMP executor unavailable");
 #ifdef _OPENMP
     const auto num_threads = n ? std::min(max_threads, n): max_threads;
   #pragma omp parallel num_threads(num_threads)
@@ -86,7 +84,7 @@ struct omp_executor {
     return {};
   }
 
-  static constexpr auto name() { return "omp"; }
+  static constexpr auto name() { return "omp_executor"; }
 };
 
 }  // namespace executor

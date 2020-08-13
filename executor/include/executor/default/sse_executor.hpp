@@ -41,11 +41,15 @@ struct sse_executor {
 
   template <typename F>
   void execute(F&& f) const {
+    static_assert(is_executor_available_v<sse_executor>,
+                  "SSE executor unavailable");
     f();
   }
 
   template <typename F>
   void bulk_execute(F&& f, const shape_type n) const {
+    static_assert(is_executor_available_v<sse_executor>,
+                  "SSE executor unavailable");
     // TODO: Look into what bulk execute will do for SSE
 #pragma simd
     f(0);
@@ -58,7 +62,7 @@ struct sse_executor {
     return {};
   }
 
-  static constexpr auto name() { return "sse"; }
+  static constexpr auto name() { return "sse_executor"; }
 };
 
 }  // namespace executor
