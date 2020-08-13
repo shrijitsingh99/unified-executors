@@ -25,6 +25,18 @@ TEST_CASE("Matrix Multiplication") {
   MatrixXd ans(3, 3);
   ans << 30, 36, 42, 66, 81, 96, 102, 126, 150;
 
+  SUBCASE("Best Fit Matrix Multiplication - Custom Priority") {
+    c.setZero();
+    mmul(a, b, c, true);
+    CHECK(c.isApprox(ans));
+  }
+
+  SUBCASE("Best Fit Matrix Multiplication - Descending Priority") {
+    c.setZero();
+    mmul(a, b, c, false);
+    CHECK(c.isApprox(ans));
+  }
+
   SUBCASE("Inline Matrix Multiplication") {
     c.setZero();
     mmul(inline_executor<>{}, a, b, c);

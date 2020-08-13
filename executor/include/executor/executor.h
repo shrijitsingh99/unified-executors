@@ -13,6 +13,7 @@
 #include <executor/property.h>
 #include <executor/type_trait.h>
 
+#include <executor/best_fit.hpp>
 #include <executor/default/cuda_executor.hpp>
 #include <executor/default/inline_executor.hpp>
 #include <executor/default/omp_executor.hpp>

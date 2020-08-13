@@ -55,3 +55,13 @@ void mmul(const Executor& ex, const MatrixXd& a, const MatrixXd& b,
           MatrixXd& c) {
   mmul_gpu(ex, a, b, c);
 }
+
+void mmul(const MatrixXd& a, const MatrixXd& b, MatrixXd& c,
+          bool custom_priority) {
+  auto mul = [&](auto& exec) { mmul(exec, a, b, c); };
+
+  if (custom_priority)
+    enable_exec_with_priority(mul, inline_executor<>{}, omp_executor<>{});
+  else
+    enable_exec_on_desc_priority(mul, inline_executor<>{}, omp_executor<>{});
+}
