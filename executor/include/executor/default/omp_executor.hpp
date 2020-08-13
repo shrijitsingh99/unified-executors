@@ -32,7 +32,7 @@ struct omp_executor {
   using shape_type = std::size_t;
 
   using index_type = struct {
-    std::size_t max;
+    shape_type max;
     int idx;
   };
 
