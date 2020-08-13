@@ -9,28 +9,36 @@
 
 #pragma once
 
+#include <tuple>
 #include <type_traits>
 
 namespace executor {
 
-// Part of Standard Library in C++17 onwards
+/**
+ *   Part of Standard Library in C++17 onwards
+ **/
 
+// void_t
 template <typename...>
 using void_t = void;
 
+// remove_cv_ref_t
 template <typename T>
 using remove_cv_ref_t = std::remove_cv_t<std::remove_reference_t<T>>;
 
-// Switch to std::disjunction in C++17
+// disjunction
 // https://stackoverflow.com/questions/31533469/check-a-parameter-pack-for-all-of-type-t
 template <typename... Conds>
 struct disjunction : std::false_type {};
 
 template <typename Cond, typename... Conds>
 struct disjunction<Cond, Conds...>
-    : std::conditional<Cond::value, std::true_type, disjunction<Conds...>>::type {};
+    : std::conditional<Cond::value, std::true_type,
+                       disjunction<Conds...>>::type {};
 
-// In accordance with equality_comparable concept in C++ 20
+/**
+ *   In accordance with equality_comparable concept in C++ 20
+ **/
 
 template <typename T1, typename T2, typename = void>
 struct equality_comparable : std::false_type {};
@@ -46,5 +54,85 @@ struct equality_comparable<
 
 template <typename T1, typename T2>
 constexpr bool equality_comparable_v = equality_comparable<T1, T2>::value;
+
+/**
+ *   Custom Traits
+ **/
+
+// is_instance_of_base
+namespace detail {
+
+template <typename Executor, template <typename...> class Type>
+struct is_instance_of_base_impl : std::false_type {};
+
+template <template <typename...> class Type, typename... Args>
+struct is_instance_of_base_impl<Type<Args...>, Type> : std::true_type {};
+
+}  // namespace detail
+
+template <typename Executor, template <typename...> class... Type>
+using is_instance_of_base =
+    executor::disjunction<detail::is_instance_of_base_impl<Executor, Type>...>;
+
+template <typename Executor, template <typename...> class... Type>
+constexpr bool is_instance_of_base_v =
+    is_instance_of_base<Executor, Type...>::value;
+
+template <typename Executor, template <typename...> class... Type>
+using instance_of_base =
+    std::enable_if_t<is_instance_of_base_v<Executor, Type...>, int>;
+
+// is_same_template
+namespace detail {
+
+template <typename T1, typename T2>
+struct is_same_template_impl : std::false_type {};
+
+template <template <typename...> class Type, typename... Args1,
+          typename... Args2>
+struct is_same_template_impl<Type<Args1...>, Type<Args2...>> : std::true_type {
+};
+
+}  // namespace detail
+
+template <typename T1, typename T2>
+using is_same_template =
+    detail::is_same_template_impl<executor::remove_cv_ref_t<T1>,
+                                  executor::remove_cv_ref_t<T2>>;
+
+// for_each_tuple_until
+// Iterate over tuple
+// https://stackoverflow.com/questions/26902633/how-to-iterate-over-a-stdtuple-in-c-11
+template <typename TupleType, typename FunctionType>
+void for_each_tuple_until(
+    TupleType&&, FunctionType,
+    std::integral_constant<std::size_t,
+                           std::tuple_size<typename std::remove_reference<
+                               TupleType>::type>::value>) {}
+
+template <std::size_t I, typename TupleType, typename FunctionType,
+          typename = typename std::enable_if<
+              I != std::tuple_size<typename std::remove_reference<
+                       TupleType>::type>::value>::type>
+void for_each_tuple_until(TupleType&& t, FunctionType f,
+                          std::integral_constant<size_t, I>) {
+  bool exit = f(std::get<I>(std::forward<TupleType>(t)));
+
+  if (exit)
+    for_each_tuple_until(
+        std::forward<TupleType>(t), f,
+        std::integral_constant<size_t,
+                               std::tuple_size<typename std::remove_reference<
+                                   TupleType>::type>::value>());
+  else
+    for_each_tuple_until(std::forward<TupleType>(t), f,
+                         std::integral_constant<size_t, I + 1>());
+}
+
+template <typename TupleType, typename FunctionType>
+void for_each_tuple_until(TupleType&& t, FunctionType f) {
+  for_each_tuple_until(std::forward<TupleType>(t), f,
+                       std::integral_constant<size_t, 0>());
+}
 
 }  // namespace executor
