@@ -61,7 +61,7 @@ void enable_exec_with_priority(
   static_assert(std::is_base_of<executor_runtime_checks, RuntimeChecks>::value,
                 "Runtime checks should inherit from executor_runtime_checks");
   bool executor_selected = false;
-  executor::for_each_tuple_until(supported_execs, [&](auto& exec) {
+  executor::for_each_until_true(supported_execs, [&](auto& exec) {
     if (RuntimeChecks::availability_check(exec) && RuntimeChecks::check(exec)) {
       f(exec);
       return (executor_selected = true);
@@ -87,7 +87,7 @@ void enable_exec_on_desc_priority(
   auto exec_is_supported = [&](auto& best_fit_exec) {
     if (!RuntimeChecks::availability_check(best_fit_exec)) return false;
     auto count = 0;
-    for_each_tuple_until(supported_execs, [&](auto& supported_exec) {
+    for_each_until_true(supported_execs, [&](auto& supported_exec) {
       if (executor::is_same_template<decltype(best_fit_exec),
                                      decltype(supported_exec)>::value &&
           RuntimeChecks::check(supported_exec)) {
@@ -101,7 +101,7 @@ void enable_exec_on_desc_priority(
   };
 
   bool executor_selected = false;
-  for_each_tuple_until(best_fit_executors, [&](auto& exec) {
+  for_each_until_true(best_fit_executors, [&](auto& exec) {
     return (executor_selected = exec_is_supported(exec));
   });
   // TODO: Throw warning or assert

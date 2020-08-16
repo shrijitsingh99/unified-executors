@@ -104,7 +104,7 @@ using is_same_template =
 // Iterate over tuple
 // https://stackoverflow.com/questions/26902633/how-to-iterate-over-a-stdtuple-in-c-11
 template <typename TupleType, typename FunctionType>
-void for_each_tuple_until(
+void for_each_until_true(
     TupleType&&, FunctionType,
     std::integral_constant<std::size_t,
                            std::tuple_size<typename std::remove_reference<
@@ -114,24 +114,18 @@ template <std::size_t I, typename TupleType, typename FunctionType,
           typename = typename std::enable_if<
               I != std::tuple_size<typename std::remove_reference<
                        TupleType>::type>::value>::type>
-void for_each_tuple_until(TupleType&& t, FunctionType f,
+void for_each_until_true(TupleType&& t, FunctionType f,
                           std::integral_constant<size_t, I>) {
   bool exit = f(std::get<I>(std::forward<TupleType>(t)));
 
-  if (exit)
-    for_each_tuple_until(
-        std::forward<TupleType>(t), f,
-        std::integral_constant<size_t,
-                               std::tuple_size<typename std::remove_reference<
-                                   TupleType>::type>::value>());
-  else
-    for_each_tuple_until(std::forward<TupleType>(t), f,
+  if (!exit)
+    for_each_until_true(std::forward<TupleType>(t), f,
                          std::integral_constant<size_t, I + 1>());
 }
 
 template <typename TupleType, typename FunctionType>
-void for_each_tuple_until(TupleType&& t, FunctionType f) {
-  for_each_tuple_until(std::forward<TupleType>(t), f,
+void for_each_until_true(TupleType&& t, FunctionType f) {
+  for_each_until_true(std::forward<TupleType>(t), f,
                        std::integral_constant<size_t, 0>());
 }
 
