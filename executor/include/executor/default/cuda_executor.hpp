@@ -44,13 +44,13 @@ struct cuda_executor {
 
   using shape_type = cuda_dim;
 
-  template <typename Executor, instance_of_base<Executor, cuda_executor> = 0>
+  template <typename Executor, InstanceOfAny<Executor, cuda_executor> = 0>
   friend bool operator==(const cuda_executor& lhs,
                          const Executor& rhs) noexcept {
     return std::is_same<cuda_executor, Executor>::value;
   }
 
-  template <typename Executor, instance_of_base<Executor, cuda_executor> = 0>
+  template <typename Executor, InstanceOfAny<Executor, cuda_executor> = 0>
   friend bool operator!=(const cuda_executor& lhs,
                          const Executor& rhs) noexcept {
     return !operator==(lhs, rhs);

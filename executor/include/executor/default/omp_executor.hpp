@@ -46,13 +46,13 @@ struct omp_executor {
 #endif
   }
 
-  template <typename Executor, instance_of_base<Executor, omp_executor> = 0>
+  template <typename Executor, InstanceOfAny<Executor, omp_executor> = 0>
   friend bool operator==(const omp_executor& lhs,
                          const Executor& rhs) noexcept {
     return std::is_same<omp_executor, Executor>::value;
   }
 
-  template <typename Executor, instance_of_base<Executor, omp_executor> = 0>
+  template <typename Executor, InstanceOfAny<Executor, omp_executor> = 0>
   friend bool operator!=(const omp_executor& lhs,
                          const Executor& rhs) noexcept {
     return !operator==(lhs, rhs);

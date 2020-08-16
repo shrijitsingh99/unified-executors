@@ -24,7 +24,7 @@ using namespace executor;
 using namespace Eigen;
 
 template <typename Executor,
-          typename executor::instance_of_base<Executor, inline_executor> = 0>
+          typename executor::InstanceOfAny<Executor, inline_executor> = 0>
 void mmul(const Executor ex, const MatrixXd& a, const MatrixXd& b,
           MatrixXd& c) {
   auto mul = [&]() { c = a * b; };
@@ -32,7 +32,7 @@ void mmul(const Executor ex, const MatrixXd& a, const MatrixXd& b,
 }
 
 template <typename Executor,
-          typename executor::instance_of_base<Executor, omp_executor> = 0>
+          typename executor::InstanceOfAny<Executor, omp_executor> = 0>
 void mmul(const Executor ex, const MatrixXd& a, const MatrixXd& b,
           MatrixXd& c) {
   auto mul = [&](typename decltype(ex)::index_type index) {
@@ -50,7 +50,7 @@ void mmul(const Executor ex, const MatrixXd& a, const MatrixXd& b,
 }
 
 template <typename Executor,
-          typename executor::instance_of_base<Executor, cuda_executor> = 0>
+          typename executor::InstanceOfAny<Executor, cuda_executor> = 0>
 void mmul(const Executor& ex, const MatrixXd& a, const MatrixXd& b,
           MatrixXd& c) {
   mmul_gpu(ex, a, b, c);

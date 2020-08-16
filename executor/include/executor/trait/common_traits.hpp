@@ -63,24 +63,24 @@ constexpr bool equality_comparable_v = equality_comparable<T1, T2>::value;
 namespace detail {
 
 template <typename Executor, template <typename...> class Type>
-struct is_instance_of_base_impl : std::false_type {};
+struct is_instance_of_any_impl : std::false_type {};
 
 template <template <typename...> class Type, typename... Args>
-struct is_instance_of_base_impl<Type<Args...>, Type> : std::true_type {};
+struct is_instance_of_any_impl<Type<Args...>, Type> : std::true_type {};
 
 }  // namespace detail
 
 template <typename Executor, template <typename...> class... Type>
-using is_instance_of_base =
-    executor::disjunction<detail::is_instance_of_base_impl<Executor, Type>...>;
+using is_instance_of_any =
+    executor::disjunction<detail::is_instance_of_any_impl<Executor, Type>...>;
 
 template <typename Executor, template <typename...> class... Type>
-constexpr bool is_instance_of_base_v =
-    is_instance_of_base<Executor, Type...>::value;
+constexpr bool is_instance_of_any_v =
+    is_instance_of_any<Executor, Type...>::value;
 
 template <typename Executor, template <typename...> class... Type>
-using instance_of_base =
-    std::enable_if_t<is_instance_of_base_v<Executor, Type...>, int>;
+using InstanceOfAny =
+    std::enable_if_t<is_instance_of_any_v<Executor, Type...>, int>;
 
 // is_same_template
 namespace detail {
