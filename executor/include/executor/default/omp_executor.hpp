@@ -65,7 +65,7 @@ struct omp_executor {
   }
 
   template <typename F>
-  void bulk_execute(F&& f, const shape_type n) const {
+  void bulk_execute(F&& f, const shape_type& n) const {
     static_assert(is_executor_available_v<omp_executor>, "OpenMP executor unavailable");
 #ifdef _OPENMP
     const auto num_threads = n ? std::min(max_threads, n): max_threads;

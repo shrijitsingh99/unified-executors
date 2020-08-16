@@ -47,7 +47,7 @@ struct sse_executor {
   }
 
   template <typename F>
-  void bulk_execute(F&& f, const shape_type n) const {
+  void bulk_execute(F&& f, const shape_type& n) const {
     static_assert(is_executor_available_v<sse_executor>,
                   "SSE executor unavailable");
     // TODO: Look into what bulk execute will do for SSE
