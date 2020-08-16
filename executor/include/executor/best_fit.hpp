@@ -23,12 +23,6 @@ static const auto best_fit_executors =
                     executor::inline_executor<>{});
 
 struct executor_runtime_checks {
-  template <template <typename...> class Executor, typename... Properties, typename executor::instance_of_base<
-      Executor<Properties...>, executor::inline_executor, sse_executor, omp_executor, cuda_executor> = 0>
-  static bool availability_check(const Executor<Properties...>& exec) {
-    return executor::is_executor_available_v<Executor>;
-  }
-
   template <typename Executor, typename executor::instance_of_base<
                                    Executor, executor::inline_executor> = 0>
   static bool check(Executor& exec) {
@@ -54,6 +48,23 @@ struct executor_runtime_checks {
   }
 };
 
+namespace detail {
+
+template <typename Function, typename Executor, typename = void>
+bool execute(Function&& f, Executor& exec) {
+  return false;
+}
+
+template <typename Function, template <typename...> class Executor, typename... Properties,
+          typename std::enable_if<executor::is_executor_available_v<Executor>,
+                                  int>::type = 0>
+bool execute(Function&& f, Executor<Properties...>& exec) {
+  f(exec);
+  return true;
+}
+
+}  // namespace detail
+
 template <typename RuntimeChecks = executor_runtime_checks, typename Function,
           typename... SupportedExecutors>
 void enable_exec_with_priority(
@@ -62,9 +73,9 @@ void enable_exec_with_priority(
                 "Runtime checks should inherit from executor_runtime_checks");
   bool executor_selected = false;
   executor::for_each_until_true(supported_execs, [&](auto& exec) {
-    if (RuntimeChecks::availability_check(exec) && RuntimeChecks::check(exec)) {
-      f(exec);
-      return (executor_selected = true);
+    if (RuntimeChecks::check(exec)) {
+      executor_selected = detail::execute(f, exec);
+      return executor_selected;
     }
     return false;
   });
@@ -73,7 +84,7 @@ void enable_exec_with_priority(
 
 template <typename RuntimeChecks = executor_runtime_checks, typename Function,
           typename... SupportedExecutors>
-void enable_exec_with_priority(Function f, SupportedExecutors... execs) {
+void enable_exec_with_priority(Function&& f, SupportedExecutors&&... execs) {
   enable_exec_with_priority<RuntimeChecks>(f, std::make_tuple(execs...));
 }
 
@@ -85,32 +96,31 @@ void enable_exec_on_desc_priority(
                 "Runtime checks should inherit from executor_runtime_checks");
   auto num_supported_execs = std::tuple_size<decltype(supported_execs)>::value;
   auto exec_is_supported = [&](auto& best_fit_exec) {
-    if (!RuntimeChecks::availability_check(best_fit_exec)) return false;
-    auto count = 0;
+    bool executor_supported = false;
     for_each_until_true(supported_execs, [&](auto& supported_exec) {
       if (executor::is_same_template<decltype(best_fit_exec),
                                      decltype(supported_exec)>::value &&
           RuntimeChecks::check(supported_exec)) {
-        f(supported_exec);
-        return true;
+        executor_supported = detail::execute(f, supported_exec);
+        return executor_supported;
       }
-      ++count;
       return false;
     });
-    return num_supported_execs != count;
+    return executor_supported;
   };
 
   bool executor_selected = false;
   for_each_until_true(best_fit_executors, [&](auto& exec) {
-    return (executor_selected = exec_is_supported(exec));
+    executor_selected = exec_is_supported(exec);
+    return executor_selected;
   });
   // TODO: Throw warning or assert
 }
 
 template <typename RuntimeChecks = executor_runtime_checks, typename Function,
           typename... SupportedExecutors>
-void enable_exec_on_desc_priority(Function f,
-                                  SupportedExecutors... supported_execs) {
+void enable_exec_on_desc_priority(Function&& f,
+                                  SupportedExecutors&&... supported_execs) {
   enable_exec_on_desc_priority<RuntimeChecks>(
       f, std::make_tuple(supported_execs...));
 }
