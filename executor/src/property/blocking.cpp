@@ -6,7 +6,7 @@
  *  Author(s): Shrijit Singh <shrijitsingh99@gmail.com>
  *
  */
-#include <executor/property//blocking.hpp>
+#include <executor/property/blocking.hpp>
 
 namespace executor {
 constexpr blocking_t::possibly_t blocking_t::possibly;
