@@ -57,4 +57,6 @@ struct inline_executor {
   static constexpr auto name() { return "inline_executor"; }
 };
 
+using default_inline_executor = inline_executor<>;
+
 }  // namespace executor

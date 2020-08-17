@@ -65,4 +65,6 @@ struct sse_executor {
   static constexpr auto name() { return "sse_executor"; }
 };
 
+using default_sse_executor = sse_executor<>;
+
 }  // namespace executor

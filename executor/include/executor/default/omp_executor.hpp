@@ -87,4 +87,6 @@ struct omp_executor {
   static constexpr auto name() { return "omp_executor"; }
 };
 
+using default_omp_executor = omp_executor<>;
+
 }  // namespace executor

@@ -92,4 +92,6 @@ struct cuda_executor {
   static constexpr auto name() { return "cuda_executor"; }
 };
 
+using default_cuda_executor = cuda_executor<>;
+
 }  // namespace executor
