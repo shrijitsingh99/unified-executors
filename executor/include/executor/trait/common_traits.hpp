@@ -82,6 +82,10 @@ template <typename Executor, template <typename...> class... Type>
 using InstanceOfAny =
     std::enable_if_t<is_instance_of_any_v<Executor, Type...>, int>;
 
+template <typename Executor, template <typename...> class Type>
+using InstanceOf =
+std::enable_if_t<is_instance_of_any_v<Executor, Type>, int>;
+
 // is_same_template
 namespace detail {
 

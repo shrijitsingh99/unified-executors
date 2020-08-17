@@ -25,13 +25,13 @@ template <typename Blocking = blocking_t::always_t,
 struct inline_executor {
   using shape_type = std::size_t;
 
-  template <typename Executor, InstanceOfAny<Executor, inline_executor> = 0>
+  template <typename Executor, InstanceOf<Executor, inline_executor> = 0>
   friend bool operator==(const inline_executor& lhs,
                          const Executor& rhs) noexcept {
     return std::is_same<inline_executor, Executor>::value;
   }
 
-  template <typename Executor, InstanceOfAny<Executor, inline_executor> = 0>
+  template <typename Executor, InstanceOf<Executor, inline_executor> = 0>
   friend bool operator!=(const inline_executor& lhs,
                          const Executor& rhs) noexcept {
     return !operator==(lhs, rhs);

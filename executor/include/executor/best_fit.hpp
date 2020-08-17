@@ -23,25 +23,25 @@ static const auto best_fit_executors =
                     executor::inline_executor<>{});
 
 struct executor_runtime_checks {
-  template <typename Executor, typename executor::InstanceOfAny<
+  template <typename Executor, typename executor::InstanceOf<
                                    Executor, executor::inline_executor> = 0>
   static bool check(Executor& exec) {
     return true;
   }
 
-  template <typename Executor, typename executor::InstanceOfAny<
+  template <typename Executor, typename executor::InstanceOf<
                                    Executor, executor::sse_executor> = 0>
   static bool check(Executor& exec) {
     return true;
   }
 
-  template <typename Executor, typename executor::InstanceOfAny<
+  template <typename Executor, typename executor::InstanceOf<
                                    Executor, executor::omp_executor> = 0>
   static bool check(Executor& exec) {
     return true;
   }
 
-  template <typename Executor, typename executor::InstanceOfAny<
+  template <typename Executor, typename executor::InstanceOf<
                                    Executor, executor::cuda_executor> = 0>
   static bool check(Executor& exec) {
     return true;
