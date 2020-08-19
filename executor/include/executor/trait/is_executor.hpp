@@ -16,7 +16,7 @@
 namespace executor {
 
 namespace detail {
-const auto noop = [] {};
+static const auto noop = [] {};
 
 /**
  * \brief Checks if the given type T provides a member function named `execute` that takes a
@@ -57,6 +57,6 @@ struct is_executor<T,
     : std::true_type {};
 
 template <typename T>
-constexpr bool is_executor_v = is_executor<T>::value;
+static constexpr bool is_executor_v = is_executor<T>::value;
 
 }  // namespace executor
