@@ -133,4 +133,53 @@ void for_each_until_true(TupleType&& t, FunctionType f) {
                        std::integral_constant<size_t, 0>());
 }
 
+
+// tuple_contains_type
+namespace detail {
+
+template <typename T, typename Tuple>
+struct tuple_contains_type_impl;
+
+template <typename T, typename... Us>
+struct tuple_contains_type_impl<T, std::tuple<Us...>>
+    : disjunction<std::is_same<T, Us>...> {};
+
+}  // namespace detail
+
+template <typename T, typename Tuple>
+using tuple_contains_type = typename detail::tuple_contains_type_impl<T, Tuple>::type;
+
+
+// filter_tuple_values
+namespace detail {
+
+template <template <typename...> class predicate, typename... T>
+struct filter_tuple_values_impl {
+  using type = decltype(
+  std::tuple_cat(typename std::conditional<predicate<T>::value, std::tuple<T>,
+                                           std::tuple<>>::type()...));
+
+  auto operator()(const std::tuple<T...> &in) { return (*this)(in, type{}); }
+
+ private:
+  // neat utility function to fetch the types we're interest in outputting
+  template<typename... To>
+  auto operator()(const std::tuple<T...> &in, std::tuple<To...>) {
+    return std::make_tuple(std::get<To>(in)...);
+  }
+};
+
+}
+
+template <template <typename...> class predicate, typename T>
+struct filter_tuple_values;
+
+template <template <typename...> class predicate, typename... T>
+struct filter_tuple_values<predicate, std::tuple<T...>>
+    : detail::filter_tuple_values_impl<predicate, T...> {};
+
+template <template <typename...> class predicate, typename... T>
+struct filter_tuple_values<predicate, const std::tuple<T...>>
+    : detail::filter_tuple_values_impl<predicate, T...> {};
+
 }  // namespace executor
