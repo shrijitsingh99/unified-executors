@@ -28,4 +28,10 @@ struct is_executor_available : std::false_type {};
 template <template <typename...> class Executor>
 static constexpr bool is_executor_available_v = is_executor_available<Executor>::value;
 
+template <typename T>
+struct is_executor_instance_available : std::false_type {};
+
+template <template <typename...> class Executor, typename... Properties>
+struct is_executor_instance_available<Executor<Properties...>> : is_executor_available<Executor> {};
+
 }  // namespace executor
