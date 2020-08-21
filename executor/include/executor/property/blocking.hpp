@@ -48,7 +48,13 @@ struct blocking_t : basic_executor_property<blocking_t, false, false> {
 
   // Default property value
   template <typename Executor>
-  static constexpr decltype(auto) static_query_v = always;
+  struct static_query {
+    static constexpr auto value = always;
+  };
+
+  template <typename Executor>
+  static constexpr decltype(auto) static_query_v =
+      static_query<Executor>::value;
 
   int value_;
 };

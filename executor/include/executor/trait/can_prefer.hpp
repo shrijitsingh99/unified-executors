@@ -17,7 +17,7 @@ namespace executor {
 
 template <typename Executor, typename Property,
           typename std::enable_if_t<
-              Property::template is_applicable_property_v<Executor> &&
+              Property::template is_applicable_property<Executor>::value &&
                   Property::is_preferable && can_require_v<Executor, Property>,
               int> = 0>
 constexpr decltype(auto) prefer(const Executor& ex,
@@ -27,7 +27,7 @@ constexpr decltype(auto) prefer(const Executor& ex,
 
 template <typename Executor, typename Property,
           typename std::enable_if_t<
-              Property::template is_applicable_property_v<Executor> &&
+              Property::template is_applicable_property<Executor>::value &&
                   Property::is_preferable && !can_require_v<Executor, Property>,
               int> = 0>
 constexpr decltype(auto) prefer(const Executor& ex,

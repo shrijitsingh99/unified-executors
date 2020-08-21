@@ -16,14 +16,15 @@ namespace executor {
 
 namespace detail {
 template <typename Executor, typename Property>
-using contains_property = std::is_same<
-    std::remove_const_t<decltype(Property::template static_query_v<Executor>)>,
-    Property>;
+using contains_property =
+    std::is_same<std::remove_const_t<decltype(
+                     Property::template static_query<Executor>::value)>,
+                 Property>;
 }
 
 template <typename Executor, typename Property,
           typename std::enable_if_t<
-              Property::template is_applicable_property_v<Executor> &&
+              Property::template is_applicable_property<Executor>::value &&
                   Property::is_requirable &&
                   detail::contains_property<Executor, Property>::value,
               int> = 0>
