@@ -42,8 +42,17 @@ struct omp_executor {
 
   omp_executor(std::size_t max_threads): max_threads(max_threads) {
 #ifdef _OPENMP
-    if (!this->max_threads) this->max_threads = omp_get_max_threads();
+    set_max_threads(max_threads);
 #endif
+  }
+
+  bool set_max_threads(std::size_t max_threads) {
+#ifdef _OPENMP
+    if (!max_threads) this->max_threads = omp_get_max_threads();
+    else this->max_threads = max_threads;
+    return true;
+#endif
+    return false;
   }
 
   template <typename Executor, InstanceOf<Executor, omp_executor> = 0>
