@@ -16,6 +16,10 @@
 namespace executor {
 
 namespace detail {
+/**
+ * \todo Convert to a static constexpr in C++ 17 onwards
+ * Lambda closure types are non-literal types before C++17
+ */
 static const auto noop = [] {};
 
 /**
