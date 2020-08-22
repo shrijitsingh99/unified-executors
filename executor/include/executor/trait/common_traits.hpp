@@ -62,11 +62,15 @@ constexpr bool equality_comparable_v = equality_comparable<T1, T2>::value;
 // is_instance_of_base
 namespace detail {
 
-template <typename Executor, template <typename...> class Type>
+template <typename Executor, template <typename...> class Type, typename = void>
 struct is_instance_of_any_impl : std::false_type {};
 
-template <template <typename...> class Type, typename... Args>
-struct is_instance_of_any_impl<Type<Args...>, Type> : std::true_type {};
+template <template <typename...> class Executor,
+          template <typename...> class Type, typename... Args>
+struct is_instance_of_any_impl<
+    Executor<Args...>, Type,
+    std::enable_if_t<std::is_base_of<Type<Args...>, Executor<Args...>>::value>>
+    : std::true_type {};
 
 }  // namespace detail
 

@@ -19,22 +19,29 @@
 #include <executor/default/omp_executor.hpp>
 #include <executor/default/sse_executor.hpp>
 
+template <typename Blocking = executor::blocking_t::always_t,
+    typename ProtoAllocator = std::allocator<void>>
+struct derived_inline: executor::inline_executor<Blocking, ProtoAllocator> {
+};
+
 // For printing names of the types for which the test was run
 using inline_exec_type =
     executor::inline_executor<executor::blocking_t::always_t>;
 using sse_exec_type = executor::sse_executor<executor::blocking_t::always_t>;
 using omp_exec_type = executor::omp_executor<executor::blocking_t::always_t>;
 using cuda_exec_type = executor::cuda_executor<executor::blocking_t::always_t>;
+using derived_inline_exec_type = derived_inline<executor::blocking_t::always_t>;
 
 TYPE_TO_STRING(inline_exec_type);
 TYPE_TO_STRING(sse_exec_type);
 TYPE_TO_STRING(omp_exec_type);
 TYPE_TO_STRING(cuda_exec_type);
+TYPE_TO_STRING(derived_inline_exec_type);
 
 // List of Executor types to run tests for
 #define TEST_EXECUTORS                                           \
   const inline_exec_type, inline_exec_type, const sse_exec_type, \
-      sse_exec_type, const omp_exec_type, omp_exec_type
+      sse_exec_type, const omp_exec_type, omp_exec_type, const derived_inline_exec_type, derived_inline_exec_type
 
 // Only run certain tests for CUDA executors due to different shape API
 // If CUDA is not available fallback to inline executor
@@ -111,3 +118,12 @@ TEST_CASE_TEMPLATE_APPLY(property_traits,
 TEST_CASE_TEMPLATE_APPLY(properties,
                          std::tuple<TEST_EXECUTORS, TEST_CUDA_EXECUTOR>);
 TEST_CASE_TEMPLATE_APPLY(execute, std::tuple<TEST_EXECUTORS>);
+
+TEST_CASE("InstanceOf") {
+  SUBCASE("inline_executor") {
+    CHECK(executor::is_instance_of_any_v<inline_exec_type, executor::inline_executor> == true);
+  }
+  SUBCASE("derived_inline_executor") {
+        CHECK(executor::is_instance_of_any_v<derived_inline_exec_type, executor::inline_executor> == true);
+  }
+}
