@@ -23,6 +23,8 @@ namespace executor {
  *
  * Any executor can define a custom shape by defining the alias shape_type for
  * the custom shape.
+ *
+ * Part of proposal P0443R13
  */
 template <typename Executor, typename = void>
 struct executor_shape {

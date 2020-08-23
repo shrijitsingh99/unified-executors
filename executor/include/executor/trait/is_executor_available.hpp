@@ -22,7 +22,6 @@ namespace executor {
  *
  * This is not part of the proposal and is needed for PCL, since the availability of an executor
  * may depend on hardware availability or other factors
- *
  */
 template <template <typename...> class Executor>
 struct is_executor_available : std::false_type {};

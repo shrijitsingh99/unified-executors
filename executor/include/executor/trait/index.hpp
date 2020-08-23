@@ -22,6 +22,8 @@ namespace executor {
  *
  * Any executor can define a custom index by defining the alias index_type for
  * the custom index.
+ *
+ * Part of proposal P0443R13
  */
 template <typename Executor, typename = void>
 struct executor_index {
