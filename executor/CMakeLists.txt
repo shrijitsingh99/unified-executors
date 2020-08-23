@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.8)
 
-project(executor VERSION 0.0.1)
+project(executor VERSION 0.3)
 
 find_package(OpenMP QUIET)
 find_package(CUDA QUIET)

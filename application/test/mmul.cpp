@@ -2,7 +2,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  *
  *  Point Cloud Library (PCL) - www.pointclouds.org
- *  Copyright (c) 2014-, Open Perception, Inc.
+ *  Copyright (c) 2020-, Open Perception, Inc.
  *  Author: Shrijit Singh <shrijitsingh99@gmail.com>
  *
  */
@@ -24,6 +24,18 @@ TEST_CASE("Matrix Multiplication") {
 
   MatrixXd ans(3, 3);
   ans << 30, 36, 42, 66, 81, 96, 102, 126, 150;
+
+  SUBCASE("Best Fit Matrix Multiplication - Custom Priority") {
+    c.setZero();
+    mmul(a, b, c, true);
+    CHECK(c.isApprox(ans));
+  }
+
+  SUBCASE("Best Fit Matrix Multiplication - Descending Priority") {
+    c.setZero();
+    mmul(a, b, c, false);
+    CHECK(c.isApprox(ans));
+  }
 
   SUBCASE("Inline Matrix Multiplication") {
     c.setZero();

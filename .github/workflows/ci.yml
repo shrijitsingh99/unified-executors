@@ -8,7 +8,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-       os: [ubuntu-18.04, ubuntu-20.04]
+       os: [ubuntu-16.04, ubuntu-18.04, ubuntu-20.04]
        compiler:
          - {
              cc: "gcc", cxx: "g++"
@@ -70,3 +70,16 @@ jobs:
          run: cmake --build build
        - name: Test
          run: cd build && ctest
+  deploy-docs:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: mattnotmitt/doxygen-action@v1
+        with:
+          working-directory: 'docs/'
+          doxyfile-path: ''
+      - name: Deploy Documentation
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs/html

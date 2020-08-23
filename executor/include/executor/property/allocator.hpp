@@ -2,7 +2,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  *
  *  Point Cloud Library (PCL) - www.pointclouds.org
- *  Copyright (c) 2014-, Open Perception, Inc.
+ *  Copyright (c) 2020-, Open Perception, Inc.
  *  Author: Shrijit Singh <shrijitsingh99@gmail.com>
  *
  */
@@ -13,10 +13,20 @@
 
 namespace executor {
 
-// Part of Proposal P0443R13: 2.2.13
-template <typename ProtoAllocator>
+/**
+ * \brief A property for customizing memory allocation
+ *
+ * \details Currently no such use of the allocator has been determined
+ * and void is set as the allocator type.
+ *
+ * Part of Proposal P0443R13 (2.2.13)
+ *
+ * \todo Look into use cases of allocators in executors and implement their
+ * mechanism for using them if needed
+ */
+ template <typename ProtoAllocator>
 struct allocator_t
-    : basic_executor_property<allocator_t<ProtoAllocator>, true, true> {
+    : base_executor_property<allocator_t<ProtoAllocator>, true, true> {
   constexpr explicit allocator_t(const ProtoAllocator& alloc) : alloc_(alloc) {}
 
   constexpr ProtoAllocator value() const { return alloc_; }
@@ -27,7 +37,7 @@ struct allocator_t
 
 template <>
 struct allocator_t<void>
-    : basic_executor_property<allocator_t<void>, true, true> {
+    : base_executor_property<allocator_t<void>, true, true> {
   template <class ProtoAllocator>
   constexpr allocator_t<ProtoAllocator> operator()(
       const ProtoAllocator& alloc) const {

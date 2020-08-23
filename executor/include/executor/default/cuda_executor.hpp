@@ -2,14 +2,14 @@
  * SPDX-License-Identifier: BSD-3-Clause
  *
  *  Point Cloud Library (PCL) - www.pointclouds.org
- *  Copyright (c) 2014-, Open Perception, Inc.
+ *  Copyright (c) 2020-, Open Perception, Inc.
  *  Author: Shrijit Singh <shrijitsingh99@gmail.com>
  *
  */
 
 #pragma once
 
-#ifdef CUDA
+#ifdef __CUDACC__
   #include <cuda_runtime_api.h>
 #endif
 
@@ -18,7 +18,7 @@
 
 namespace executor {
 
-#ifdef CUDA
+#ifdef __CUDACC__
 template <typename F>
 __global__ void global_kernel(F f) {
   f();
@@ -28,7 +28,7 @@ __global__ void global_kernel(F f) {
 template <typename Blocking, typename ProtoAllocator>
 struct cuda_executor;
 
-#ifdef CUDA
+#ifdef __CUDACC__
 template <>
 struct is_executor_available<cuda_executor> : std::true_type {};
 #endif
@@ -44,13 +44,13 @@ struct cuda_executor {
 
   using shape_type = cuda_dim;
 
-  template <typename Executor, instance_of_base<cuda_executor, Executor> = 0>
+  template <typename Executor, InstanceOf<Executor, cuda_executor> = 0>
   friend bool operator==(const cuda_executor& lhs,
                          const Executor& rhs) noexcept {
     return std::is_same<cuda_executor, Executor>::value;
   }
 
-  template <typename Executor, instance_of_base<cuda_executor, Executor> = 0>
+  template <typename Executor, InstanceOf<Executor, cuda_executor> = 0>
   friend bool operator!=(const cuda_executor& lhs,
                          const Executor& rhs) noexcept {
     return !operator==(lhs, rhs);
@@ -58,7 +58,8 @@ struct cuda_executor {
 
   template <typename F>
   void execute(F& f) const {
-#ifdef CUDA
+    static_assert(is_executor_available_v<cuda_executor>, "CUDA executor unavailable");
+#ifdef __CUDACC__
     void* global_kernel_args[] = {static_cast<void*>(&f)};
     cudaLaunchKernel(reinterpret_cast<void*>(global_kernel<F>), 1, 1,
                      global_kernel_args, 0, nullptr);
@@ -69,9 +70,9 @@ struct cuda_executor {
   // Passing rvalue reference of function doesn't currently work with CUDA for
   // some reason
   template <typename F>
-  void bulk_execute(F& f, shape_type shape) const {
-    // TODO: Add custom shape property for CUDA executor
-#ifdef CUDA
+  void bulk_execute(F& f, const shape_type& shape) const {
+    static_assert(is_executor_available_v<cuda_executor>, "CUDA executor unavailable");
+#ifdef __CUDACC__
     void* global_kernel_args[] = {static_cast<void*>(&f)};
     dim3 grid_size(shape.grid_dim.x, shape.grid_dim.y, shape.grid_dim.z);
     dim3 block_size(shape.block_dim.x, shape.block_dim.y, shape.block_dim.z);
@@ -88,7 +89,9 @@ struct cuda_executor {
     return {};
   }
 
-  static constexpr auto name() { return "cuda"; }
+  static constexpr auto name() { return "cuda_executor"; }
 };
+
+using default_cuda_executor = cuda_executor<>;
 
 }  // namespace executor

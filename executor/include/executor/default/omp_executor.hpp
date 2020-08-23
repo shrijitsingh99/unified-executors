@@ -2,7 +2,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  *
  *  Point Cloud Library (PCL) - www.pointclouds.org
- *  Copyright (c) 2014-, Open Perception, Inc.
+ *  Copyright (c) 2020-, Open Perception, Inc.
  *  Author: Shrijit Singh <shrijitsingh99@gmail.com>
  *
  */
@@ -32,17 +32,36 @@ struct omp_executor {
   using shape_type = std::size_t;
 
   using index_type = struct {
-    std::size_t max;
+    shape_type max;
     int idx;
   };
 
-  template <typename Executor, instance_of_base<omp_executor, Executor> = 0>
+  std::size_t max_threads = 0;
+
+  omp_executor(): omp_executor(0) {}
+
+  omp_executor(std::size_t max_threads): max_threads(max_threads) {
+#ifdef _OPENMP
+    set_max_threads(max_threads);
+#endif
+  }
+
+  bool set_max_threads(std::size_t max_threads) {
+#ifdef _OPENMP
+    if (!max_threads) this->max_threads = omp_get_max_threads();
+    else this->max_threads = max_threads;
+    return true;
+#endif
+    return false;
+  }
+
+  template <typename Executor, InstanceOf<Executor, omp_executor> = 0>
   friend bool operator==(const omp_executor& lhs,
                          const Executor& rhs) noexcept {
     return std::is_same<omp_executor, Executor>::value;
   }
 
-  template <typename Executor, instance_of_base<omp_executor, Executor> = 0>
+  template <typename Executor, InstanceOf<Executor, omp_executor> = 0>
   friend bool operator!=(const omp_executor& lhs,
                          const Executor& rhs) noexcept {
     return !operator==(lhs, rhs);
@@ -50,15 +69,20 @@ struct omp_executor {
 
   template <typename F>
   void execute(F&& f) const {
+    static_assert(is_executor_available_v<omp_executor>, "OpenMP executor unavailable");
     f();
   }
 
   template <typename F>
-  void bulk_execute(F&& f, shape_type n) const {
+  void bulk_execute(F&& f, const shape_type& n) const {
+    static_assert(is_executor_available_v<omp_executor>, "OpenMP executor unavailable");
 #ifdef _OPENMP
-    index_type index{n, omp_get_thread_num()};
-  #pragma omp parallel num_threads(n)
-    f(index);
+    const auto num_threads = n ? std::min(max_threads, n): max_threads;
+  #pragma omp parallel num_threads(num_threads)
+    {
+      index_type index{num_threads, omp_get_thread_num()};
+      f(index);
+    }
 #endif
   }
 
@@ -69,7 +93,9 @@ struct omp_executor {
     return {};
   }
 
-  static constexpr auto name() { return "omp"; }
+  static constexpr auto name() { return "omp_executor"; }
 };
+
+using default_omp_executor = omp_executor<>;
 
 }  // namespace executor

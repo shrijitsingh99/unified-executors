@@ -2,7 +2,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  *
  *  Point Cloud Library (PCL) - www.pointclouds.org
- *  Copyright (c) 2014-, Open Perception, Inc.
+ *  Copyright (c) 2020-, Open Perception, Inc.
  *  Author: Shrijit Singh <shrijitsingh99@gmail.com>
  *
  */
@@ -25,13 +25,13 @@ template <typename Blocking = blocking_t::always_t,
 struct inline_executor {
   using shape_type = std::size_t;
 
-  template <typename Executor, instance_of_base<inline_executor, Executor> = 0>
+  template <typename Executor, InstanceOf<Executor, inline_executor> = 0>
   friend bool operator==(const inline_executor& lhs,
                          const Executor& rhs) noexcept {
     return std::is_same<inline_executor, Executor>::value;
   }
 
-  template <typename Executor, instance_of_base<inline_executor, Executor> = 0>
+  template <typename Executor, InstanceOf<Executor, inline_executor> = 0>
   friend bool operator!=(const inline_executor& lhs,
                          const Executor& rhs) noexcept {
     return !operator==(lhs, rhs);
@@ -43,7 +43,7 @@ struct inline_executor {
   }
 
   template <typename F, typename... Args>
-  void bulk_execute(F&& f, std::size_t n) const {
+  void bulk_execute(F&& f, const std::size_t& n) const {
     f(0);
   }
 
@@ -54,7 +54,9 @@ struct inline_executor {
     return {};
   }
 
-  static constexpr auto name() { return "inline"; }
+  static constexpr auto name() { return "inline_executor"; }
 };
+
+using default_inline_executor = inline_executor<>;
 
 }  // namespace executor
