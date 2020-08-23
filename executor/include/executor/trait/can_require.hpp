@@ -26,8 +26,30 @@ using contains_property =
     std::is_same<std::remove_const_t<decltype(
                      Property::template static_query<Executor>::value)>,
                  Property>;
-}
+}  // namespace detail
 
+/**
+ * \brief Enforces a specified Property on an Executor. A new executor instance
+ * which implements that property is created and returned. require denotes a
+ * customization point and should satisfy the following conditions to be
+ * applicable:
+ *  1. The Property should be applicable and requirable which can be checked
+ * using Property::template is_applicable_property<Executor>::value and
+ * Property::is_requirable
+ *  2. The expression Property::template static_query<Executor>::value ==
+ * Property::value() should be true, which implies that the Executor supports
+ * that property
+ *
+ *  If all the above conditions are met, then the overload require member
+ * function in the Executor is called with the Property.
+ *
+ *  Part of Proposal P1393R0
+ *
+ * \todo
+ * 1. Return same instance of executor if property is already implemented
+ * 2. Support multiple querying multiple properties in the trait: template
+ * <typename Executor, typename... Properties>
+ */
 template <typename Executor, typename Property,
           typename std::enable_if_t<
               Property::template is_applicable_property<Executor>::value &&
@@ -39,15 +61,9 @@ constexpr decltype(auto) require(const Executor& ex,
   return ex.require(p);
 }
 
-// Part of Proposal P1393R0
 /**
- * \brief Checks whether the given Property and Executor support the require customization point
- *  It is used to enforce a specified property on an executor. A new executor instance which implements that property is created and returned.
- *  In future version if the property is already implemented the same instance is returned.
- *
- * \todo
- * 1. Return same instance of executor if property is already implemented
- * 2. Support multiple querying multiple properties in the trait: template <typename Executor, typename... Properties>
+ * \brief Checks whether the given Property and Executor support the require
+ * customization point Part of Proposal P1393R0
  */
 template <typename Executor, typename Properties, typename = void>
 struct can_require : std::false_type {};
