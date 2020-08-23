@@ -70,3 +70,19 @@ jobs:
          run: cmake --build build
        - name: Test
          run: cd build && ctest
+  deploy-docs:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: true  # Fetch Hugo themes (true OR recursive)
+          fetch-depth: 0    # Fetch all history for .GitInfo and .Lastmod
+      - uses: mattnotmitt/doxygen-action@v1
+        with:
+          working-directory: 'docs/'
+          doxyfile-path: ''
+      - name: Deploy Documentation
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs/html
