@@ -1,3 +1,5 @@
+# Doxyfile 1.8.13
+
 #---------------------------------------------------------------------------
 # Project related configuration options
 #---------------------------------------------------------------------------
@@ -14,7 +16,7 @@
   # Configuration options related to the input files
   #---------------------------------------------------------------------------
   INPUT                  = ../executor
-  CLANG_ASSISTED_PARSING = yes
+  RECURSIVE              = YES
 
   #---------------------------------------------------------------------------
   # Configuration options related to the LaTeX output
