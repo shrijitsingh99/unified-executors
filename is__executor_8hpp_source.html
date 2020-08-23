@@ -90,35 +90,35 @@ $(function() {
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="keyword">namespace </span>detail {</div>
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="keyword">static</span> <span class="keyword">const</span> <span class="keyword">auto</span> noop = [] {};</div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160; </div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span> = <span class="keywordtype">void</span>&gt;</div>
-<div class="line"><a name="l00030"></a><span class="lineno"><a class="line" href="structexecutor_1_1detail_1_1contains__execute.html">   30</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structexecutor_1_1detail_1_1contains__execute.html">contains_execute</a> : std::false_type {};</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160; </div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l00033"></a><span class="lineno"><a class="line" href="structexecutor_1_1detail_1_1contains__execute_3_01T_00_01std_1_1enable__if__t_3_01std_1_1is__same2783e4583acaa01a559075cc77b297d.html">   33</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structexecutor_1_1detail_1_1contains__execute.html">contains_execute</a>&lt;</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    T, std::enable_if_t&lt;std::is_same&lt;</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;           decltype(std::declval&lt;T&gt;().execute(detail::noop)), void&gt;::value&gt;&gt;</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    : std::true_type {};</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160; </div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;}  <span class="comment">// namespace detail</span></div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160; </div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">class</span> T, <span class="keyword">typename</span> = <span class="keywordtype">void</span>&gt;</div>
-<div class="line"><a name="l00056"></a><span class="lineno"><a class="line" href="structexecutor_1_1is__executor.html">   56</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structexecutor_1_1is__executor.html">is_executor</a> : std::false_type {};</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160; </div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l00059"></a><span class="lineno"><a class="line" href="structexecutor_1_1is__executor_3_01T_00_01std_1_1enable__if__t_3_01std_1_1is__copy__constructibl739eb3860bbdee7cbf7a53ee058663f3.html">   59</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structexecutor_1_1is__executor.html">is_executor</a>&lt;T,</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;                   std::enable_if_t&lt;std::is_copy_constructible&lt;T&gt;::value &amp;&amp;</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;                                    detail::contains_execute&lt;T&gt;::value &amp;&amp;</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;                                    executor::equality_comparable&lt;T, T&gt;::value&gt;&gt;</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    : std::true_type {};</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160; </div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;<span class="keyword">static</span> constexpr <span class="keywordtype">bool</span> is_executor_v = <a class="code" href="structexecutor_1_1is__executor.html">is_executor&lt;T&gt;::value</a>;</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160; </div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;}  <span class="comment">// namespace executor</span></div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span> = <span class="keywordtype">void</span>&gt;</div>
+<div class="line"><a name="l00031"></a><span class="lineno"><a class="line" href="structexecutor_1_1detail_1_1contains__execute.html">   31</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structexecutor_1_1detail_1_1contains__execute.html">contains_execute</a> : std::false_type {};</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160; </div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l00034"></a><span class="lineno"><a class="line" href="structexecutor_1_1detail_1_1contains__execute_3_01T_00_01std_1_1enable__if__t_3_01std_1_1is__same2783e4583acaa01a559075cc77b297d.html">   34</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structexecutor_1_1detail_1_1contains__execute.html">contains_execute</a>&lt;</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    T, std::enable_if_t&lt;std::is_same&lt;</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;           decltype(std::declval&lt;T&gt;().execute(detail::noop)), void&gt;::value&gt;&gt;</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    : std::true_type {};</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160; </div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;}  <span class="comment">// namespace detail</span></div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160; </div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">class</span> T, <span class="keyword">typename</span> = <span class="keywordtype">void</span>&gt;</div>
+<div class="line"><a name="l00058"></a><span class="lineno"><a class="line" href="structexecutor_1_1is__executor.html">   58</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structexecutor_1_1is__executor.html">is_executor</a> : std::false_type {};</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160; </div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l00061"></a><span class="lineno"><a class="line" href="structexecutor_1_1is__executor_3_01T_00_01std_1_1enable__if__t_3_01std_1_1is__copy__constructibl739eb3860bbdee7cbf7a53ee058663f3.html">   61</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structexecutor_1_1is__executor.html">is_executor</a>&lt;T,</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;                   std::enable_if_t&lt;std::is_copy_constructible&lt;T&gt;::value &amp;&amp;</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;                                    detail::contains_execute&lt;T&gt;::value &amp;&amp;</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;                                    executor::equality_comparable&lt;T, T&gt;::value&gt;&gt;</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    : std::true_type {};</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160; </div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;<span class="keyword">static</span> constexpr <span class="keywordtype">bool</span> is_executor_v = <a class="code" href="structexecutor_1_1is__executor.html">is_executor&lt;T&gt;::value</a>;</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160; </div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;}  <span class="comment">// namespace executor</span></div>
 </div><!-- fragment --></div><!-- contents -->
 <div class="ttc" id="acommon__traits_8hpp_html"><div class="ttname"><a href="common__traits_8hpp.html">common_traits.hpp</a></div></div>
-<div class="ttc" id="astructexecutor_1_1is__executor_html"><div class="ttname"><a href="structexecutor_1_1is__executor.html">executor::is_executor</a></div><div class="ttdoc">Checks whether the given type T is an executor.</div><div class="ttdef"><b>Definition:</b> is_executor.hpp:56</div></div>
-<div class="ttc" id="astructexecutor_1_1detail_1_1contains__execute_html"><div class="ttname"><a href="structexecutor_1_1detail_1_1contains__execute.html">executor::detail::contains_execute</a></div><div class="ttdoc">Checks if the given type T provides a member function named execute that takes a nullary callable.</div><div class="ttdef"><b>Definition:</b> is_executor.hpp:30</div></div>
+<div class="ttc" id="astructexecutor_1_1is__executor_html"><div class="ttname"><a href="structexecutor_1_1is__executor.html">executor::is_executor</a></div><div class="ttdoc">Checks whether the type is an executor.</div><div class="ttdef"><b>Definition:</b> is_executor.hpp:58</div></div>
+<div class="ttc" id="astructexecutor_1_1detail_1_1contains__execute_html"><div class="ttname"><a href="structexecutor_1_1detail_1_1contains__execute.html">executor::detail::contains_execute</a></div><div class="ttdoc">Checks if the given type provides a member function named execute that takes a nullary callable.</div><div class="ttdef"><b>Definition:</b> is_executor.hpp:31</div></div>
 <div class="ttc" id="anamespaceexecutor_html"><div class="ttname"><a href="namespaceexecutor.html">executor</a></div><div class="ttdef"><b>Definition:</b> best_fit.hpp:22</div></div>
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

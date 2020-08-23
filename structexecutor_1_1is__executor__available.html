@@ -71,7 +71,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
-<p>Checks whether the given Executor is available to use.  
+<p>Checks whether the given executor is available to use.  
  <a href="structexecutor_1_1is__executor__available.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="is__executor__available_8hpp_source.html">is_executor_available.hpp</a>&gt;</code></p>
@@ -88,9 +88,15 @@ Inheritance diagram for executor::is_executor_available&lt; Executor &gt;:</div>
 <div class="textblock"><h3>template&lt;template&lt; typename... &gt; class Executor&gt;<br />
 struct executor::is_executor_available&lt; Executor &gt;</h3>
 
-<p>Checks whether the given Executor is available to use. </p>
-<p>A given Executor is defined as available if the member function <code>execute</code> can be called an used without a compile time error. For an executor to be made available it must proved explicit specialization for this trait and inherit from std::true_type E.g. template &lt;&gt; struct <a class="el" href="structexecutor_1_1is__executor__available_3_01inline__executor_01_4.html">is_executor_available&lt;inline_executor&gt;</a> : std::true_type {};</p>
-<p>This is not part of the proposal and is needed for PCL, since the availability of an executor may depend on hardware availability or other factors </p>
+<p>Checks whether the given executor is available to use. </p>
+<p>A given executor is defined as available if the member function <code>execute</code> can be called an used without a compile time error. For an executor to be made available it must proved explicit specialization for this trait and inherit from std::true_type E.g. template &lt;&gt; struct <a class="el" href="structexecutor_1_1is__executor__available_3_01inline__executor_01_4.html">is_executor_available&lt;inline_executor&gt;</a> : std::true_type {};</p>
+<p>This is not part of the proposal and is needed for PCL, since the availability of an executor may depend on hardware availability or other factors</p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">Executor</td><td>an executor type </td></tr>
+  </table>
+  </dd>
+</dl>
 </div><hr/>The documentation for this struct was generated from the following file:<ul>
 <li>/github/workspace/executor/include/executor/trait/<a class="el" href="is__executor__available_8hpp_source.html">is_executor_available.hpp</a></li>
 </ul>

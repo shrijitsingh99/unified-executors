@@ -71,7 +71,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
-<p>Checks whether the given type T is an executor.  
+<p>Checks whether the type is an executor.  
  <a href="structexecutor_1_1is__executor.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="is__executor_8hpp_source.html">is_executor.hpp</a>&gt;</code></p>
@@ -85,13 +85,19 @@ Inheritance diagram for executor::is_executor&lt; T, typename &gt;:</div>
 <div class="textblock"><h3>template&lt;class T, typename = void&gt;<br />
 struct executor::is_executor&lt; T, typename &gt;</h3>
 
-<p>Checks whether the given type T is an executor. </p>
+<p>Checks whether the type is an executor. </p>
 <p>A given type T is an Executor if it satisfies the following properties:</p><ol type="1">
 <li>Provides a function named execute that eagerly submits work on a single execution agent created for it by the executor</li>
 <li>Is a CopyConstructible type</li>
 <li>Is a EqualityComparable type</li>
 </ol>
 <p>This concept was finalized in P1660R0 and merged in the draft P0443R13 in the form of a concept</p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">T</td><td>type to check whether is an executor or not </td></tr>
+  </table>
+  </dd>
+</dl>
 <dl class="todo"><dt><b><a class="el" href="todo.html#_todo000007">Todo:</a></b></dt><dd>Convert to a concept in C++20 </dd></dl>
 </div><hr/>The documentation for this struct was generated from the following file:<ul>
 <li>/github/workspace/executor/include/executor/trait/<a class="el" href="is__executor_8hpp_source.html">is_executor.hpp</a></li>
