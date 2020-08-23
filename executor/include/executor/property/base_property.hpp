@@ -29,7 +29,6 @@ namespace executor {
  * requirable and preferable. This is useful for behavioral properties (P0443R13
  * - 2.2.12) which are not requirable nor preferable unlike the properties
  * nested in them.
- *
  */
 template <typename DerivedProperty, bool requireable, bool preferable>
 struct base_executor_property {

@@ -13,8 +13,18 @@
 
 namespace executor {
 
-// Part of Proposal P0443R13: 2.2.13
-template <typename ProtoAllocator>
+/**
+ * \brief A property for customizing memory allocation
+ *
+ * \details Currently no such use of the allocator has been determined
+ * and void is set as the allocator type.
+ *
+ * Part of Proposal P0443R13 (2.2.13)
+ *
+ * \todo Look into use cases of allocators in executors and implement their
+ * mechanism for using them if needed
+ */
+ template <typename ProtoAllocator>
 struct allocator_t
     : base_executor_property<allocator_t<ProtoAllocator>, true, true> {
   constexpr explicit allocator_t(const ProtoAllocator& alloc) : alloc_(alloc) {}
