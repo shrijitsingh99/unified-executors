@@ -713,7 +713,7 @@ template&lt;typename Executor , typename Property , typename std::enable_if_t&lt
 <li>The Property should be applicable and preferable which can be checked using Property::template is_applicable_property&lt;Executor&gt;::value and Property::is_preferable</li>
 <li>The expression Property::template static_query&lt;Executor&gt;::value == Property::value() should be true, which implies that the Executor supports that property</li>
 </ol>
-<p>If all the above conditions are met, prefer customization point is valid. If it is possible to call the require customization point, then it is called and the Property is enforced for the Executor. If the above case is not possible, then the same Executor is returned.</p>
+<p>If all the above conditions are met, prefer customization point is valid. If it is possible, then the require customization point is called and the Property is enforced for the Executor. If the above case is not possible, then the same Executor is returned.</p>
 <p>Part of Proposal P1393R0</p>
 <dl class="todo"><dt><b><a class="el" href="todo.html#_todo000005">Todo:</a></b></dt><dd><ol type="1">
 <li>Support multiple querying multiple properties in the trait: template &lt;typename Executor, typename... Properties&gt; </li>

@@ -110,7 +110,7 @@ struct executor::base_executor_property&lt; DerivedProperty, requireable, prefer
 
 <p>A base class for all properties, containing the common functionality needed by all properties. </p>
 <p>A base class was needed as each property needed to specify a minimum set of functionality such as <a class="el" href="structexecutor_1_1base__executor__property_1_1is__applicable__property.html" title="Checks whether the given Property is applicable for the given type T.">is_applicable_property</a>, static query, is_requirable, is_preferable etc. which would lead to code duplication without a base class.</p>
-<p>A CRTP design is used as static query needs to be able to access the DerivedProperty in order to query the overloaded query member function in an executor. It also allows to specify on a property basis whether it is requirable and preferable. This is useful for behavioral properties (P0443R13</p><ul>
+<p>A CRTP design is used as static query needs to be able to access the DerivedProperty in order to call the overloaded query member function in an executor. It also allows to specify on a property basis whether it is requirable and preferable. This is useful for behavioral properties (P0443R13</p><ul>
 <li>2.2.12) which are not requirable nor preferable unlike the properties nested in them. </li>
 </ul>
 </div><h2 class="groupheader">Member Data Documentation</h2>
