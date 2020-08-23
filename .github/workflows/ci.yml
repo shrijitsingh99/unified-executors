@@ -3,70 +3,87 @@ name: C/C++ CI
 on: [push]
 
 jobs:
-  build-ubuntu:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-       os: [ubuntu-16.04, ubuntu-18.04, ubuntu-20.04]
-       compiler:
-         - {
-             cc: "gcc", cxx: "g++"
-           }
-         - {
-             cc: "clang", cxx: "clang++"
-           }
-    steps:
-      - uses: actions/checkout@v2
-      - name: Install dependencies
-        run: |
-          pip3 install wheel setuptools
-          pip3 install conan
-      - name: Configure
-        env:
-          CC: ${{ matrix.compiler.cc }}
-          CXX: ${{ matrix.compiler.cxx }}
-        run: ./configure
-      - name: Build
-        run: cmake --build build
-      - name: Test
-        run: cd build && ctest
+#  build-ubuntu:
+#    runs-on: ${{ matrix.os }}
+#    strategy:
+#      fail-fast: false
+#      matrix:
+#       os: [ubuntu-16.04, ubuntu-18.04, ubuntu-20.04]
+#       compiler:
+#         - {
+#             cc: "gcc", cxx: "g++"
+#           }
+#         - {
+#             cc: "clang", cxx: "clang++"
+#           }
+#    steps:
+#      - uses: actions/checkout@v2
+#      - name: Install dependencies
+#        run: |
+#          pip3 install wheel setuptools
+#          pip3 install conan
+#      - name: Configure
+#        env:
+#          CC: ${{ matrix.compiler.cc }}
+#          CXX: ${{ matrix.compiler.cxx }}
+#        run: ./configure
+#      - name: Build
+#        run: cmake --build build
+#      - name: Test
+#        run: cd build && ctest
+#
+#  build-cuda:
+#    runs-on: ubuntu-18.04
+#    container:
+#      image: nvidia/cuda:10.2-devel-ubuntu18.04
+#    steps:
+#      - uses: actions/checkout@v2
+#      - name: Install dependencies
+#        run: |
+#          apt update
+#          apt install cmake libomp-dev python3-pip -y
+#          pip3 install wheel setuptools
+#          pip3 install conan
+#      - name: Configure
+#        env:
+#          CC: ${{ matrix.compiler.cc }}
+#          CXX: ${{ matrix.compiler.cxx }}
+#        run: ./configure
+#      - name: Build
+#        run: cmake --build build
+#      - name: Test
+#        continue-on-error: true
+#        run: cd build && ctest
+#
+#  build-macos:
+#     runs-on: macOS-10.15
+#     steps:
+#       - uses: actions/checkout@v2
+#       - name: Install dependencies
+#         run: |
+#           brew install libomp
+#           pip3 install wheel setuptools
+#           pip3 install conan
+#       - name: Configure
+#         run: ./configure
+#       - name: Build
+#         run: cmake --build build
+#       - name: Test
+#         run: cd build && ctest
 
-  build-cuda:
+  deploy-docs:
     runs-on: ubuntu-18.04
-    container:
-      image: nvidia/cuda:10.2-devel-ubuntu18.04
     steps:
       - uses: actions/checkout@v2
-      - name: Install dependencies
-        run: |
-          apt update
-          apt install cmake libomp-dev python3-pip -y
-          pip3 install wheel setuptools
-          pip3 install conan
-      - name: Configure
-        env:
-          CC: ${{ matrix.compiler.cc }}
-          CXX: ${{ matrix.compiler.cxx }}
-        run: ./configure
-      - name: Build
-        run: cmake --build build
-      - name: Test
-        continue-on-error: true
-        run: cd build && ctest
-
-  build-macos:
-     runs-on: macOS-10.15
-     steps:
-       - uses: actions/checkout@v2
-       - name: Install dependencies
-         run: |
-           brew install libomp
-           pip3 install wheel setuptools
-           pip3 install conan
-       - name: Configure
-         run: ./configure
-       - name: Build
-         run: cmake --build build
-       - name: Test
-         run: cd build && ctest
+        with:
+          submodules: true  # Fetch Hugo themes (true OR recursive)
+          fetch-depth: 0    # Fetch all history for .GitInfo and .Lastmod
+      - uses: mattnotmitt/doxygen-action@v1
+        with:
+          working-directory: 'docs/'
+          doxyfile-path: ''
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs/html
