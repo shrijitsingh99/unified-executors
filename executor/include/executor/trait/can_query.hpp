@@ -23,4 +23,20 @@ constexpr auto query(Executor&& ex, const Property& p) noexcept {
   return Property::template static_query<Executor>::value;
 }
 
+/**
+ * \brief Checks whether the given Property and Executor support the query customization point
+ *  Part of Proposal P1393R0
+ */
+template <typename Executor, typename Properties, typename = void>
+struct can_query : std::false_type {};
+
+template <typename Executor, typename Property>
+struct can_query<Executor, Property,
+                 void_t<decltype(query(std::declval<Executor>(),
+                                       std::declval<Property>()))>>
+: std::true_type {};
+
+template <typename Executor, typename Property>
+constexpr bool can_query_v = can_query<Executor, Property>::value;
+
 }  // namespace executor

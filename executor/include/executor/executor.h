@@ -70,6 +70,11 @@ TEST_CASE_TEMPLATE_DEFINE("Property Traits ", E, property_traits) {
     CHECK(executor::can_prefer_v<E, executor::blocking_t::always_t> == true);
     CHECK(executor::can_prefer_v<E, executor::blocking_t::never_t> == true);
   }
+
+  SUBCASE("can_prefer") {
+      CHECK(executor::can_query_v<E, executor::blocking_t::always_t> == true);
+      CHECK(executor::can_query_v<E, executor::blocking_t::never_t> == true);
+  }
 }
 
 TEST_CASE_TEMPLATE_DEFINE("Properties", E, properties) {
