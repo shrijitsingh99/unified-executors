@@ -17,7 +17,9 @@ namespace executor {
 
 /**
  * \brief Enforces a specified Property on an Executor if possible else returns
- * the same Executor. If enforced a new executor instance which implements that
+ * the same Executor.
+ *
+ * \details If enforced a new executor instance which implements that
  * property is created and returned. prefer denotes a customization point and
  * should satisfy the following conditions to be applicable:
  * 1. The Property should be applicable and preferable which can be checked
@@ -61,6 +63,7 @@ constexpr decltype(auto) prefer(const Executor& ex,
 /**
  * \brief Checks whether the given Property and Executor support the prefer
  * customization point.
+ *
  * Part of Proposal P1393R0
  */
 template <typename Executor, typename Properties, typename = void>

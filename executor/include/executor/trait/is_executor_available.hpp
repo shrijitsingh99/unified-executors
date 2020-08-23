@@ -12,7 +12,9 @@
 namespace executor {
 
 /**
- * \brief A given Executor is defined as available if the member function
+ * \brief Checks whether the given Executor is available to use
+ *
+ * \details A given Executor is defined as available if the member function
  * `execute` can be called an used without a compile time error. For an executor
  * to be made available it must proved explicit specialization for this trait
  * and inherit from std::true_type

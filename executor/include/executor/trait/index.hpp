@@ -12,9 +12,10 @@
 namespace executor {
 
 /**
- * \brief A given Executor can have a custom index for bulk execute. By default
- * if not explicitly specified by the executor the shape is std::size_t. The
- * index represents the index of execution unit which is currently running.
+ * \brief A given Executor can have a custom index for bulk execute.
+ *
+ * \details: By default if not explicitly specified by the executor the shape is std::size_t.
+ * The index represents the index of execution unit which is currently running.
  *
  * executor_index is an Executor type trait which provides the index type
  * defined by the Executor.

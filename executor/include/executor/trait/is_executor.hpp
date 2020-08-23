@@ -38,7 +38,9 @@ struct contains_execute<
 }  // namespace detail
 
 /**
- * \brief A given type T is an Executor if it satisfies the following
+ * \brief Checks whether the given type T is an executor
+ *
+ * \details A given type T is an Executor if it satisfies the following
  * properties:
  *  1. Provides a function named execute that eagerly submits work on a single
  * execution agent created for it by the executor

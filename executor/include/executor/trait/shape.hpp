@@ -12,9 +12,10 @@
 namespace executor {
 
 /**
- * \brief A given Executor can have a custom shape for bulk execute. By default
- * if not explicitly specified by the executor the shape is std::size_t. The
- * shape represents the number of execution units and their dimensionality if
+ * \brief A given Executor can have a custom shape for bulk execute.
+ *
+ * \details By default if not explicitly specified by the executor the shape is std::size_t.
+ * The shape represents the number of execution units and their dimensionality if
  * needed.
  *
  * executor_shape is an Executor type trait which provides the shape type

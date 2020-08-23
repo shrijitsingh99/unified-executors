@@ -16,18 +16,20 @@ namespace executor {
 
 /**
  * \brief Checks whether a specified Property on an Executor is supported by the
- * Executor. If supported it returns the current instance of that Property.
- *  prefer denotes a customization point and should satisfy the following
+ * Executor.
+ *
+ * \details If supported it returns the current instance of that Property.
+ * prefer denotes a customization point and should satisfy the following
  * conditions to be applicable:
- *  1. The Property should be applicable which can be checked using
+ * 1. The Property should be applicable which can be checked using
  * Property::template is_applicable_property<Executor>::value
- *  2. The expression Property::template static_query<Executor>::value should be
+ * 2. The expression Property::template static_query<Executor>::value should be
  * a valid constant expression
  *
- *  If all the above conditions are met, then the overload query member function
+ * If all the above conditions are met, then the overload query member function
  * in the Executor is called with the Property.
  *
- *  Part of Proposal P1393R0
+ * Part of Proposal P1393R0
  *
  */
 template <
@@ -41,6 +43,7 @@ constexpr auto query(Executor&& ex, const Property& p) noexcept {
 /**
  * \brief Checks whether the given Property and Executor support the query
  * customization point.
+ *
  * Part of Proposal P1393R0
  */
 template <typename Executor, typename Properties, typename = void>
