@@ -23,8 +23,9 @@ namespace detail {
 static const auto noop = [] {};
 
 /**
- * \brief Checks if the given type T provides a member function named `execute` that takes a
+ * \brief Checks if the given type provides a member function named `execute` that takes a
  * nullary callable
+ * \tparam T type to check for member function `execute`
  */
 template <typename T, typename = void>
 struct contains_execute : std::false_type {};
@@ -38,7 +39,7 @@ struct contains_execute<
 }  // namespace detail
 
 /**
- * \brief Checks whether the given type T is an executor
+ * \brief Checks whether the type is an executor
  *
  * \details A given type T is an Executor if it satisfies the following
  * properties:
@@ -50,6 +51,7 @@ struct contains_execute<
  *  This concept was finalized in P1660R0 and merged in the draft P0443R13 in
  * the form of a concept
  *
+ * \tparam T type to check whether is an executor or not
  *  \todo Convert to a concept in C++20
  */
 template <class T, typename = void>

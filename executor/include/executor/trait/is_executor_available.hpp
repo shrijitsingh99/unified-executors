@@ -12,9 +12,9 @@
 namespace executor {
 
 /**
- * \brief Checks whether the given Executor is available to use
+ * \brief Checks whether the given executor is available to use
  *
- * \details A given Executor is defined as available if the member function
+ * \details A given executor is defined as available if the member function
  * `execute` can be called an used without a compile time error. For an executor
  * to be made available it must proved explicit specialization for this trait
  * and inherit from std::true_type
@@ -22,6 +22,8 @@ namespace executor {
  *
  * This is not part of the proposal and is needed for PCL, since the availability of an executor
  * may depend on hardware availability or other factors
+ *
+ * \tparam Executor an executor type
  */
 template <template <typename...> class Executor>
 struct is_executor_available : std::false_type {};
