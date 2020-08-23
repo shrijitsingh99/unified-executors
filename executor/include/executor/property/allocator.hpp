@@ -16,7 +16,7 @@ namespace executor {
 // Part of Proposal P0443R13: 2.2.13
 template <typename ProtoAllocator>
 struct allocator_t
-    : basic_executor_property<allocator_t<ProtoAllocator>, true, true> {
+    : base_executor_property<allocator_t<ProtoAllocator>, true, true> {
   constexpr explicit allocator_t(const ProtoAllocator& alloc) : alloc_(alloc) {}
 
   constexpr ProtoAllocator value() const { return alloc_; }
@@ -27,7 +27,7 @@ struct allocator_t
 
 template <>
 struct allocator_t<void>
-    : basic_executor_property<allocator_t<void>, true, true> {
+    : base_executor_property<allocator_t<void>, true, true> {
   template <class ProtoAllocator>
   constexpr allocator_t<ProtoAllocator> operator()(
       const ProtoAllocator& alloc) const {

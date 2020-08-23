@@ -14,7 +14,7 @@
 namespace executor {
 
 // Part of Proposal P0443R13: 2.2.12.1
-struct blocking_t : basic_executor_property<blocking_t, false, false> {
+struct blocking_t : base_executor_property<blocking_t, false, false> {
   friend constexpr bool operator==(const blocking_t& a, const blocking_t& b) {
     return a.value_ == b.value_;
   }
@@ -25,21 +25,21 @@ struct blocking_t : basic_executor_property<blocking_t, false, false> {
 
   constexpr blocking_t() : value_{0} {};
 
-  struct always_t : basic_executor_property<always_t, true, true> {
+  struct always_t : base_executor_property<always_t, true, true> {
     static constexpr blocking_t value() { return {}; }
   };
 
   static constexpr always_t always{};
   constexpr blocking_t(const always_t&) : value_{1} {};
 
-  struct never_t : basic_executor_property<never_t, true, true> {
+  struct never_t : base_executor_property<never_t, true, true> {
     static constexpr blocking_t value() { return {}; }
   };
 
   static constexpr never_t never{};
   constexpr blocking_t(const never_t&) : value_{2} {};
 
-  struct possibly_t : basic_executor_property<possibly_t, true, true> {
+  struct possibly_t : base_executor_property<possibly_t, true, true> {
     static constexpr blocking_t value() { return {}; }
   };
 

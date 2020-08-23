@@ -15,7 +15,7 @@
 namespace executor {
 
 template <typename Derived, bool requireable, bool preferable>
-struct basic_executor_property {
+struct base_executor_property {
   // Part of Proposal P1393R0
   static constexpr bool is_requirable = requireable;
   static constexpr bool is_preferable = preferable;
