@@ -40,7 +40,8 @@ constexpr auto query(Executor&& ex, const Property& p) noexcept {
 
 /**
  * \brief Checks whether the given Property and Executor support the query
- * customization point Part of Proposal P1393R0
+ * customization point.
+ * Part of Proposal P1393R0
  */
 template <typename Executor, typename Properties, typename = void>
 struct can_query : std::false_type {};

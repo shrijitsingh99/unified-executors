@@ -40,7 +40,7 @@ using contains_property =
  * Property::value() should be true, which implies that the Executor supports
  * that property
  *
- *  If all the above conditions are met, then the overload require member
+ * If all the above conditions are met, then the overload require member
  * function in the Executor is called with the Property.
  *
  *  Part of Proposal P1393R0
@@ -63,7 +63,8 @@ constexpr decltype(auto) require(const Executor& ex,
 
 /**
  * \brief Checks whether the given Property and Executor support the require
- * customization point Part of Proposal P1393R0
+ * customization point.
+ * Part of Proposal P1393R0
  */
 template <typename Executor, typename Properties, typename = void>
 struct can_require : std::false_type {};
