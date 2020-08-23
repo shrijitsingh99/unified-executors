@@ -24,7 +24,7 @@ namespace executor {
  * without a base class.
  *
  * A CRTP design is used as static query needs to be able to access the
- * DerivedProperty in order to query the overloaded query member function in an
+ * DerivedProperty in order to call the overloaded query member function in an
  * executor. It also allows to specify on a property basis whether it is
  * requirable and preferable. This is useful for behavioral properties (P0443R13
  * - 2.2.12) which are not requirable nor preferable unlike the properties
@@ -51,7 +51,7 @@ struct base_executor_property {
  *
  * \details Currently for the property to be applicable T should be an executor type.
  * In proposal P1393R0 there are no conditions specified for a property to be applicable
- * ans is left to the implementer to decide.
+ * and the design is left up to the implementer
  *
  * Part of Proposal P1393R0
  *

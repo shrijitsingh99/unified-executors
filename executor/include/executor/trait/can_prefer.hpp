@@ -30,7 +30,7 @@ namespace executor {
  * that property
  *
  * If all the above conditions are met, prefer customization point is valid.
- * If it is possible to call the require customization point, then it is called
+ * If it is possible, then the require customization point is called
  * and the Property is enforced for the Executor. If the above case is not
  * possible, then the same Executor is returned.
  *
